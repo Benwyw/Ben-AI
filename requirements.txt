@@ -2,3 +2,4 @@ discord.py
 python-dotenv
 youtube_dl
 ffmpeg
+PyNaCl
