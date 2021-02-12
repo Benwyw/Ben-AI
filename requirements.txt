@@ -1,5 +1,6 @@
-discord.py
+pip
+youtube_dl
+discord.py[voice]
 python-dotenv
-youtube-dl
 ffmpeg
 PyNaCl
