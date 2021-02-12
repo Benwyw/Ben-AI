@@ -55,7 +55,7 @@ async def dm(ctx, target, content):
 
     await ctx.send("Sent a message to: "+str(person))
     await person.send(content)
-    await ctx.message.delete()
+    #await ctx.message.delete()
 
 @bot.command()
 async def add(ctx, left: int, right: int):
