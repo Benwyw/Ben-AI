@@ -21,7 +21,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     channel = bot.get_channel(809741175321264149)
-    if message.guild is None and message.author != bot.user:
+    if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
         #await channel.send("{}: {}".format(message.author,message.content))
         await bot.get_user(254517813417476097).send("{}: {}".format(message.author,message.content))
     await bot.process_commands(message)
