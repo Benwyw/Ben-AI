@@ -135,13 +135,13 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
         duration = []
         if days > 0:
-            duration.append('{} days'.format(days))
+            duration.append('{} 日'.format(days))
         if hours > 0:
-            duration.append('{} hours'.format(hours))
+            duration.append('{} 小時'.format(hours))
         if minutes > 0:
-            duration.append('{} minutes'.format(minutes))
+            duration.append('{} 分'.format(minutes))
         if seconds > 0:
-            duration.append('{} seconds'.format(seconds))
+            duration.append('{} 秒'.format(seconds))
 
         return ', '.join(duration)
 
@@ -154,13 +154,13 @@ class Song:
         self.requester = source.requester
 
     def create_embed(self):
-        embed = (discord.Embed(title='Now playing',
+        embed = (discord.Embed(title='正在播放',
                                description='```css\n{0.source.title}\n```'.format(self),
                                color=discord.Color.blurple())
-                 .add_field(name='Duration', value=self.source.duration)
-                 .add_field(name='Requested by', value=self.requester.mention)
-                 .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
-                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
+                 .add_field(name='時間', value=self.source.duration)
+                 .add_field(name='要求者', value=self.requester.mention)
+                 .add_field(name='上載者', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
+                 .add_field(name='網址', value='[點擊]({0.source.url})'.format(self))
                  .set_thumbnail(url=self.source.thumbnail))
 
         return embed
