@@ -238,10 +238,11 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(180):  # 3 minutes
+                    async with timeout(3600):  # 3 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
+                    await self._ctx.guild.text_channels[0].send("已超過一小時冇歌了，拜~")
                     return
 
             self.current.source.volume = self._volume
@@ -268,7 +269,6 @@ class VoiceState:
         if self.voice:
             await self.voice.disconnect()
             self.voice = None
-
 
 class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -362,7 +362,7 @@ class Music(commands.Cog):
     async def _pause(self, ctx: commands.Context):
         """暫停目前播緊嘅歌。"""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
@@ -371,7 +371,7 @@ class Music(commands.Cog):
     async def _resume(self, ctx: commands.Context):
         """恢復目前播緊嘅歌。"""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
@@ -382,7 +382,7 @@ class Music(commands.Cog):
 
         ctx.voice_state.songs.clear()
 
-        if not ctx.voice_state.is_playing:
+        if ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
@@ -502,13 +502,21 @@ class Music(commands.Cog):
                 raise commands.CommandError('Bot is already in a voice channel.')
 
 #========================General========================
-class DM(commands.Cog):
+class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(name='announce')
+    async def _announce(self, ctx: commands.Context, message):
+        '''特別指令。公告。'''
+
+        #client.get_channel("182583972662")
+        for guild in bot.guilds:
+            await guild.text_channels[0].send(message)
+
     @commands.command(name='dm')
     async def _dm(self, ctx: commands.Context, target, content):
-        """該指令為Ben專用。同Bot DM，會由Bot DM Ben。"""
+        """特別指令。同Bot DM，會由Bot DM Ben。"""
 
         target = target.lower()
 
@@ -575,7 +583,7 @@ class General(commands.Cog):
 
 bot = commands.Bot('$', description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', intents=discord.Intents.all())
 bot.add_cog(Music(bot))
-bot.add_cog(DM(bot))
+bot.add_cog(Special(bot))
 bot.add_cog(General(bot))
 
 
@@ -583,6 +591,18 @@ bot.add_cog(General(bot))
 async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help"))
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
+
+'''
+@bot.event
+async def on_voice_state_update(member, before, after):
+    # pylint: disable=unused-argument
+    # If we're the only one left in a voice chat, leave the channel
+    if member == bot.user and after.channel is None:
+        print(member.guild)
+
+    if member.bot:
+        return
+'''
 
 @bot.event
 async def on_message(message):
