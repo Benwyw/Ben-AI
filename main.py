@@ -597,7 +597,7 @@ async def on_message(message):
     #Shield
     if 'ben' in message.content.lower() and 'gay' in message.content.lower():
         await message.delete()
-        if 'ben' in message.author.display_name:
+        if 'ben' in message.author.display_name.lower():
             await message.channel.send("Pok is gay")
         else:
             await message.channel.send(str(message.author.display_name)+" is gay")
