@@ -512,7 +512,6 @@ class Special(commands.Cog):
         '''特別指令。公告。'''
 
         #client.get_channel("182583972662")
-        if ctx.author
         for guild in bot.guilds:
             await guild.text_channels[0].send(message)
 
