@@ -502,6 +502,8 @@ class Music(commands.Cog):
                 raise commands.CommandError('Bot is already in a voice channel.')
 
 #========================General========================
+dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
+
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -541,7 +543,7 @@ class Special(commands.Cog):
             memberID = 270781455678832641
         elif 'kei' in target:
             memberID = 363347146080256001
-        elif 'anson' in target:
+        elif 'olaf' in target:
             memberID = 272977239014899713
         elif 'brian' in target:
             memberID = 262267347379683329
@@ -610,7 +612,10 @@ async def on_voice_state_update(member, before, after):
 async def on_message(message):
     if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
         #await channel.send("{}: {}".format(message.author,message.content))
-        await bot.get_user(254517813417476097).send("{}: {}".format(message.author,message.content))
+        if message.author.id not in dmList:
+            await bot.get_user(254517813417476097).send("{}({}): {}".format(message.author,message.author.id,message.content))
+        else:
+            await bot.get_user(254517813417476097).send("{}: {}".format(message.author,message.content))
     await bot.process_commands(message)
 
     if message.author == bot.user:
