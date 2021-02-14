@@ -507,14 +507,17 @@ class Special(commands.Cog):
         self.bot = bot
 
     @commands.command(name='announce')
+    @commands.is_owner()
     async def _announce(self, ctx: commands.Context, message):
         '''特別指令。公告。'''
 
         #client.get_channel("182583972662")
+        if ctx.author
         for guild in bot.guilds:
             await guild.text_channels[0].send(message)
 
     @commands.command(name='dm')
+    @commands.is_owner()
     async def _dm(self, ctx: commands.Context, target, content):
         """特別指令。同Bot DM，會由Bot DM Ben。"""
 
