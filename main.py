@@ -554,7 +554,7 @@ class Special(commands.Cog):
         elif 'ivan' in target:
             memberID = 269394999890673664
         else:
-            memberID = target
+            memberID = int(target)
 
         person = bot.get_user(memberID)
 
