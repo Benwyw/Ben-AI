@@ -238,11 +238,10 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(3600):  # 3 minutes
+                    async with timeout(3600):  # 3 minutes --> 1 hr
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
-                    await self._ctx.guild.text_channels[0].send("已超過一小時冇歌了，拜~")
                     return
 
             self.current.source.volume = self._volume
