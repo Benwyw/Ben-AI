@@ -619,6 +619,10 @@ async def on_message(message):
 
     if message.author == bot.user:
         return
+        
+    #Troll
+    if '888' in message.content:
+        await message.channel.send("8888", tts=True)
 
     #Shield
     if 'ben' in message.content.lower() and 'gay' in message.content.lower():
