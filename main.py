@@ -575,9 +575,14 @@ class Special(commands.Cog):
             memberID = int(target)
 
         person = bot.get_user(memberID)
-
-        await ctx.send("Sent a message to: "+str(person))
-        await person.send(content)
+        try:
+            await person.send(content)
+        except Exception as e:
+            channel = bot.get_channel(809527650955296848)
+            await ctx.send("Unable to send message to: "+str(person))
+            await channel.send(str(e))
+        else:
+            await ctx.send("Sent a message to: "+str(person))
 
 class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
