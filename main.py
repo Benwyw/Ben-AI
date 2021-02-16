@@ -17,6 +17,7 @@ import itertools
 import math
 import random
 import os
+import copy
 
 import discord
 import youtube_dl
@@ -231,6 +232,7 @@ class VoiceState:
     async def audio_player_task(self):
         while True:
             self.next.clear()
+            self.tempSource = None
 
             if not self.loop:
                 # Try to get the next song within 3 minutes.
@@ -244,10 +246,24 @@ class VoiceState:
                     self.bot.loop.create_task(self.stop())
                     return
 
-            self.current.source.volume = self._volume
-            self.voice.play(self.current.source, after=self.play_next_song)
-            await self.current.source.channel.send(embed=self.current.create_embed())
+                self.current.source.volume = self._volume
+                self.voice.play(self.current.source, after=self.play_next_song)
 
+            elif self.loop == True:
+                try:
+                    async with timeout(60):
+                        await self.songs.put(self.current)
+                        self.current = await self.songs.get()
+                except asyncio.TimeoutError:
+                    self.bot.loop.create_task(self.stop())
+                    return
+
+                self.tempSource = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS))
+
+                self.tempSource.volume = self._volume
+                self.voice.play(self.tempSource, after=self.play_next_song)
+
+            await self.current.source.channel.send(embed=self.current.create_embed())
             await self.next.wait()
 
     def play_next_song(self, error=None):
@@ -329,7 +345,7 @@ class Music(commands.Cog):
     @commands.command(name='leave', aliases=['disconnect'])
     @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
-        """清除曲列及離開語音頻道。"""
+        """清除曲列、解除循環播放，離開語音頻道。"""
 
         if not ctx.voice_state.voice:
             return await ctx.send('未連接到任何語音通道。')
@@ -466,7 +482,10 @@ class Music(commands.Cog):
 
         # Inverse boolean value to loop and unloop.
         ctx.voice_state.loop = not ctx.voice_state.loop
-        await ctx.message.add_reaction('✅')
+        if ctx.voice_state.loop:
+            await ctx.message.add_reaction('✅')
+        elif not ctx.voice_state.loop:
+            await ctx.message.add_reaction('❎')
 
     @commands.command(name='play', aliases=['p'])
     async def _play(self, ctx: commands.Context, *, search: str):
@@ -621,7 +640,7 @@ async def on_message(message):
         return
         
     #Troll
-    if '888' in message.content:
+    if '888' in message.content and message.content.startswith('8'):
         await message.channel.send("8888", tts=True)
 
     #Shield
