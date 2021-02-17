@@ -741,7 +741,7 @@ async def on_message(message):
         if 'ben' not in message.author.display_name.lower():
             await message.channel.send(str(message.author.display_name)+" is gay")
         else:
-            seed = randrange(7)
+            seed = randrange(5)
             if seed == 0:
                 msg = "Pok is gay"
             elif seed == 1:
