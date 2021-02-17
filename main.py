@@ -17,13 +17,13 @@ import itertools
 import math
 import random
 import os
-import copy
 
 import discord
 import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
 from dotenv import load_dotenv
+from random import randrange
 
 #========================Music========================
 # Silence useless bug reports messages
@@ -616,7 +616,7 @@ bot.add_cog(General(bot))
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | 冇野幫到你"))
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 '''
@@ -632,6 +632,53 @@ async def on_voice_state_update(member, before, after):
 '''
 
 @bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        seed = randrange(8)
+        if seed == 0:
+            msg = "**無效的令咒。 請使用** `$help` **來找出強制命令！**"
+        elif seed == 1:
+            msg = "**NANI！？** `$help`"
+        elif seed == 2:
+            msg = "**What 7 command is this ah, use** `$help` **la 7 head**"
+        elif seed == 3:
+            msg = "**JM9? 試下睇下個** `$help`"
+        elif seed == 4:
+            msg = "**Kys, u need some** `$help`"
+        elif seed == 5:
+            msg = "**打咩！！** `$help` **！！**"
+        elif seed == 6:
+            msg = "**Trash... use** `$help` **la**"
+        elif seed == 7:
+            msg = "**都冇呢個指令！！！！！！！ 用** `$help` **啦！！！！！！！**"
+
+        await ctx.send(msg)
+    if isinstance(error, commands.MissingRequiredArgument):
+        seed = randrange(6)
+        if seed == 0:
+            msg = "**打漏野呀Ching**"
+        if seed == 1:
+            msg = "**你漏咗...個腦**"
+        if seed == 2:
+            msg = "**乜你唔覺得怪怪dick?**"
+        if seed == 3:
+            msg = "**「行返屋企」，你只係打咗「行返」，我點lung知行返去邊？**"
+        if seed == 4:
+            msg = "**你食飯未呀？Sor9完全無興趣知，我只知你打漏咗野呀。**"
+        if seed == 5:
+            msg = "**你係想我fill in the blanks? 填充題？？**"
+
+        await ctx.send(msg)
+    if isinstance(error, commands.MissingPermissions):
+        seed = randrange(2)
+        if seed == 0:
+            msg = "**Sor9弱小的你冇權限用呢個指令:angry:**"
+        elif seed == 1:
+            msg = "**你確定你有lung力用呢個指令？**"
+
+        await ctx.send(msg)
+
+@bot.event
 async def on_message(message):
     if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
         #await channel.send("{}: {}".format(message.author,message.content))
@@ -643,10 +690,50 @@ async def on_message(message):
 
     if message.author == bot.user:
         return
+
+    #Mentions Ben AI
+    if bot.user.mentioned_in(message):
+        seed = randrange(6)
+        if seed == 0:
+            msg = "你就是我的Master嗎"
+        elif seed == 1:
+            msg = "此後吾之劍與Ben同在，Ben之命運與吾共存。"
+        elif seed == 2:
+            msg = "Ben心之所向，即為我劍之所指。"
+        elif seed == 3:
+            msg = "I am the bone of my sword.\n" \
+                  "Steel is my body, and fire is my blood.\n" \
+                  "I have created over a thousand blades.\n" \
+                  "Unknown to death,Nor known to life.\n" \
+                  "Have withstood pain to create many weapons.\n" \
+                  "Yet, those hands will never hold anything.\n" \
+                  "So as I pray, unlimited blade works."
+        elif seed == 4:
+            msg = "Ben來承認，Ben來允許，Ben來背負整個世界。"
+        elif seed == 5:
+            msg = "輸給誰都可以，但是，決不能輸給自己。"
+
+        await message.channel.send(msg)
         
     #Troll
     if '888' in message.content and message.content.startswith('8'):
-        await message.channel.send("8888", tts=True)
+        seed = randrange(7)
+        if seed == 0:
+            msg = "8888"
+        elif seed == 1:
+            msg = "7777"
+        elif seed == 2:
+            msg = "6666"
+        elif seed == 3:
+            msg = "9999"
+        elif seed == 4:
+            msg = "爸爸爸爸"
+        elif seed == 5:
+            msg = "伯伯伯伯"
+        elif seed == 6:
+            msg = "八八八八"
+
+        await message.channel.send(msg, tts=True)
 
     #Shield
     if 'ben' in message.content.lower() and 'gay' in message.content.lower():
@@ -654,7 +741,19 @@ async def on_message(message):
         if 'ben' not in message.author.display_name.lower():
             await message.channel.send(str(message.author.display_name)+" is gay")
         else:
-            await message.channel.send("Pok is gay")
+            seed = randrange(7)
+            if seed == 0:
+                msg = "Pok is gay"
+            elif seed == 1:
+                msg = "Pok is fucking gay"
+            elif seed == 2:
+                msg = "Pok guy jai"
+            elif seed == 3:
+                msg = "Wow! Jennifer Pok-pez?"
+            elif seed == 4:
+                msg = "POKemon鳩"
+
+            await message.channel.send(msg)
 
 load_dotenv()
 bot.run(os.getenv('TOKEN'))
