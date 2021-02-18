@@ -584,6 +584,66 @@ class Special(commands.Cog):
         else:
             await ctx.send("Sent a message to: "+str(person))
 
+    @commands.command(name='menu')
+    async def _menu(self, ctx: commands.Context):
+        """Menu測試"""
+        page1 = discord.Embed (
+            title = '頁 1/3',
+            description = '早',
+            colour = discord.Colour.orange()
+        )
+        page2 = discord.Embed (
+            title = '頁 2/3',
+            description = '晨',
+            colour = discord.Colour.orange()
+        )
+        page3 = discord.Embed (
+            title = '頁 3/3',
+            description = '呀',
+            colour = discord.Colour.orange()
+        )
+
+        pages = [page1, page2, page3]
+
+        message = await ctx.send(embed = page1)
+
+        await message.add_reaction('⏮')
+        await message.add_reaction('◀')
+        await message.add_reaction('▶')
+        await message.add_reaction('⏭')
+
+        i = 0
+        emoji = ''
+
+        def check(reaction, user):
+            return message == message
+
+        try:
+            while True:
+                if emoji == '⏮':
+                    i = 0
+                    await message.edit(embed = pages[i])
+                elif emoji == '◀':
+                    if i > 0:
+                        i -= 1
+                        await message.edit(embed = pages[i])
+                elif emoji == '▶':
+                    if i < 2:
+                        i += 1
+                        await message.edit(embed = pages[i])
+                elif emoji == '⏭':
+                    i = 2
+                    await message.edit(embed=pages[i])
+                res = await bot.wait_for('reaction_add', timeout = 30.0, check = check)
+                if res == None:
+                    break
+                if str(res[1]) != 'Ben AI#0649':  #Example: 'MyBot#1111'
+                    emoji = str(res[0].emoji)
+                    await message.remove_reaction(res[0].emoji, res[1])
+
+        except:
+            await message.clear_reactions()
+
 class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
