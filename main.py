@@ -409,7 +409,7 @@ class Music(commands.Cog):
 
         if not ctx.voice_state.is_playing:
             return await ctx.send('依家冇嘢播緊...')
-
+        '''
         voter = ctx.message.author
         if voter == ctx.voice_state.current.requester:
             await ctx.message.add_reaction('⏭')
@@ -418,16 +418,18 @@ class Music(commands.Cog):
         elif voter.id not in ctx.voice_state.skip_votes:
             ctx.voice_state.skip_votes.add(voter.id)
             total_votes = len(ctx.voice_state.skip_votes)
-
+        
             if total_votes >= 3:
                 await ctx.message.add_reaction('⏭')
                 ctx.voice_state.skip()
             else:
                 await ctx.send('已增加跳過投票，目前位於 **{}/3**'.format(total_votes))
-
+        
         else:
             await ctx.send('您已經投票跳過這首歌。')
-
+        '''
+        await ctx.message.add_reaction('⏭')
+        ctx.voice_state.skip()
     @commands.command(name='queue', aliases=['q'])
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
         """顯示曲列。
