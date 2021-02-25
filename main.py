@@ -197,6 +197,7 @@ class VoiceState:
 
         self.current = None
         self.voice = None
+        self.prevmsg = None
         self.next = asyncio.Event()
         self.songs = SongQueue()
 
@@ -240,30 +241,33 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 #try:
-                    #async with timeout(1800):  # 3 minutes
+                #async with timeout(1800):  # 3 minutes
                 self.current = await self.songs.get()
                 #except asyncio.TimeoutError:
-                    #self.bot.loop.create_task(self.stop())
-                    #return
+                #self.bot.loop.create_task(self.stop())
+                #return
 
                 self.current.source.volume = self._volume
                 self.voice.play(self.current.source, after=self.play_next_song)
 
             elif self.loop == True:
                 #try:
-                    #async with timeout(60):
+                #async with timeout(60):
                 await self.songs.put(self.current)
                 self.current = await self.songs.get()
                 #except asyncio.TimeoutError:
-                    #self.bot.loop.create_task(self.stop())
-                    #return
+                #self.bot.loop.create_task(self.stop())
+                #return
 
                 self.tempSource = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS))
 
                 self.tempSource.volume = self._volume
                 self.voice.play(self.tempSource, after=self.play_next_song)
 
-            await self.current.source.channel.send(embed=self.current.create_embed())
+            if self.prevmsg is not None:
+                await self.prevmsg.delete()
+            self.prevmsg = await self.current.source.channel.send(embed=self.current.create_embed())
+
             await self.next.wait()
 
     def play_next_song(self, error=None):
@@ -289,6 +293,7 @@ class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.voice_states = {}
+        self.prevmsg = None
 
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
@@ -338,6 +343,7 @@ class Music(commands.Cog):
             return
 
         ctx.voice_state.voice = await destination.connect()
+        self.prevmsg = None
 
     @commands.command(name='summon')
     @commands.has_permissions(manage_guild=True)
@@ -523,7 +529,9 @@ class Music(commands.Cog):
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
-                await ctx.send('加咗首 {}'.format(str(source)))
+                if self.prevmsg is not None:
+                    await self.prevmsg.delete()
+                self.prevmsg = await ctx.send('加咗首 {}'.format(str(source)))
 
     @_join.before_invoke
     @_play.before_invoke
@@ -727,6 +735,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         seed = randrange(8)
         if seed == 0:
+            img = "https://i.imgur.com/UPSOyNB.jpg"
             msg = "**無效的令咒。 請使用** `$help` **來找出強制命令！**"
         elif seed == 1:
             msg = "**NANI！？** `$help`"
@@ -743,7 +752,13 @@ async def on_command_error(ctx, error):
         elif seed == 7:
             msg = "**都冇呢個指令！！！！！！！ 用** `$help` **啦！！！！！！！**"
 
-        await ctx.send(msg)
+        if seed == 0:
+            e = discord.Embed()
+            e.set_image(url=img)
+            e.set_footer(text=msg)
+            await ctx.send(embed=e)
+        else:
+            await ctx.send(msg)
     if isinstance(error, commands.MissingRequiredArgument):
         seed = randrange(6)
         if seed == 0:
@@ -782,16 +797,27 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    #Delete after execute
+    music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
+                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p']
+    if message.content.split(' ')[0] in music_command_List:
+        await message.delete()
+
     #Mentions Ben AI
     if bot.user.mentioned_in(message):
+        e = discord.Embed()
         seed = randrange(6)
         if seed == 0:
+            img = "https://i.imgur.com/CWOMg81.jpg"
             msg = "你就是我的Master嗎"
         elif seed == 1:
+            img = "https://i.imgur.com/UatUsA5.jpg"
             msg = "此後吾之劍與Ben同在，Ben之命運與吾共存。"
         elif seed == 2:
+            img = "https://i.imgur.com/NeEknCF.jpg"
             msg = "Ben心之所向，即為我劍之所指。"
         elif seed == 3:
+            img = "https://i.imgur.com/PzzfeIx.gif"
             msg = "I am the bone of my sword.\n" \
                   "Steel is my body, and fire is my blood.\n" \
                   "I have created over a thousand blades.\n" \
@@ -800,15 +826,19 @@ async def on_message(message):
                   "Yet, those hands will never hold anything.\n" \
                   "So as I pray, unlimited blade works."
         elif seed == 4:
+            img = "https://i.imgur.com/QPMalxQ.jpg"
             msg = "Ben來承認，Ben來允許，Ben來背負整個世界。"
         elif seed == 5:
+            img = "https://i.imgur.com/o8EHHMV.gif"
             msg = "輸給誰都可以，但是，決不能輸給自己。"
 
-        await message.channel.send(msg)
-        
+        e.set_image(url=img)
+        e.set_footer(text=msg)
+        await message.channel.send(embed=e)
+
     #Troll
     if '888' in message.content and message.content.startswith('8'):
-        seed = randrange(7)
+        seed = randrange(8)
         if seed == 0:
             msg = "8888"
         elif seed == 1:
@@ -823,6 +853,8 @@ async def on_message(message):
             msg = "伯伯伯伯"
         elif seed == 6:
             msg = "八八八八"
+        elif seed == 7:
+            msg = "西八"
 
         await message.channel.send(msg, tts=True)
 
