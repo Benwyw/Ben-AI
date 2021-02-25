@@ -240,7 +240,7 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(3):  # 3 minutes
+                    async with timeout(1800):  # 3 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
