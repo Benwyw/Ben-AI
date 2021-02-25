@@ -239,24 +239,24 @@ class VoiceState:
                 # If no song will be added to the queue in time,
                 # the player will disconnect due to performance
                 # reasons.
-                try:
-                    async with timeout(1800):  # 3 minutes
-                        self.current = await self.songs.get()
-                except asyncio.TimeoutError:
-                    self.bot.loop.create_task(self.stop())
-                    return
+                #try:
+                    #async with timeout(1800):  # 3 minutes
+                self.current = await self.songs.get()
+                #except asyncio.TimeoutError:
+                    #self.bot.loop.create_task(self.stop())
+                    #return
 
                 self.current.source.volume = self._volume
                 self.voice.play(self.current.source, after=self.play_next_song)
 
             elif self.loop == True:
-                try:
-                    async with timeout(60):
-                        await self.songs.put(self.current)
-                        self.current = await self.songs.get()
-                except asyncio.TimeoutError:
-                    self.bot.loop.create_task(self.stop())
-                    return
+                #try:
+                    #async with timeout(60):
+                await self.songs.put(self.current)
+                self.current = await self.songs.get()
+                #except asyncio.TimeoutError:
+                    #self.bot.loop.create_task(self.stop())
+                    #return
 
                 self.tempSource = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS))
 
@@ -309,7 +309,6 @@ class Music(commands.Cog):
         return True
 
     async def cog_before_invoke(self, ctx: commands.Context):
-        print("called")
         ctx.voice_state = self.get_voice_state(ctx)
 
     async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
@@ -317,12 +316,12 @@ class Music(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        # pylint: disable=unused-argument
-        # If we're the only one left in a voice chat, leave the channel
-        if member == bot.user and after.channel is None:
-            """清除曲列、解除循環播放，離開語音頻道。"""
+        voice_state = member.guild.voice_client
 
+        if voice_state is not None and len(voice_state.channel.members) == 1 or member == bot.user and after.channel is None:
+            # You should also check if the song is still playing
             try:
+                await voice_state.disconnect()
                 del self.voice_states[member.guild.id]
             except:
                 pass
@@ -511,7 +510,7 @@ class Music(commands.Cog):
         如果未提供URL，此指令將自動從各個站點搜索。
         個站點的列表可以喺呢到揾到：https://rg3.github.io/youtube-dl/supportedsites.html
         """
-        print(self.voice_states)
+
         if not ctx.voice_state.voice:
             await ctx.invoke(self._join)
 
