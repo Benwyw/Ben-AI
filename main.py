@@ -240,7 +240,7 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(180):  # 3 minutes
+                    async with timeout(3):  # 3 minutes
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
@@ -309,10 +309,25 @@ class Music(commands.Cog):
         return True
 
     async def cog_before_invoke(self, ctx: commands.Context):
+        print("called")
         ctx.voice_state = self.get_voice_state(ctx)
 
     async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
         await ctx.send('發生錯誤: {}'.format(str(error)))
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        # pylint: disable=unused-argument
+        # If we're the only one left in a voice chat, leave the channel
+        if member == bot.user and after.channel is None:
+            """清除曲列、解除循環播放，離開語音頻道。"""
+
+            try:
+                del self.voice_states[member.guild.id]
+            except:
+                pass
+        else:
+            return
 
     @commands.command(name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
@@ -496,7 +511,7 @@ class Music(commands.Cog):
         如果未提供URL，此指令將自動從各個站點搜索。
         個站點的列表可以喺呢到揾到：https://rg3.github.io/youtube-dl/supportedsites.html
         """
-
+        print(self.voice_states)
         if not ctx.voice_state.voice:
             await ctx.invoke(self._join)
 
@@ -690,6 +705,21 @@ async def on_voice_state_update(member, before, after):
         print(member.guild)
 
     if member.bot:
+        return
+'''
+
+
+'''
+@bot.event
+async def on_voice_state_update(member, before, after):
+    # pylint: disable=unused-argument
+    # If we're the only one left in a voice chat, leave the channel
+    if member == bot.user and after.channel is None:
+        """清除曲列、解除循環播放，離開語音頻道。"""
+
+        channel = discord.utils.get(bot.voice_clients, channel=before.channel)
+        await channel.disconnect()
+    else:
         return
 '''
 
