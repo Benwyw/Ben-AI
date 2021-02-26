@@ -17,6 +17,8 @@ import itertools
 import math
 import random
 import os
+import io
+import requests
 
 import discord
 import youtube_dl
@@ -24,6 +26,18 @@ from async_timeout import timeout
 from discord.ext import commands
 from dotenv import load_dotenv
 from random import randrange
+
+#========================Alpha Vantage========================
+from alpha_vantage.timeseries import TimeSeries
+import matplotlib
+import matplotlib.pyplot as plt
+
+#Make plots bigger
+matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
+
+#API Key
+load_dotenv()
+ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
 
 #========================Music========================
 # Silence useless bug reports messages
@@ -667,6 +681,55 @@ class Special(commands.Cog):
 
         except:
             await message.clear_reactions()
+
+    @commands.command(name='stock')
+    async def _stock(self, ctx:commands.Context, stock_name):
+        """股市圖表"""
+
+        response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteID=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
+        if response.status_code == 200:
+            for line in response.content.decode('utf-8').splitlines():
+                if '<td class="bottomborder">' in line:
+                    stock_name = line.split('<',3)[2].split('>')[-1]
+                    break
+                if '<span class="company__ticker">' in line:
+                    stock_name = line.split('>',1)[1].split('<',1)[0]
+                    break
+
+        else:
+            ctx.send("marketwatch連線失敗！？")
+
+        response.close()
+
+        e = discord.Embed()
+
+        # Initialize IO
+        data_stream = io.BytesIO()
+
+        data, meta_data = ts.get_intraday(symbol=stock_name,interval='1min', outputsize='full')
+        if str(data.head(2)) is not None:
+            pass
+        else:
+            ctx.send("symbol搜尋失敗！？")
+        #ctx.send(str(data.head(2)))
+
+        data = data.drop('5. volume',1)
+        data.plot()
+        plt.title('Intraday Times Series for the {} stock (1 min)'.format(stock_name))
+
+        plt.savefig(data_stream, format='png', bbox_inches="tight", dpi = 80)
+        plt.close()
+        #plt.show()
+
+        #create file
+        data_stream.seek(0)
+        chart = discord.File(data_stream,filename="stock_chart.png")
+
+        e.set_image(
+            url="attachment://stock_chart.png"
+        )
+
+        await ctx.send(embed=e, file=chart)
 
 class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
