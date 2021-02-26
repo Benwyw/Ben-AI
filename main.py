@@ -717,7 +717,7 @@ class Special(commands.Cog):
         data = data.drop('5. volume',1)
         data.plot()
         plt.title('Intraday Times Series for the {} stock (1 min)'.format(stock_name))
-
+        plt.grid()
         plt.savefig(data_stream, format='png', bbox_inches="tight", dpi = 80)
         plt.close()
         #plt.show()
