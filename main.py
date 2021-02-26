@@ -22,10 +22,12 @@ import requests
 
 import discord
 import youtube_dl
+import pandas as pd
 from async_timeout import timeout
 from discord.ext import commands
 from dotenv import load_dotenv
 from random import randrange
+from datetime import datetime
 
 #========================Alpha Vantage========================
 from alpha_vantage.timeseries import TimeSeries
@@ -682,57 +684,6 @@ class Special(commands.Cog):
         except:
             await message.clear_reactions()
 
-    @commands.command(name='stock')
-    async def _stock(self, ctx:commands.Context, stock_name):
-        """股市圖表"""
-        tempmsg = await ctx.send("處理中...")
-
-        response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteID=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
-        if response.status_code == 200:
-            for line in response.content.decode('utf-8').splitlines():
-                if '<td class="bottomborder">' in line:
-                    stock_name = line.split('<',3)[2].split('>')[-1]
-                    break
-                if '<span class="company__ticker">' in line:
-                    stock_name = line.split('>',1)[1].split('<',1)[0]
-                    break
-
-        else:
-            ctx.send("marketwatch連線失敗！？")
-
-        response.close()
-
-        e = discord.Embed()
-
-        # Initialize IO
-        data_stream = io.BytesIO()
-
-        data, meta_data = ts.get_intraday(symbol=stock_name,interval='1min', outputsize='full')
-        if str(data.head(2)) is not None:
-            pass
-        else:
-            ctx.send("symbol搜尋失敗！？")
-        #ctx.send(str(data.head(2)))
-
-        data = data.drop('5. volume',1)
-        data.plot()
-        plt.title('Intraday Times Series for the {} stock (1 min)'.format(stock_name))
-        plt.grid()
-        plt.savefig(data_stream, format='png', bbox_inches="tight", dpi = 80)
-        plt.close()
-        #plt.show()
-
-        #create file
-        data_stream.seek(0)
-        chart = discord.File(data_stream,filename="stock_chart.png")
-
-        e.set_image(
-            url="attachment://stock_chart.png"
-        )
-
-        await tempmsg.delete()
-        await ctx.send(embed=e, file=chart)
-
 class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -755,6 +706,118 @@ class General(commands.Cog):
             for count in range(10):
                 await ctx.send("<@{}>".format(ctx.message.mentions[0].id))
                 await ctx.send(embed=embed)
+
+    @commands.command(name='stock')
+    async def _stock(self, ctx:commands.Context, stock_name):
+        """股市圖表"""
+        tempmsg = await ctx.send("處理資料中...")
+
+        response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteID=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
+        if response.status_code == 200:
+            for line in response.content.decode('utf-8').splitlines():
+                if '<td class="bottomborder">' in line:
+                    stock_name = line.split('<',3)[2].split('>')[-1]
+                    break
+                if '<span class="company__ticker">' in line:
+                    stock_name = line.split('>',1)[1].split('<',1)[0]
+                    break
+
+        else:
+            ctx.send("marketwatch連線失敗！？")
+
+        response.close()
+        e = discord.Embed()
+
+        # Initialize IO
+        data_stream = io.BytesIO()
+
+        data, meta_data = ts.get_intraday(symbol=stock_name,interval='1min', outputsize='full')
+        if str(data.head(2)) is not None:
+            pass
+        else:
+            ctx.send("symbol搜尋失敗！？")
+        #ctx.send(str(data.head(2)))
+
+        data = data.drop('5. volume',1)
+        data.plot()
+        plt.title('美股 {} 盤中時間系列 (1分鐘)'.format(stock_name))
+        plt.xlabel('日期')
+        plt.grid()
+        plt.savefig(data_stream, format='png', bbox_inches="tight", dpi = 80)
+        plt.close()
+        #plt.show()
+
+        #create file
+        data_stream.seek(0)
+        chart = discord.File(data_stream,filename="stock_chart.png")
+        data_stream.close()
+
+        e.set_image(
+            url="attachment://stock_chart.png"
+        )
+
+        await tempmsg.delete()
+        await ctx.send(embed=e, file=chart)
+
+    @commands.command(name='cov', aliases=['covid','cov19','covid-19'])
+    async def _cov(self, ctx:commands.Context):
+        """本港冠狀病毒病的最新情況"""
+        tempmsg = await ctx.send("從data.gov.hk獲取資料中...")
+
+        csv_url="http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_covid_19_chi.csv"
+        response = requests.get(csv_url)
+
+        response.close()
+        e = discord.Embed()
+
+        # Initialize IO
+        data_stream = io.BytesIO()
+
+        file_object = io.StringIO(response.content.decode('utf-8'))
+        pd.set_option('display.max_rows', 60)
+        pd.set_option('display.max_columns', None)
+        data = pd.read_csv(file_object)
+
+        data = data.tail(60)
+
+        try:
+            data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
+        except:
+            pass
+        x = data['更新日期']
+        y = data['確診個案']
+        y2 = data['死亡']
+        y3 = data['出院']
+        y4 = data['疑似個案']
+        y5 = data['住院危殆個案']
+
+        plt.plot(x, y, label="確診個案")
+        plt.plot(x, y2, label="死亡")
+        plt.plot(x, y3, label="出院")
+        plt.plot(x, y4, label="疑似個案")
+        plt.plot(x, y5, label="住院危殆個案")
+        plt.title("本港冠狀病毒病的最新情況")
+        plt.xlabel('更新日期 (過去60天)')
+        plt.ylabel('量')
+        plt.gcf().autofmt_xdate()
+
+        #print(data.tail(1))
+        plt.legend()
+        plt.grid()
+        plt.savefig(data_stream, format='png', bbox_inches="tight", dpi = 80)
+        plt.close()
+
+        #create file
+        data_stream.seek(0)
+        chart = discord.File(data_stream,filename="cov_latest.png")
+        data_stream.close()
+
+        e.set_image(
+            url="attachment://cov_latest.png"
+        )
+
+        await tempmsg.delete()
+        await ctx.send(embed=e, file=chart)
 
 
 bot = commands.Bot('$', description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', intents=discord.Intents.all())
@@ -864,7 +927,7 @@ async def on_message(message):
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
-                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock']
+                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock','$cov','$covid','$cov19','$covid-19']
     if message.content.split(' ')[0] in music_command_List:
         await message.delete()
 
