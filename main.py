@@ -685,6 +685,7 @@ class Special(commands.Cog):
     @commands.command(name='stock')
     async def _stock(self, ctx:commands.Context, stock_name):
         """股市圖表"""
+        tempmsg = await ctx.send("處理中...")
 
         response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteID=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
         if response.status_code == 200:
@@ -729,6 +730,7 @@ class Special(commands.Cog):
             url="attachment://stock_chart.png"
         )
 
+        await tempmsg.delete()
         await ctx.send(embed=e, file=chart)
 
 class General(commands.Cog):
@@ -862,7 +864,7 @@ async def on_message(message):
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
-                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p']
+                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock']
     if message.content.split(' ')[0] in music_command_List:
         await message.delete()
 
