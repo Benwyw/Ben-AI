@@ -36,7 +36,6 @@ import matplotlib.pyplot as plt
 
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
-matplotlib.rcParams['font.family'] = 'MingLiU'
 
 #API Key
 load_dotenv()
@@ -741,8 +740,7 @@ class General(commands.Cog):
 
         data = data.drop('5. volume',1)
         data.plot()
-        plt.title('美股 {} 盤中時間系列 (1分鐘)'.format(stock_name))
-        plt.xlabel('日期')
+        plt.title('Intraday Times Series for the {} stock (1 min)'.format(stock_name))
         plt.grid()
         plt.savefig(data_stream, format='png', bbox_inches="tight", dpi = 80)
         plt.close()
@@ -792,14 +790,14 @@ class General(commands.Cog):
         y4 = data['疑似個案']
         y5 = data['住院危殆個案']
 
-        plt.plot(x, y, label="確診個案")
-        plt.plot(x, y2, label="死亡")
-        plt.plot(x, y3, label="出院")
-        plt.plot(x, y4, label="疑似個案")
-        plt.plot(x, y5, label="住院危殆個案")
-        plt.title("本港冠狀病毒病的最新情況")
-        plt.xlabel('更新日期 (過去60天)')
-        plt.ylabel('量')
+        plt.plot(x, y, label="confirmed")
+        plt.plot(x, y2, label="death")
+        plt.plot(x, y3, label="discharge")
+        plt.plot(x, y4, label="probable")
+        plt.plot(x, y5, label="hospitalised and critical")
+        plt.title("Latest situation of reported cases of COVID-19 in Hong Kong")
+        plt.xlabel('past 60 days')
+        plt.ylabel('amount')
         plt.gcf().autofmt_xdate()
 
         #print(data.tail(1))
