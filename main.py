@@ -36,6 +36,7 @@ import matplotlib.pyplot as plt
 
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
+matplotlib.rcParams['font.family'] = 'MingLiU'
 
 #API Key
 load_dotenv()
