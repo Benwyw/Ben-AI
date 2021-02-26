@@ -8,3 +8,4 @@ alpha-vantage
 pandas
 matplotlib
 requests
+tika

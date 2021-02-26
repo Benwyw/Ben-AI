@@ -28,6 +28,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from random import randrange
 from datetime import datetime
+from tika import parser
 
 #========================Alpha Vantage========================
 from alpha_vantage.timeseries import TimeSeries
@@ -683,6 +684,21 @@ class Special(commands.Cog):
 
         except:
             await message.clear_reactions()
+
+    @commands.command(name='chest')
+    async def _chest(self, ctx: commands.Context, code, key):
+        """$chest CivilCodeMenu網址 關鍵字"""
+
+        response = requests.get(code)
+        if response.status_code == 200:
+            for line in response.content.decode('utf-8').splitlines():
+                if 'pdfIcon after' in line:
+                    pdf_url = line.split("=\"")[1].split("\" class")[0].replace("../../../../","https://www.bd.gov.hk/")
+
+                    pdfFile = parser.from_file(pdf_url)
+
+                    if key.lower() in str(pdfFile["content"]).lower():
+                        await ctx.send("在 {} 找到 {}".format(pdf_url,key))
 
 class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
