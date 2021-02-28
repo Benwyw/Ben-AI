@@ -15,9 +15,11 @@ class Economy(commands.Cog):
     async def bal(self, ctx, user: discord.Member = None):
         if user is None:
             user = ctx.author
-
+        print("Before DB")
         if not DBConnection.checkUserInDB(str(user.id)):
             DBConnection.addUserToDB(str(user.id))
+
+        print("After DB")
 
         money = DBConnection.fetchUserData("userBalance", str(user.id))
 

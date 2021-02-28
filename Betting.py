@@ -7,10 +7,10 @@ import main
 from main import checkInGame, getGame, channelCheck
 
 class Betting(commands.Cog):
-    @commands.command(description="Raise your bet.",
-                      brief="Raise your bet",
+    @commands.command(description="提高您的賭注。",
+                      brief="提高您的賭注",
                       name='raise',
-                      help="Raise your bet by a specified amount. Format for this command is $raise <amount>. Requires sufficient balance to use.",
+                      help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __raise(self, ctx, raiseBy: float = None):
         ID = str(ctx.author.id)
@@ -22,42 +22,42 @@ class Betting(commands.Cog):
         authorMoney = DBConnection.fetchUserData("userBalance", ID)
 
         if not checkInGame(ctx.author):
-            embed.description = "You are not in a game."
+            embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
-            embed.description = "You are not in the specified game's channel. Please go there."
+            embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
             await ctx.send(embed=embed)
             return
 
-        embed.add_field(name="Game ID", value=str(GAME.ID), inline=False)
+        embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
         embed.set_thumbnail(url=GAME.imageUrl)
 
         if not GAME.gameUnderway:
-            embed.description = "This game has not started."
-            embed.set_footer(text="Use $start to start this game.")
+            embed.description = "該遊戲尚未開始。"
+            embed.set_footer(text="使用 $start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
-        embed.set_footer(text="Format is $raise <amount to raise by>.")
+        embed.set_footer(text="格式為 $raise <加注金額>。")
         embed.add_field(name="Your Balance", value="$" + str(authorMoney), inline=False)
 
         if GAME.playerStatus[ID] == "Fold":
-            embed.description = "You are not participating in the current hand. Wait for the next one to start."
+            embed.description = "您不參與當前的一手牌。 等待下一個開始。"
             await ctx.send(embed=embed)
             return
 
         if authorMoney < raiseBy:
-            embed.description = "You do not have the funds to raise by $" + str(raiseBy) + "."
+            embed.description = "您沒有足夠資金來加注 $" + str(raiseBy) + "."
             await ctx.send(embed=embed)
             return
 
         if raiseBy + GAME.bets[ID] <= GAME.maxBet:
-            embed.add_field(name="Current Highest Bet", value="$" + str(GAME.maxBet), inline=False)
-            embed.description = "Does not beat the current highest bet."
+            embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
+            embed.description = "沒有擊敗當前最高的賭注。"
             await ctx.send(embed=embed)
             return
 
@@ -68,10 +68,10 @@ class Betting(commands.Cog):
         DBConnection.updateUserBalance(ID, authorMoney)
 
         embed.remove_field(1)
-        embed.add_field(name="Your New Balance", value="$" + str(authorMoney), inline=False)
-        embed.add_field(name="Current Highest Bet", value="$" + str(GAME.maxBet), inline=False)
-        embed.add_field(name="Pot", value="$" + str(GAME.pot))
-        embed.description = "You raised your bet to $" + str(GAME.bets[ID])
+        embed.add_field(name="您的新餘額", value="$" + str(authorMoney), inline=False)
+        embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
+        embed.add_field(name="彩池(Pot)", value="$" + str(GAME.pot))
+        embed.description = "你把賭注提高到 $" + str(GAME.bets[ID])
 
         await ctx.send(embed=embed)
 
@@ -84,57 +84,57 @@ class Betting(commands.Cog):
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
             await ctx.send(embed=embed)
 
-    @commands.command(description="Call to the highest bet.",
-                      brief="Call to the highest bet",
+    @commands.command(description="跟注最高賭注。",
+                      brief="跟注最高賭注",
                       name='call',
-                      help="Match the current highest bet. Format is $call. No parameters are needed. Requires sufficient balance to use.",
+                      help="匹配當前最高賭注。 格式為 $call。 不需要任何參數。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __call(self, ctx):
         ID = str(ctx.author.id)
         authorMoney = DBConnection.fetchUserData("userBalance", ID)
-        embed = discord.Embed(title="Bet Call", color=0x00ff00)
+        embed = discord.Embed(title="賭注", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         from main import bot
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
 
         if not checkInGame(ctx.author):
-            embed.description = "You are not in a game."
+            embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
-            embed.description = "You are not in the specified game's channel. Please go there."
+            embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
             await ctx.send(embed=embed)
             return
 
-        embed.add_field(name="Game ID", value=str(GAME.ID), inline=False)
+        embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
         embed.set_thumbnail(url=GAME.imageUrl)
 
         if not GAME.gameUnderway:
-            embed.description = "This game has not started."
-            embed.set_footer(text="Use $start to start this game.")
+            embed.description = "該遊戲尚未開始。"
+            embed.set_footer(text="使用 $start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
-        embed.set_footer(text="Format is $raise <amount to raise by>.")
+        embed.set_footer(text="格式為 $raise <加注金額>。")
         embed.add_field(name="Your Balance", value="$" + str(authorMoney), inline=False)
 
         if GAME.playerStatus[ID] == "Fold":
-            embed.description = "You are not participating in the current hand. Wait for the next one to start."
+            embed.description = "您不參與當前的一手牌。 等待下一個開始。"
             await ctx.send(embed=embed)
             return
 
-        embed.add_field(name="Current Highest Bet", value="$" + str(GAME.maxBet), inline=False)
+        embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
         if str(ID) in GAME.bets:
             if GAME.bets[ID] == GAME.maxBet:
-                embed.description = "Your bet already matches the highest bet."
+                embed.description = "您的下注已經與最高下注匹配。"
                 await ctx.send(embed=embed)
                 return
 
         if authorMoney < GAME.maxBet - GAME.bets[ID]:
-            embed.description = "You do not have the funds to match the highest bet."
+            embed.description = "您沒有足夠的資金來匹配最高的賭注。"
             await ctx.send(embed=embed)
             return
 
@@ -152,13 +152,13 @@ class Betting(commands.Cog):
 
         embed.set_field_at(1, name="Your New Balance", value ="$" + str(authorMoney), inline=False)
         embed.add_field(name="Pot", value="$" + str(GAME.pot))
-        embed.description = "You matched the highest bet of $" + str(GAME.maxBet) + "."
+        embed.description = "您與最高下注 $" + str(GAME.maxBet) + "跟注了。"
         await ctx.send(embed=embed)
 
-    @commands.command(description="Forfeit your bet and lay down your hand.",
-                      brief="Forfeit your bet",
+    @commands.command(description="放棄您的賭注，放下您的手。",
+                      brief="放棄您的賭注",
                       name='fold',
-                      help="Fold and forfeit, taking no further part in the hand. You will lose any amount you already bet. Format is $fold. No parameters are needed.",
+                      help="棄牌棄牌，不再參與。 您將輸掉任何您已經下注的金額。 格式為 $fold。 不需要任何參數。",
                       pass_context=True)
     async def __fold(self, ctx):
         ID = str(ctx.author.id)
@@ -168,34 +168,34 @@ class Betting(commands.Cog):
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
         if not checkInGame(ctx.author):
-            embed.description = "You are not in a game."
+            embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
-            embed.description = "You are not in the specified game's channel. Please go there."
+            embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
             await ctx.send(embed=embed)
             return
 
-        embed.add_field(name="Game ID", value=str(GAME.ID), inline=False)
+        embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
         embed.set_thumbnail(url=GAME.imageUrl)
 
         if not GAME.gameUnderway:
-            embed.description = "This game has not started."
-            embed.set_footer(text="Use $start to start this game.")
+            embed.description = "該遊戲尚未開始。"
+            embed.set_footer(text="使用 $start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
         GAME.playerStatus[ID] = "Fold"
-        embed.description = "You have folded."
+        embed.description = "你已經蓋牌了。"
         await ctx.send(embed=embed)
 
     @commands.command(description="View the money in the pot.",
                       brief="View the money in the pot",
                       name='pot',
-                      help="See how much money is currently available to be won in the pot. Format is $pot. No parameters are needed.",
+                      help="看看目前有多少錢可以贏得彩池。 格式為 $pot。 不需要任何參數。",
                       pass_context=True)
     async def __pot(self, ctx):
         embed = discord.Embed(title="Pot", color=0x00ff00)
@@ -204,33 +204,33 @@ class Betting(commands.Cog):
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
 
         if not checkInGame(ctx.author):
-            embed.description = "You are not in a game."
+            embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
-            embed.description = "You are not in the specified game's channel. Please go there."
+            embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
             await ctx.send(embed=embed)
             return
 
-        embed.add_field(name="Game ID", value=str(GAME.ID), inline=False)
+        embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
         embed.set_thumbnail(url=GAME.imageUrl)
 
         if not GAME.gameUnderway:
-            embed.description = "This game has not started."
-            embed.set_footer(text="Use $start to start this game.")
+            embed.description = "該遊戲尚未開始。"
+            embed.set_footer(text="使用 $start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
-        embed.description = "The pot currently contains $" + str(GAME.pot) + "."
+        embed.description = "彩池當前總值 $" + str(GAME.pot) + "."
         await ctx.send(embed=embed)
 
-    @commands.command(description="Check the current highest bet.",
-                      brief="Check the current highest bet",
+    @commands.command(description="檢查當前最高賭注。",
+                      brief="查看當前最高賭注",
                       name='highest',
-                      help="Check what the current highest bet is. Format is $highest. No parameters are needed.",
+                      help="檢查當前最高賭注是多少。 格式為 $highest。 不需要任何參數。",
                       pass_context=True)
     async def __highest(self, ctx):
         embed = discord.Embed(title="Highest Bet", color=0x00ff00)
@@ -239,27 +239,27 @@ class Betting(commands.Cog):
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
 
         if not checkInGame(ctx.author):
-            embed.description = "You are not in a game."
+            embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
-            embed.description = "You are not in the specified game's channel. Please go there."
+            embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
             await ctx.send(embed=embed)
             return
 
-        embed.add_field(name="Game ID", value=str(GAME.ID), inline=False)
+        embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
         embed.set_thumbnail(url=GAME.imageUrl)
 
         if not GAME.gameUnderway:
-            embed.description = "This game has not started."
-            embed.set_footer(text="Use $start to start this game.")
+            embed.description = "該遊戲尚未開始。"
+            embed.set_footer(text="使用 $start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
-        embed.description = "The current highest bet is $" + str(GAME.maxBet) + "."
+        embed.description = "當前最高賭注是 $" + str(GAME.maxBet) + "."
         await ctx.send(embed=embed)
 
 def setup(bot):

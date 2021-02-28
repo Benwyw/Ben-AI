@@ -79,6 +79,117 @@ deck = ["https://i.imgur.com/VBdPy26.png", "https://i.imgur.com/yGcued2.png", "h
         "https://i.imgur.com/y3NLpIF.png", "https://i.imgur.com/7o4C1LX.png", "https://i.imgur.com/zAr7vhg.png", "https://i.imgur.com/R4bYTZo.png", "https://i.imgur.com/N8qoXrl.png", "https://i.imgur.com/MJIoVsk.png", "https://i.imgur.com/WpL2pJI.png",
         "https://i.imgur.com/bXFkuPH.png", "https://i.imgur.com/UQSjCzN.png", "https://i.imgur.com/vakonuH.png"]
 
+def findFileName(suit, card):
+    if suit == 'D':
+        if card == 'A':
+            return "https://i.imgur.com/pKv3o52.png"
+        elif card == '2':
+            return "https://i.imgur.com/0Znul30.png"
+        elif card == '3':
+            return "https://i.imgur.com/aR5T1do.png"
+        elif card == '4':
+            return "https://i.imgur.com/GoyjsN6.png"
+        elif card == '5':
+            return "https://i.imgur.com/SS7SFsT.png"
+        elif card == '6':
+            return "https://i.imgur.com/5SR155z.png"
+        elif card == '7':
+            return "https://i.imgur.com/md7LNs3.png"
+        elif card == '8':
+            return "https://i.imgur.com/2bMLCBW.png"
+        elif card == '9':
+            return "https://i.imgur.com/PjxnGhg.png"
+        elif card == '10':
+            return "https://i.imgur.com/kQARj7b.png"
+        elif card == 'J':
+            return "https://i.imgur.com/MJIoVsk.png"
+        elif card == 'Q':
+            return "https://i.imgur.com/7o4C1LX.png"
+        elif card == 'K':
+            return "https://i.imgur.com/WpL2pJI.png"
+    elif suit == 'C':
+        if card == 'A':
+            return "https://i.imgur.com/bq6lb5Z.png"
+        elif card == '2':
+            return "https://i.imgur.com/8M9EbWg.png"
+        elif card == '3':
+            return "https://i.imgur.com/VBdPy26.png"
+        elif card == '4':
+            return "https://i.imgur.com/DiuE5ye.png"
+        elif card == '5':
+            return "https://i.imgur.com/qSZoZT3.png"
+        elif card == '6':
+            return "https://i.imgur.com/KYWeqAC.png"
+        elif card == '7':
+            return "https://i.imgur.com/LblY086.png"
+        elif card == '8':
+            return "https://i.imgur.com/hj27dUO.png"
+        elif card == '9':
+            return "https://i.imgur.com/DrehITV.png"
+        elif card == '10':
+            return "https://i.imgur.com/3qqBau2.png"
+        elif card == 'J':
+            return "https://i.imgur.com/4XM9H2y.png"
+        elif card == 'Q':
+            return "https://i.imgur.com/R4bYTZo.png"
+        elif card == 'K':
+            return "https://i.imgur.com/zAr7vhg.png"
+    elif suit == 'H':
+        if card == 'A':
+            return "https://i.imgur.com/sEqDkMq.png"
+        elif card == '2':
+            return "https://i.imgur.com/rxaKhG4.png"
+        elif card == '3':
+            return "https://i.imgur.com/yGcued2.png"
+        elif card == '4':
+            return "https://i.imgur.com/11yLhfD.png"
+        elif card == '5':
+            return "https://i.imgur.com/NRQiCiJ.png"
+        elif card == '6':
+            return "https://i.imgur.com/0lqLY4E.png"
+        elif card == '7':
+            return "https://i.imgur.com/8WhdL65.png"
+        elif card == '8':
+            return "https://i.imgur.com/J3sKcoF.png"
+        elif card == '9':
+            return "https://i.imgur.com/43gwYkW.png"
+        elif card == '10':
+            return "https://i.imgur.com/0F2KC0D.png"
+        elif card == 'J':
+            return "https://i.imgur.com/9cDlc0C.png"
+        elif card == 'Q':
+            return "https://i.imgur.com/y3NLpIF.png"
+        elif card == 'K':
+            return "https://i.imgur.com/vakonuH.png"
+    elif suit == 'S':
+        if card == 'A':
+            return "https://i.imgur.com/SsNG5L8.png"
+        elif card == '2':
+            return "https://i.imgur.com/mFdtL9O.png"
+        elif card == '3':
+            return "https://i.imgur.com/F98Y3CA.png"
+        elif card == '4':
+            return "https://i.imgur.com/pTlYzW7.png"
+        elif card == '5':
+            return "https://i.imgur.com/A9Nyxwn.png"
+        elif card == '6':
+            return "https://i.imgur.com/ntwFoQr.png"
+        elif card == '7':
+            return "https://i.imgur.com/PNGooTc.png"
+        elif card == '8':
+            return "https://i.imgur.com/S3BUfV7.png"
+        elif card == '9':
+            return "https://i.imgur.com/smLknK1.png"
+        elif card == '10':
+            return "https://i.imgur.com/v9iTjcX.png"
+        elif card == 'J':
+            return "https://i.imgur.com/UQSjCzN.png"
+        elif card == 'Q':
+            return "https://i.imgur.com/bXFkuPH.png"
+        elif card == 'K':
+            return "https://i.imgur.com/N8qoXrl.png"
+
+
 def hasCommandByName(name: str):
     for command in commands.commands:
         if command.name == name:
@@ -138,7 +249,11 @@ def showHand(user, userHand):
 
     font = ImageFont.truetype('calibri.ttf', size=24)
     for i in range(0, numCards):
-        card = Image.open(userHand[i])
+        fname = str(userHand[i].split("/")[1])
+        card = fname[0]
+        suit = fname[1]
+        url = findFileName(suit,card)
+        card = Image.open(requests.get(url, stream=True).raw)
         card = card.resize((cardWidth, cardHeight))
         HAND.paste(card, (10 + int(cardWidth / 3) * i, 10))
         DRAW.text((30 + int(cardWidth / 3) * i, cardHeight + 15), str(i), fill=ImageColor.getrgb("#ffffff"), font=font)
@@ -154,14 +269,12 @@ def sortHand(user: discord.Member, HAND):
     global ORDER, presOrder, suitOrder, order
     h = []
     sortType = DBConnection.fetchUserData("sortPref", str(user.id))
-
     if sortType== 'p':
         ORDER = presOrder
     elif sortType == 's':
         ORDER = suitOrder
     else:
         ORDER = order
-
     for card in HAND:
         val = ORDER[card]
         index = 0
@@ -265,6 +378,7 @@ class Game(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command(description="生成隨機卡。 可能會出現重複項。",
+                      name="rc",
                     brief="生成隨機卡",
                     help="該命令從52張卡組中生成一張隨機卡。 格式為 $rc。 不需要任何參數。",
                     pass_context=True)
@@ -294,13 +408,15 @@ class Game(commands.Cog):
         else:
             embed.description += selectCard
 
-        imgName = "deck/" + selectCard + selectSuit + ".png"
-        file = discord.File(imgName, filename='card.png')
+        #imgName = "deck/" + selectCard + selectSuit + ".png"
+        embed.set_image(url=findFileName(selectSuit, selectCard))
+        #file = discord.File(imgName, filename='card.png')
         embed.set_thumbnail(url="attachment://card.png")
-        await ctx.send(file=file, embed=embed)
+        await ctx.send(embed=embed)
 
 
     @commands.command(description="從卡組中拉出許多隨機卡。",
+                      name="draw",
                     brief="從牌組中抽出若干張牌",
                     help="從卡組中拉出一些指定的隨機卡。\n"
                          "該指令的格式為 $draw <卡數>.\n 卡數應在1到52之間（含1和52）。",
@@ -346,6 +462,7 @@ class Game(commands.Cog):
 
 
     @commands.command(description="查看您的手。",
+                      name="hand",
                     brief="查看你的手",
                     help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 $hand，不帶任何參數。",
                     pass_context=True)
@@ -360,7 +477,6 @@ class Game(commands.Cog):
                 file = showHand(ctx.author, GAME.playerHands[str(ctx.author.id)])
                 embed.set_image(url="attachment://hand.png")
                 embed.add_field(name="Number of Cards", value=str(len(GAME.playerHands[str(ctx.author.id)])))
-                print("RAN author.send")
                 await ctx.author.send(file=file, embed=embed)
             else:
                 embed.description = "您的遊戲尚未開始。"
@@ -371,6 +487,7 @@ class Game(commands.Cog):
 
 
     @commands.command(description="Set sorting type. Use 'p' for president-style sorting (3 low, 2 high), 'd' for default sorting (A low, K high), 's' for suit sorting (diamonds - spades).",
+                      name="setSort",
                     brief="Set sorting type",
                     aliases=['ss'],
                     help="Set your preferred hand sorting style. Format for this command is $setSort <sortType>.\nUse 'p' for president-style 3 lowest, 2 highest sorting.\n "
@@ -410,6 +527,7 @@ class Game(commands.Cog):
 
 
     @commands.command(description="開始遊戲。",
+                      name="game",
                     brief="開始遊戲",
                     aliases=['5card'],
                     help="使用此命令開始新遊戲。 您只能在遊戲之外使用此命令。 格式為 $game，不帶參數。",
@@ -533,6 +651,7 @@ class Game(commands.Cog):
 
 
     @commands.command(description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
+                      name="out",
                     brief="離開您加入的遊戲，如果該遊戲已經在進行中，則放棄任何下注",
                     help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 $out，不帶任何參數。",
                     pass_context=True)
@@ -560,6 +679,7 @@ class Game(commands.Cog):
 
 
     @commands.command(description="開始遊戲。",
+                      name="start",
                     brief="開始遊戲",
                     help="如果您還沒有開始遊戲，請先開始。 格式為 $start，不帶任何參數。",
                     pass_context=True)
@@ -589,11 +709,11 @@ class Game(commands.Cog):
             embed.description = "你不能一個人玩！"
             await ctx.send(embed=embed)
             return
-
         await GAME.startGame()
 
 
     @commands.command(description="使用十六進制代碼為您的手設置自定義顏色。",
+                      name="setColor",
                     brief="為您的手設置自定義顏色",
                     aliases=['sc', 'setColour'],
                     help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 $setColor <十六進制代碼>。",
@@ -1499,6 +1619,10 @@ async def on_message(message):
             await bot.get_user(254517813417476097).send("{}({}): {}".format(message.author,message.author.id,message.content))
         else:
             await bot.get_user(254517813417476097).send("{}: {}".format(message.author,message.content))
+
+    if not DBConnection.checkUserInDB(str(message.author.id)):
+        DBConnection.addUserToDB(str(message.author.id))
+
     await bot.process_commands(message)
 
     if message.author == bot.user:
@@ -1584,6 +1708,12 @@ async def on_message(message):
                 msg = "POKemon鳩"
 
             await message.channel.send(msg)
+
+@bot.event
+async def on_guild_join(guild):
+    for member in guild.members:
+        if not DBConnection.checkUserInDB(str(member.id)):
+            DBConnection.addUserToDB(str(member.id))
 
 bot.load_extension('Poker')
 bot.load_extension('Economy')

@@ -4,13 +4,18 @@ from dotenv import load_dotenv
 #Game import
 import mysql.connector
 
+load_dotenv()
+host = os.getenv('HOST')
+user = os.getenv('DBUSER')
+password = os.getenv('DBPW')
+database = os.getenv('DATABASE')
+
 class DBConnection:
 
     @classmethod
     def connection(cls):
-        load_dotenv()
-        botDB = mysql.connector.connect(host=os.getenv('HOST'), user=os.getenv('USERNAME'),
-                                        password=os.getenv('PASSWORD'), database=os.getenv('DATABASE'))
+        botDB = mysql.connector.connect(host=host, user=user,
+                                        password=password, database=database)
         DBCursor = botDB.cursor()
         return (botDB, DBCursor)
 

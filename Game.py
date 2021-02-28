@@ -101,34 +101,45 @@ class TexasHoldEm(Game):
 
     async def startGame(self):
         self.gameUnderway = True
+        print("await self.newHand()")
         await self.newHand()
 
     async def newHand(self):
+        print("RAN newHand TOP")
         from main import bot, showHand
+        print("RAN newHand after import")
         self.gameEnded = False
         self.playerHands.clear()
+        print("RAN newHand after clear")
         self.DECK = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",
-                      "deck/2S.png", "deck/3D.png", "deck/3C.png", "deck/3H.png", "deck/3S.png",
-                      "deck/4D.png", "deck/4C.png", "deck/4H.png", "deck/4S.png", "deck/5D.png", "deck/5C.png", "deck/5H.png",
-                      "deck/5S.png", "deck/6D.png", "deck/6C.png", "deck/6H.png", "deck/6S.png",
-                      "deck/7D.png", "deck/7C.png", "deck/7H.png", "deck/7S.png", "deck/8D.png", "deck/8C.png", "deck/8H.png",
-                      "deck/8S.png", "deck/9D.png", "deck/9C.png", "deck/9H.png", "deck/9S.png",
-                      "deck/10D.png", "deck/10C.png", "deck/10H.png",
-                      "deck/10S.png", "deck/JD.png", "deck/JC.png", "deck/JH.png", "deck/JS.png", "deck/QD.png", "deck/QC.png",
-                      "deck/QH.png", "deck/QS.png",
-                      "deck/KD.png", "deck/KC.png", "deck/KH.png", "deck/KS.png"]
+                     "deck/2S.png", "deck/3D.png", "deck/3C.png", "deck/3H.png", "deck/3S.png",
+                     "deck/4D.png", "deck/4C.png", "deck/4H.png", "deck/4S.png", "deck/5D.png", "deck/5C.png", "deck/5H.png",
+                     "deck/5S.png", "deck/6D.png", "deck/6C.png", "deck/6H.png", "deck/6S.png",
+                     "deck/7D.png", "deck/7C.png", "deck/7H.png", "deck/7S.png", "deck/8D.png", "deck/8C.png", "deck/8H.png",
+                     "deck/8S.png", "deck/9D.png", "deck/9C.png", "deck/9H.png", "deck/9S.png",
+                     "deck/10D.png", "deck/10C.png", "deck/10H.png",
+                     "deck/10S.png", "deck/JD.png", "deck/JC.png", "deck/JH.png", "deck/JS.png", "deck/QD.png", "deck/QC.png",
+                     "deck/QH.png", "deck/QS.png",
+                     "deck/KD.png", "deck/KC.png", "deck/KH.png", "deck/KS.png"]
         self.pot = 0
         self.communityCards.clear()
+        print("RAN newHand after clear 2")
         self.deal(bot.get_user(814558209859518555), 3)
+        print("RAN newHand after deal")
 
         embed = discord.Embed(title="德州撲克", description="開始新手。 底注是$ 50", colour=0x00ff00)
         embed.set_thumbnail(url=TexasHoldEm.imageUrl)
         embed.set_footer(text="使用 $out 退出此遊戲。")
-        file = showHand(bot.get_user(814558209859518555), self.communityCards)
+        print("Bot user id is:",bot.user.id)
+        print("Community cards:",self.communityCards)
+        file = showHand(bot.get_user(int(bot.user.id)), self.communityCards)
+        print(bot.user.id)
         embed.set_image(url="attachment://hand.png")
 
         playerList = ""
+        print("Here 1")
         for ID in self.players:
+            print("HERE2")
             self.playerHands.update({ID: []})
             self.playerStatus[ID] = "Active"
             userMoney = DBConnection.fetchUserData("userBalance", ID)
@@ -159,7 +170,6 @@ class TexasHoldEm(Game):
 
             file2 = showHand(user, self.playerHands[ID])
             embed2.set_image(url="attachment://hand.png")
-
             await user.send(file=file2, embed=embed2)
 
         embed.add_field(name="玩家們", value=playerList)
