@@ -101,16 +101,12 @@ class TexasHoldEm(Game):
 
     async def startGame(self):
         self.gameUnderway = True
-        print("await self.newHand()")
         await self.newHand()
 
     async def newHand(self):
-        print("RAN newHand TOP")
         from main import bot, showHand
-        print("RAN newHand after import")
         self.gameEnded = False
         self.playerHands.clear()
-        print("RAN newHand after clear")
         self.DECK = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",
                      "deck/2S.png", "deck/3D.png", "deck/3C.png", "deck/3H.png", "deck/3S.png",
                      "deck/4D.png", "deck/4C.png", "deck/4H.png", "deck/4S.png", "deck/5D.png", "deck/5C.png", "deck/5H.png",
@@ -123,17 +119,12 @@ class TexasHoldEm(Game):
                      "deck/KD.png", "deck/KC.png", "deck/KH.png", "deck/KS.png"]
         self.pot = 0
         self.communityCards.clear()
-        print("RAN newHand after clear 2")
         self.deal(bot.get_user(814558209859518555), 3)
-        print("RAN newHand after deal")
 
         embed = discord.Embed(title="德州撲克", description="開始新手。 底注是$ 50", colour=0x00ff00)
         embed.set_thumbnail(url=TexasHoldEm.imageUrl)
         embed.set_footer(text="使用 $out 退出此遊戲。")
-        print("Bot user id is:",bot.user.id)
-        print("Community cards:",self.communityCards)
         file = showHand(bot.get_user(int(bot.user.id)), self.communityCards)
-        print(bot.user.id)
         embed.set_image(url="attachment://hand.png")
 
         playerList = ""
