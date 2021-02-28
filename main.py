@@ -1157,7 +1157,7 @@ class Special(commands.Cog):
 
     @commands.command(name='status')
     @commands.is_owner()
-    async def _announce(self, ctx: commands.Context, status):
+    async def _status(self, ctx: commands.Context, status):
         '''特別指令。更改狀態。'''
 
         if status != "reset":
