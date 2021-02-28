@@ -41,7 +41,8 @@ class Economy(commands.Cog):
                       help="Set the balance of a user to a specified value. Requires administrator permissions for use. Mention a user to"
                            " set their balance. Format is $setbal <mention user> <balance amount>.",
                       pass_context=True)
-    @has_permissions(administrator=True)
+    @commands.is_owner()
+    #@commands.check_any(commands.has_permissions(administrator=True), commands.is_owner())
     async def setbal(self, ctx, user: discord.Member = None, amount: float = None):
         embed = discord.Embed(title="Set User Balance", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
