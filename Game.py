@@ -128,9 +128,7 @@ class TexasHoldEm(Game):
         embed.set_image(url="attachment://hand.png")
 
         playerList = ""
-        print("Here 1")
         for ID in self.players:
-            print("HERE2")
             self.playerHands.update({ID: []})
             self.playerStatus[ID] = "Active"
             userMoney = DBConnection.fetchUserData("userBalance", ID)
