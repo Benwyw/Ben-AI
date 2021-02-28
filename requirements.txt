@@ -11,3 +11,4 @@ requests
 tika
 mysql
 mysql-connector
+Pillow
