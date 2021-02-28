@@ -236,44 +236,32 @@ def channelCheck(GAME, CHANNEL):
 # Return a discord File object representing the user's hand
 def showHand(user, userHand):
     userHand = sortHand(user, userHand)
-    print("1")
     # Find dimensions
     numCards = len(userHand)
     maxWidth = (int(cardWidth / 3) * (numCards - 1)) + cardWidth + 20
-    print("2")
     COLOR = DBConnection.fetchUserData("colorPref", str(user.id))
-    print("3")
     # Create base hand image
     HAND = Image.new("RGB", (maxWidth, cardHeight + 40), ImageColor.getrgb(COLOR))
     DRAW = ImageDraw.Draw(HAND)
-    print("4")
     font = ImageFont.truetype(requests.get('http://geocities.ws/benwyw/calibri.ttf', stream=True).raw, size=24)
     for i in range(0, numCards):
-        print("5")
-        print(userHand[i])
         fname = str(userHand[i].split("/")[1])
         lname = fname.split(".")[0]
-        print(fname)
-        print(lname)
         if len(lname) > 2:
             card = fname[0]+fname[1]
             suit = fname[2]
         else:
             card = fname[0]
             suit = fname[1]
-        print(suit)
-        print(card)
         url = findFileName(suit,card)
         card = Image.open(requests.get(url, stream=True).raw)
         card = card.resize((cardWidth, cardHeight))
         HAND.paste(card, (10 + int(cardWidth / 3) * i, 10))
         DRAW.text((30 + int(cardWidth / 3) * i, cardHeight + 15), str(i), fill=ImageColor.getrgb("#ffffff"), font=font)
-    print("Done 1")
     with BytesIO() as img:
         HAND.save(img, 'PNG')
         img.seek(0)
         file = discord.File(fp=img, filename='hand.png')
-        print("Done2")
         return file
 
 # Sort user's hand based on their preferred sorting style
