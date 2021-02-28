@@ -339,7 +339,7 @@ class Game(commands.Cog):
             drawDeck.remove(cardName)
             dealtCards.append(cardName)
 
-        embed.description = str(cards) + " card(s) dealt."
+        embed.description = "發了 " + str(cards) + "張牌。"
         file = showHand(ctx.author, dealtCards)
         embed.set_image(url="attachment://hand.png")
         await ctx.send(file=file, embed=embed)
@@ -377,30 +377,30 @@ class Game(commands.Cog):
                          "Use 'd' for default ace low, king high sorting.\n Use 's' for sorting by suit.\n",
                     pass_context=True)
     async def setSort(self, ctx: commands.Context, sortType: str = None):
-        embed = discord.Embed(title="Sorting Style", description=None, color=0x00ff00)
+        embed = discord.Embed(title="排序方式", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
-        embed.add_field(name="President-Style (p)", value="3 - K, A, 2", inline=False)
-        embed.add_field(name="Default (d)", value="A - K", inline=False)
+        embed.add_field(name="大統領-樣式 (p)", value="3 - K, A, 2", inline=False)
+        embed.add_field(name="默認 (d)", value="A - K", inline=False)
         embed.add_field(name="Suits (s)", value="Ace of Diamonds - King of Spades", inline=False)
 
         global order, presOrder, ORDER
 
         if sortType is None:
-            embed.description = "No sorting type provided."
+            embed.description = "沒有提供排序類型。"
             await ctx.send(embed=embed)
             return
 
         if sortType == "d":
-            embed.description = "Sorting type set to Default."
+            embed.description = "排序類型設置為默認(d)。"
             ORDER = order
             DBConnection.updateUserSortPref(str(ctx.author.id), sortType)
         elif sortType == "p":
-            embed.description = "Sorting type set to President-Style."
+            embed.description = "排序類型設置為“大統領-樣式(p)”。"
             ORDER = presOrder
             DBConnection.updateUserSortPref(str(ctx.author.id), sortType)
         elif sortType == "s":
-            embed.description = "Sorting type set to Suits-Style."
+            embed.description = "排序類型設置為 Suits-Style."
             ORDER = suitOrder
             DBConnection.updateUserSortPref(str(ctx.author.id), sortType)
         else:
@@ -423,7 +423,7 @@ class Game(commands.Cog):
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
             embed.add_field(name="遊戲編號", value=str(channelGame.ID))
-            embed.set_footer(text="Use $in <遊戲編號> to join a game.")
+            embed.set_footer(text="使用 $in <遊戲編號> 加入遊戲。")
             await ctx.send(embed=embed)
             return
 
@@ -453,7 +453,7 @@ class Game(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=50.0, check=check)
         except asyncio.TimeoutError:
-            await ctx.send(embed=discord.Embed(title="Game Selection", description="Nobody chose in time...", color=0x00ff00))
+            await ctx.send(embed=discord.Embed(title="遊戲選擇", description="沒有人及時選擇...", color=0x00ff00))
             return
         else:
             if str(rxn[0].emoji) == emoji1:
@@ -519,7 +519,7 @@ class Game(commands.Cog):
             return
 
         GAME.players.append(str(ctx.author.id))
-        embed.description = "You joined a game."
+        embed.description = "您加入了遊戲。"
 
         playerList = ""
         for playerID in GAME.players:
@@ -599,20 +599,20 @@ class Game(commands.Cog):
                     help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 $setColor <十六進制代碼>。",
                     pass_context=True)
     async def setColor(self, ctx: commands.Context, colour: str):
-        embed = discord.Embed(title="Custom Colour", description=None, color=0x00ff00)
+        embed = discord.Embed(title="自定義顏色", description=None, color=0x00ff00)
         embed.set_thumbnail(url="https://i.imgur.com/FCCMHHi.png")
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', colour)
         if not match:
-            embed.description="Invalid colour hex code."
+            embed.description="無效的顏色十六進制代碼。"
             await ctx.send(embed=embed)
             return
 
         DBConnection.updateUserHandColor(str(ctx.author.id), colour)
 
         embed.colour = int(colour[1:], 16)
-        embed.description = "Custom colour set."
-        embed.add_field(name="Colour", value="<-----")
+        embed.description = "自定義顏色設置。"
+        embed.add_field(name="顏色", value="<-----")
 
         await ctx.send(embed=embed)
 
