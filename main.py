@@ -247,7 +247,7 @@ def showHand(user, userHand):
     HAND = Image.new("RGB", (maxWidth, cardHeight + 40), ImageColor.getrgb(COLOR))
     DRAW = ImageDraw.Draw(HAND)
     print("4")
-    font = ImageFont.truetype('calibri.ttf', size=24)
+    font = ImageFont.truetype('/app/calibri.ttf', size=24)
     for i in range(0, numCards):
         print("5")
         print(userHand[i])
