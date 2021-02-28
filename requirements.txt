@@ -9,3 +9,5 @@ pandas
 matplotlib
 requests
 tika
+mysql
+mysql-connector
