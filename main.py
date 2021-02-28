@@ -1720,4 +1720,5 @@ bot.load_extension('Economy')
 bot.load_extension('Betting')
 bot.load_extension('Pres')
 load_dotenv()
+bot.owner_id = 254517813417476097
 bot.run(os.getenv('TOKEN'))
