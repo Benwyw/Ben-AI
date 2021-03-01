@@ -236,7 +236,7 @@ class TexasHoldEm(Game):
             winners = []
             for userScore, userID in score.items():
                 if userScore == overallMax:
-                    print(bot.get_user(int(userID)).name)
+                    #print(bot.get_user(int(userID)).name)
                     winners.append(userID)
 
             if len(winners) == 1:
