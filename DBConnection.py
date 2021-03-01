@@ -101,7 +101,7 @@ class DBConnection:
     def addUserToDB(cls, userID: str):
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO userData (userID, userBalance, colorPref, sortPref, userWin) 
-                VALUES (%s, %s, %s, %s) """
+                VALUES (%s, %s, %s, %s, %s) """
         dataTuple = (userID, 10000, "#00ff00", 'd', 0)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
