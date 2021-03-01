@@ -1266,6 +1266,58 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(name='reward', aliases=['bonus','prize','b'], pass_context=True)
+    @commands.cooldown(1, 600, commands.BucketType.user)
+    async def _reward(self, ctx: commands.Context):
+        '''隨機獎金 $bonus $b'''
+        chanceList = [0,1,2,3,4]
+
+        first = str(ctx.author.name)
+        middle = "抽中了"
+
+        e = discord.Embed()
+        ID = ctx.author.id
+
+        seed = random.choices(chanceList, weights=(3, 5, 18, 30, 44), k=1)
+        seed = int(str(seed).replace("[","").replace("]",""))
+
+        if seed == 4:
+            img = "https://i.imgur.com/IfZS8xe.gif"
+            end = "星蛋 $10~30區間"
+            money = randrange(10,30+1,1)
+        elif seed == 3:
+            img = "https://i.imgur.com/k0SQ1Lt.png"
+            end = "銀蛋 $30~50區間"
+            money = randrange(30,50+1,1)
+        elif seed == 2:
+            img = "https://i.imgur.com/JyDHamm.gif"
+            end = "金蛋 $50~70區間"
+            money = randrange(50,70+1,1)
+        elif seed == 1:
+            img = "https://i.imgur.com/crdEb6i.gif"
+            end = "鑽蛋 $70~100區間"
+            money = randrange(70,100+1,1)
+        elif seed == 0:
+            img = "https://i.imgur.com/WBfgmgL.png"
+            end = "壞蛋 -$1~150區間"
+            money = randrange(-150,0,1)
+
+        oldTotal = DBConnection.fetchUserData("userBalance", ID)
+
+        newTotal = oldTotal + money
+        if newTotal <= 0:
+            newTotal = 0
+
+        DBConnection.updateUserBalance(ID, newTotal)
+        newTotal = DBConnection.fetchUserData("userBalance", ID)
+
+        msg = first+" "+middle+end
+
+        e.set_image(url=img)
+        e.set_author(name=msg, url=e.Empty, icon_url=e.Empty)
+        e.set_footer(text="{}得到了 ${} | ${} --> ${}".format(first,money,oldTotal,newTotal))
+        await ctx.send(embed=e)
+
     @commands.command(name='announce')
     @commands.is_owner()
     async def _announce(self, ctx: commands.Context, message):
@@ -1611,6 +1663,36 @@ async def on_command_error(ctx, error):
 
         await ctx.send(msg)
 
+    if isinstance(error, commands.CommandOnCooldown):
+        hour = 0
+        min = 0
+        sec = 0
+        print(error.retry_after)
+
+        while error.retry_after >= 60*60:
+            hour += 1
+            error.retry_after -= 60*60
+        while error.retry_after >= 60:
+            min += 1
+            error.retry_after -= 60
+
+        sec += error.retry_after
+
+        start = "請於 **"
+        end = "** 後再使用。"
+        middle = ""
+
+        if hour != 0:
+            middle += "{}時".format(hour)
+        if min != 0:
+            middle += "{}分".format(min)
+        if sec != 0:
+            middle += "{:.0f}秒".format(sec)
+
+        msg = start+middle+end
+
+        await ctx.send(msg)
+
 @bot.event
 async def on_message(message):
     if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
@@ -1630,7 +1712,7 @@ async def on_message(message):
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
-                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock','$cov','$covid','$cov19','$covid-19']
+                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock','$cov','$covid','$cov19','$covid-19','$reward','$bonus','$b','$prize']
     if message.content.split(' ')[0] in music_command_List:
         await message.delete()
 

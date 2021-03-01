@@ -20,7 +20,7 @@ class Economy(commands.Cog):
 
         money = DBConnection.fetchUserData("userBalance", str(user.id))
 
-        embed = discord.Embed(title="User Balance", color=0x00ff00)
+        embed = discord.Embed(title="用戶餘額", color=0x00ff00)
         embed.set_author(name=user.display_name, icon_url=user.avatar_url)
         embed.set_thumbnail(url=imgUrl)
         embed.description = "$" + str(money)
@@ -49,13 +49,13 @@ class Economy(commands.Cog):
         embed.set_thumbnail(url=imgUrl)
 
         if amount is None or user is None:
-            embed.description = "Invalid format for command. Try $setbal <mention user> <amount>."
+            embed.description = "指令格式無效。 嘗試 $setbal <提及用戶> <金額>。"
             await ctx.send(embed=embed)
             return
 
         DBConnection.updateUserBalance(str(user.id), amount)
 
-        embed.description = "Balance for " + user.display_name + " set to $" + str(amount) + "."
+        embed.description = user.display_name + " 的餘額已設置為 $" + str(amount) + "."
         await ctx.send(embed=embed)
 
     @setbal.error
@@ -68,8 +68,8 @@ class Economy(commands.Cog):
             embed.set_thumbnail(url=imgUrl)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
-            embed = discord.Embed(title="Permissions Error",
-                                  description="You do not have permission to use this command.",
+            embed = discord.Embed(title="權限錯誤",
+                                  description="您無權使用此指令。",
                                   color=0x00ff00)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=imgUrl)
@@ -81,26 +81,26 @@ class Economy(commands.Cog):
                            " the user who you'd like to pay. Format is $pay <mention user> <payment amount>.",
                       pass_context=True)
     async def pay(self, ctx, user: discord.Member = None, amount: float = None):
-        embed = discord.Embed(title="Payment", color=0x00ff00)
+        embed = discord.Embed(title="支付", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         embed.set_thumbnail(url=imgUrl)
         if user is None:
-            embed.description = "No recipient provided."
+            embed.description = "沒有提供收款人。"
             await ctx.send(embed=embed)
             return
 
         if user == ctx.author:
-            embed.description = "Why are you paying yourself?"
+            embed.description = "俾錢自己JM9"
             await ctx.send(embed=embed)
             return
 
         if amount is None:
-            embed.description = "No amount provided."
+            embed.description = "沒有提供金額。"
             await ctx.send(embed=embed)
             return
 
         if amount <= 0:
-            embed.description = "Payments must be greater than $0."
+            embed.description = "付款必須大於 $0。"
             await ctx.send(embed=embed)
             return
 
@@ -108,8 +108,8 @@ class Economy(commands.Cog):
         recipientMoney = DBConnection.fetchUserData("userBalance", str(user.id))
 
         if amount > authorMoney:
-            embed.description = "Insufficient funds for payment."
-            embed.add_field(name="Your Balance", value="$" + str(authorMoney))
+            embed.description = "付款資金不足。"
+            embed.add_field(name="您的餘額", value="$" + str(authorMoney))
             await ctx.send(embed=embed)
             return
 
@@ -118,18 +118,18 @@ class Economy(commands.Cog):
         DBConnection.updateUserBalance(str(ctx.author.id), authorMoney)
         DBConnection.updateUserBalance(str(user.id), recipientMoney)
 
-        embed.description = "Payment of $" + str(amount) + " sent to " + user.display_name + "."
-        embed.add_field(name="Your New Balance", value="$" + str(authorMoney))
-        embed.add_field(name=user.display_name + "'s New Balance", value="$" + str(recipientMoney), inline=False)
+        embed.description = "付了 $" + str(amount) + " 予 " + user.display_name + "."
+        embed.add_field(name="您的新餘額", value="$" + str(authorMoney))
+        embed.add_field(name=user.display_name + "的新餘額", value="$" + str(recipientMoney), inline=False)
         await ctx.send(embed=embed)
 
     @pay.error
     async def pay_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            embed = discord.Embed(title="Command Error", color=0x00ff00)
+            embed = discord.Embed(title="指令錯誤", color=0x00ff00)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=imgUrl)
-            embed.description = "Invalid arguments detected for command 'pay'. Try $pay <mention user> <amount>."
+            embed.description = "檢測到指令為 \'pay\' 的無效參數。 嘗試 $pay <提及用戶> <金額>"
             await ctx.send(embed=embed)
 
 

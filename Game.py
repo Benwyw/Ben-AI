@@ -230,7 +230,7 @@ class TexasHoldEm(Game):
                 overallMax = max(maxScore, overallMax)
                 file = showHand(user, self.playerHands[ID])
                 embed.set_image(url="attachment://hand.png")
-                embed.set_field_at(1, name="Combo", value=handType(maxScore))
+                embed.set_field_at(1, name="組合", value=handType(maxScore))
                 await self.channel.send(file=file, embed=embed)
 
             winners = []
@@ -242,10 +242,10 @@ class TexasHoldEm(Game):
             if len(winners) == 1:
                 winner = bot.get_user(int(score[overallMax]))
 
-                embed.title = "Texas Hold 'Em"
-                embed.description = "The winner is " + winner.name + ", winning the pot of $" + str(self.pot) + ".\n\nStart next hand? Thumps up for yes, thumbs down for no."
+                embed.title = "德州撲克"
+                embed.description = "獲勝者是 " + winner.name + "，贏得底池 $" + str(self.pot) + ".\n\n開始下一個手？豎起大拇指表示同意，豎下大拇指表示否。"
                 embed.set_thumbnail(url=winner.avatar_url)
-                embed.set_footer(text="Use $out to leave this game.")
+                embed.set_footer(text="使用 $out 退出此遊戲。")
 
                 userMoney = DBConnection.fetchUserData("userBalance", score[overallMax])
                 userMoney += self.pot
