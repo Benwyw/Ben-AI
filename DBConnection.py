@@ -35,12 +35,34 @@ class DBConnection:
             return result[2]
         elif dataType == "sortPref":
             return result[3]
+        elif dataType == "userWin":
+            return result[4]
+
+    @classmethod
+    def fetchAllRankData(cls):
+        botDB, DBCursor = cls.connection()
+        sqlQuery = 'select userID, userWin from userData order by userWin desc'
+        DBCursor.execute(sqlQuery)
+        result = DBCursor.fetchall()
+        DBCursor.close()
+        botDB.close()
+        return result
 
     @classmethod
     def updateUserBalance(cls, userID: str, balance: int):
         botDB, DBCursor = cls.connection()
         vals = (balance, userID)
         sqlQuery = 'update userData set userBalance = %s where userID = %s'
+        DBCursor.execute(sqlQuery, vals)
+        botDB.commit()
+        DBCursor.close()
+        botDB.close()
+
+    @classmethod
+    def updateUserWin(cls, userID: str, win: int):
+        botDB, DBCursor = cls.connection()
+        vals = (win, userID)
+        sqlQuery = 'update userData set userWin = %s where userID = %s'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
         DBCursor.close()
@@ -78,9 +100,9 @@ class DBConnection:
     @classmethod
     def addUserToDB(cls, userID: str):
         botDB, DBCursor = cls.connection()
-        query = """INSERT INTO userData (userID, userBalance, colorPref, sortPref) 
+        query = """INSERT INTO userData (userID, userBalance, colorPref, sortPref, userWin) 
                 VALUES (%s, %s, %s, %s) """
-        dataTuple = (userID, 10000, "#00ff00", 'd')
+        dataTuple = (userID, 10000, "#00ff00", 'd', 0)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
         DBCursor.close()

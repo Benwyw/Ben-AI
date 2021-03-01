@@ -1266,10 +1266,48 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(name='rank')
+    async def _rank(self, ctx: commands.Context):
+        '''查閱全宇宙排行榜 及 你的排名'''
+
+        embed = discord.Embed(title="全宇宙首五名 排行榜",
+                              description="根據德州撲克勝場已定。",
+                              color=0x00ff00)
+        embed.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
+
+        rankData = DBConnection.fetchAllRankData()
+
+        count = 1
+        for user in rankData:
+            tempID = user[0]
+            tempWIN = user[1]
+
+            if count <= 5:
+                user = await bot.fetch_user(tempID)
+
+                embed.add_field(name="{}. {}".format(count,user.display_name),
+                                value="勝場: {}".format(tempWIN), inline=False)
+
+            if int(ctx.author.id) == int(tempID):
+                userWin = DBConnection.fetchUserData("userWin", tempID)
+
+                embed2 = discord.Embed(title="你的排名", color=0x00ff00)
+                embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+                embed2.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
+                embed2.description = "勝場: {}".format(userWin)
+                embed2.add_field(name="全宇宙排行", value="No.{} | 勝場: {}".format(count,tempWIN))
+
+            count += 1
+
+        await ctx.send(embed=embed)
+        await ctx.send(embed=embed2)
+
+
     @commands.command(name='reward', aliases=['bonus','prize','b'], pass_context=True)
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def _reward(self, ctx: commands.Context):
         '''隨機獎金 $bonus $b'''
+
         chanceList = [0,1,2,3,4]
 
         first = str(ctx.author.name)
@@ -1667,7 +1705,6 @@ async def on_command_error(ctx, error):
         hour = 0
         min = 0
         sec = 0
-        print(error.retry_after)
 
         while error.retry_after >= 60*60:
             hour += 1
@@ -1712,7 +1749,7 @@ async def on_message(message):
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
-                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock','$cov','$covid','$cov19','$covid-19','$reward','$bonus','$b','$prize']
+                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock','$cov','$covid','$cov19','$covid-19','$reward','$bonus','$b','$prize','$rank']
     if message.content.split(' ')[0] in music_command_List:
         await message.delete()
 

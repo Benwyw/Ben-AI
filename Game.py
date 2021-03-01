@@ -242,8 +242,12 @@ class TexasHoldEm(Game):
             if len(winners) == 1:
                 winner = bot.get_user(int(score[overallMax]))
 
+                olduserWin = DBConnection.fetchUserData("userWin", score[overallMax])
+                newuserWin = olduserWin + 1
+                DBConnection.updateUserWin(score[overallMax], newuserWin)
+
                 embed.title = "德州撲克"
-                embed.description = "獲勝者是 " + winner.name + "，贏得底池 $" + str(self.pot) + ".\n\n開始下一個手？豎起大拇指表示同意，豎下大拇指表示否。"
+                embed.description = "獲勝者是 " + winner.name + "，贏得底池 $" + str(self.pot) + "。\n勝場: {} --> {}\n\n開始下一個手？豎起大拇指表示同意，豎下大拇指表示否。".format(olduserWin,newuserWin)
                 embed.set_thumbnail(url=winner.avatar_url)
                 embed.set_footer(text="使用 $out 退出此遊戲。")
 
@@ -256,12 +260,17 @@ class TexasHoldEm(Game):
                 desc = "獲獎者是 "
                 for winnerID in winners:
                     winner = bot.get_user(int(winnerID))
+
+                    olduserWin = DBConnection.fetchUserData("userWin", winnerID)
+                    newuserWin = olduserWin + 1
+                    DBConnection.updateUserWin(winnerID, newuserWin)
+
                     desc += winner.name + ", "
                     userMoney = DBConnection.fetchUserData("userBalance", winnerID)
                     userMoney += payout
                     DBConnection.updateUserBalance(winnerID, userMoney)
 
-                desc += ", 拆分的底池 $" + str(self.pot) + ".\n\n開始下一個手？ 豎起大拇指表示同意，豎起大拇指表示否。"
+                desc += ", 拆分的底池 $" + str(self.pot) + "。\n勝場: {} --> {}\n\n開始下一個手？ 豎起大拇指表示同意，豎起大拇指表示否。".format(olduserWin,newuserWin)
                 embed.description = desc
                 embed.set_thumbnail(url=TexasHoldEm.imageUrl)
                 embed.set_footer(text="使用 $out 退出此遊戲。")
