@@ -13,9 +13,6 @@ class Betting(commands.Cog):
                       help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __raise(self, ctx, raiseBy: float = None):
-        if isinstance(raiseBy, (int, float)) == False or "\\" in raiseBy:
-            await ctx.send("賭注必須為數值。")
-            return
         ID = str(ctx.author.id)
         embed = discord.Embed(title="Bet Raise", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
