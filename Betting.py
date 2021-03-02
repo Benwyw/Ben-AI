@@ -13,7 +13,7 @@ class Betting(commands.Cog):
                       help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __raise(self, ctx, raiseBy: float = None):
-        if not isinstance(raiseBy, (int, float)):
+        if isinstance(raiseBy, (int, float)) == False or "\\" in raiseBy:
             await ctx.send("賭注必須為數值。")
             return
         ID = str(ctx.author.id)
