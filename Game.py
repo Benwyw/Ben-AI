@@ -159,7 +159,12 @@ class TexasHoldEm(Game):
 
             file2 = showHand(user, self.playerHands[ID])
             embed2.set_image(url="attachment://hand.png")
-            await user.send(file=file2, embed=embed2)
+            try:
+                await user.send(file=file2, embed=embed2)
+            except Exception as e:
+                log_channel = bot.get_channel(809527650955296848)
+                await log_channel.send("{}\n===\n{}".format(user.display_name,e))
+                await self.channel.send("傳送訊息予 {} 時發生錯誤，請確保伺服__隱私設定__ **允許** __來自伺服器成員的私人信息__，否則將無法收到手牌。".format(user.display_name))
 
         embed.add_field(name="玩家們", value=playerList)
         embed.add_field(name="彩池", value="$" + str(self.pot))
