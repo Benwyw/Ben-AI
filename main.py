@@ -1316,29 +1316,29 @@ class Special(commands.Cog):
         e = discord.Embed()
         ID = ctx.author.id
 
-        seed = random.choices(chanceList, weights=(3, 5, 18, 30, 44), k=1)
+        seed = random.choices(chanceList, weights=(1.5, 5.5, 15, 33, 45), k=1)
         seed = int(str(seed).replace("[","").replace("]",""))
 
         if seed == 4:
             img = "https://i.imgur.com/IfZS8xe.gif"
-            end = "星蛋 $10~30區間"
-            money = randrange(10,30+1,1)
+            end = "星蛋 $100~300區間"
+            money = randrange(100,300+1,1)
         elif seed == 3:
             img = "https://i.imgur.com/k0SQ1Lt.png"
-            end = "銀蛋 $30~50區間"
-            money = randrange(30,50+1,1)
+            end = "銀蛋 $301~500區間"
+            money = randrange(301,500+1,1)
         elif seed == 2:
             img = "https://i.imgur.com/JyDHamm.gif"
-            end = "金蛋 $50~70區間"
-            money = randrange(50,70+1,1)
+            end = "金蛋 $501~700區間"
+            money = randrange(501,700+1,1)
         elif seed == 1:
             img = "https://i.imgur.com/crdEb6i.gif"
-            end = "鑽蛋 $70~100區間"
-            money = randrange(70,100+1,1)
+            end = "鑽蛋 $701~1000區間"
+            money = randrange(701,1000+1,1)
         elif seed == 0:
             img = "https://i.imgur.com/WBfgmgL.png"
-            end = "壞蛋 -$1~150區間"
-            money = randrange(-150,0,1)
+            end = "壞蛋 -$500~1500區間"
+            money = randrange(-1500,-500+1,1)
 
         oldTotal = DBConnection.fetchUserData("userBalance", ID)
 
