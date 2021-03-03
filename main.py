@@ -1043,6 +1043,7 @@ class Music(commands.Cog):
             # You should also check if the song is still playing
             try:
                 await voice_state.disconnect()
+                self.voice_states.get(member.guild.id).audio_player.cancel()
                 del self.voice_states[member.guild.id]
             except:
                 pass
