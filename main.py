@@ -60,7 +60,7 @@ cardHeight = 210
 
 gameList = []
 
-uncategorized = ['draw', 'game', 'hand',  'in', 'rc', 'setColor', 'setSort', 'start']
+uncategorized = ['game', 'hand',  'in', 'rc', 'setColor', 'setSort', 'start']
 
 # Card generator
 cardChoices = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -415,7 +415,7 @@ class Game(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.command(description="從卡組中拉出許多隨機卡。",
+    '''@commands.command(description="從卡組中拉出許多隨機卡。",
                       name="draw",
                     brief="從牌組中抽出若干張牌",
                     help="從卡組中拉出一些指定的隨機卡。\n"
@@ -438,7 +438,7 @@ class Game(commands.Cog):
                     "https://i.imgur.com/kQARj7b.png", "https://i.imgur.com/S3BUfV7.png", "https://i.imgur.com/PNGooTc.png", "https://i.imgur.com/8WhdL65.png", "https://i.imgur.com/PjxnGhg.png", "https://i.imgur.com/9cDlc0C.png", "https://i.imgur.com/4XM9H2y.png",
                     "https://i.imgur.com/y3NLpIF.png", "https://i.imgur.com/7o4C1LX.png", "https://i.imgur.com/zAr7vhg.png", "https://i.imgur.com/R4bYTZo.png", "https://i.imgur.com/N8qoXrl.png", "https://i.imgur.com/MJIoVsk.png", "https://i.imgur.com/WpL2pJI.png",
                     "https://i.imgur.com/bXFkuPH.png", "https://i.imgur.com/UQSjCzN.png", "https://i.imgur.com/vakonuH.png"]
-        '''drawDeck = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",
+        drawDeck = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",
                     "deck/2S.png", "deck/3D.png", "deck/3C.png", "deck/3H.png", "deck/3S.png",
                     "deck/4D.png", "deck/4C.png", "deck/4H.png", "deck/4S.png", "deck/5D.png", "deck/5C.png", "deck/5H.png",
                     "deck/5S.png", "deck/6D.png", "deck/6C.png", "deck/6H.png", "deck/6S.png",
@@ -447,7 +447,7 @@ class Game(commands.Cog):
                     "deck/10D.png", "deck/10C.png", "deck/10H.png",
                     "deck/10S.png", "deck/JD.png", "deck/JC.png", "deck/JH.png", "deck/JS.png", "deck/QD.png", "deck/QC.png",
                     "deck/QH.png", "deck/QS.png",
-                    "deck/KD.png", "deck/KC.png", "deck/KH.png", "deck/KS.png"]'''
+                    "deck/KD.png", "deck/KC.png", "deck/KH.png", "deck/KS.png"]
 
         dealtCards = []
         for i in range(0, cards):
@@ -458,7 +458,7 @@ class Game(commands.Cog):
         embed.description = "發了 " + str(cards) + "張牌。"
         file = showHand(ctx.author, dealtCards)
         embed.set_image(url="attachment://hand.png")
-        await ctx.send(file=file, embed=embed)
+        await ctx.send(file=file, embed=embed)'''
 
 
     @commands.command(description="查看您的手。",
@@ -1303,7 +1303,7 @@ class Special(commands.Cog):
         await ctx.send(embed=embed2)
 
 
-    @commands.command(name='reward', aliases=['bonus','prize','b'], pass_context=True)
+    @commands.command(name='reward', aliases=['bonus','prize','b','draw'], pass_context=True)
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def _reward(self, ctx: commands.Context):
         '''隨機獎金 $bonus $b'''
@@ -1749,7 +1749,8 @@ async def on_message(message):
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
-                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p','$stock','$cov','$covid','$cov19','$covid-19','$reward','$bonus','$b','$prize','$rank']
+                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p',
+                          '$stock','$cov','$covid','$cov19','$covid-19','$reward','$bonus','$b','$prize','$rank','$draw']
     if message.content.split(' ')[0] in music_command_List:
         await message.delete()
 
