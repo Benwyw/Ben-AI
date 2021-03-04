@@ -1757,19 +1757,14 @@ async def on_message(message):
                            '$reward','$bonus','$b','$prize','$rank','$draw']
 
     if message.content.split(' ')[0] in casino_command_List:
-        cs_temp_msg = await message.channel.send("賭場系統處理中...")
         if not DBConnection.checkUserInDB(str(message.author.id)):
             DBConnection.addUserToDB(str(message.author.id))
-        await bot.process_commands(message)
+
+    await bot.process_commands(message)
+
+    if message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List:
         await message.delete()
-        await cs_temp_msg.delete()
-    elif message.content.split(' ')[0] in music_command_List:
-        mu_temp_msg = await message.channel.send("音樂系統處理中...")
-        await bot.process_commands(message)
-        await message.delete()
-        await mu_temp_msg.delete()
-    else:
-        await bot.process_commands(message)
+
 
     #Mentions Ben AI
     if bot.user.mentioned_in(message):
