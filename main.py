@@ -1812,10 +1812,12 @@ async def on_message(message):
 
     #Shield
     if 'ben' in message.content.lower() and 'gay' in message.content.lower():
-        await message.delete()
-        if 'ben' not in message.author.display_name.lower():
-            await message.channel.send(str(message.author.display_name)+" is gay")
-        else:
+        try:
+            await message.delete()
+        except:
+            pass
+
+        if 'ben' in message.author.display_name.lower() or 'ben' in message.author.name.lower():
             seed = randrange(5)
             if seed == 0:
                 msg = "Pok is gay"
@@ -1829,6 +1831,8 @@ async def on_message(message):
                 msg = "POKemon鳩"
 
             await message.channel.send(msg)
+        else:
+            await message.channel.send(str(message.author.display_name)+" is gay")
 
 @bot.event
 async def on_guild_join(guild):
