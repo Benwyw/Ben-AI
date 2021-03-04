@@ -1043,7 +1043,9 @@ class Music(commands.Cog):
             # You should also check if the song is still playing
             try:
                 await voice_state.disconnect()
-                self.voice_states.get(member.guild.id).audio_player.cancel()
+                '''for task in asyncio.Task.all_tasks(bot.loop):
+                    await task.cancel()'''
+                #self.voice_states.get(member.guild.id).audio_player.cancel()
                 del self.voice_states[member.guild.id]
             except:
                 pass
@@ -1740,20 +1742,34 @@ async def on_message(message):
         else:
             await bot.get_user(254517813417476097).send("{}: {}".format(message.author,message.content))
 
-    if not DBConnection.checkUserInDB(str(message.author.id)):
-        DBConnection.addUserToDB(str(message.author.id))
-
-    await bot.process_commands(message)
-
     if message.author == bot.user:
         return
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
                           '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p',
-                          '$stock','$cov','$covid','$cov19','$covid-19','$reward','$bonus','$b','$prize','$rank','$draw']
-    if message.content.split(' ')[0] in music_command_List:
+                          '$stock','$cov','$covid','$cov19','$covid-19']
+    casino_command_List = ['$call','$fold','$highest','$pot','$raise',
+                           '$bal','$pay','$setbal',
+                           '$game','$hand','$in','$out','$rc','$setColor','$setSort','$start',
+                           '$cards','$next',
+                           '$ctb','$enter','$pass',
+                           '$reward','$bonus','$b','$prize','$rank','$draw']
+
+    if message.content.split(' ')[0] in casino_command_List:
+        cs_temp_msg = await message.channel.send("賭場系統處理中...")
+        if not DBConnection.checkUserInDB(str(message.author.id)):
+            DBConnection.addUserToDB(str(message.author.id))
+        await bot.process_commands(message)
         await message.delete()
+        await cs_temp_msg.delete()
+    elif message.content.split(' ')[0] in music_command_List:
+        mu_temp_msg = await message.channel.send("音樂系統處理中...")
+        await bot.process_commands(message)
+        await message.delete()
+        await mu_temp_msg.delete()
+    else:
+        await bot.process_commands(message)
 
     #Mentions Ben AI
     if bot.user.mentioned_in(message):
