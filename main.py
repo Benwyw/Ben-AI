@@ -980,8 +980,13 @@ class VoiceState:
                 self.tempSource.volume = self._volume
                 self.voice.play(self.tempSource, after=self.play_next_song)
 
-            if self.prevmsg is not None:
-                await self.prevmsg.delete()
+            try:
+                if self.prevmsg is not None:
+                    await self.prevmsg.delete()
+            except Exception as e:
+                log_channel = bot.get_channel(809527650955296848)
+                await log_channel.send(e)
+
             self.prevmsg = await self.current.source.channel.send(embed=self.current.create_embed())
 
             await self.next.wait()
