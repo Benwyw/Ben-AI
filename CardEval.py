@@ -145,22 +145,22 @@ def evaluateHand(cards):
 # Return a string corresponding to combo type
 def handType(handValue):
     if 1000 <= handValue < 2000:
-        return "High Card"
+        return "散牌"
     elif 2000 <= handValue < 3000:
-        return "One Pair"
+        return "一對"
     elif 3000 <= handValue < 4000:
-        return "Two Pairs"
+        return "兩對"
     elif 4000 <= handValue < 6000:
-        return "Three of a Kind"
+        return "三條"
     elif 6000 <= handValue < 7000:
-        return "Straight"
+        return "蛇"
     elif 7000 <= handValue < 8000:
-        return "Flush"
+        return "花"
     elif 8000 <= handValue < 12000:
-        return "Full House"
+        return "夫佬"
     elif 12000 <= handValue < 15000:
-        return "Four of a Kind"
+        return "四條"
     elif 15000 <= handValue < 30000:
-        return "Straight Flush"
+        return "同花順"
     elif handValue >= 30000:
-        return "Royal Flush"
+        return "同花大順"
