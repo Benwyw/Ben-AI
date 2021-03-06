@@ -27,6 +27,8 @@ class Game:
     def __init__(self, channel, ID):
         self.gameUnderway = False
         self.gameEnded = False
+        self.lastBet = False
+        self.pre_lastBet = False
         self.channel = channel
         self.expireTimer = 0
         self.ID = ID
@@ -106,6 +108,8 @@ class TexasHoldEm(Game):
     async def newHand(self):
         from main import bot, showHand
         self.gameEnded = False
+        self.lastBet = False
+        self.pre_lastBet = False
         self.playerHands.clear()
         self.DECK = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",
                      "deck/2S.png", "deck/3D.png", "deck/3C.png", "deck/3H.png", "deck/3S.png",
@@ -201,7 +205,7 @@ class TexasHoldEm(Game):
             del self
             return
 
-        if len(self.communityCards) == 5:
+        if len(self.communityCards) == 5 and self.lastBet is True:
             self.endGame()
 
         if self.gameEnded:

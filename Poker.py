@@ -69,7 +69,7 @@ class Poker(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if len(GAME.communityCards) >= 5:
+        if len(GAME.communityCards) >= 5 and GAME.lastBet is True:
             return
 
         embed.set_author(name="", icon_url="")
@@ -96,7 +96,7 @@ class Poker(commands.Cog):
         if len(GAME.communityCards) == 0:
             GAME.deal(bot.get_user(814558209859518555), 3)
             embed.description = "頭三張卡發了。"
-        else:
+        elif len(GAME.communityCards) < 5:
             GAME.deal(me, 1)
         file = showHand(bot.get_user(814558209859518555), GAME.communityCards)
         embed.set_image(url="attachment://hand.png")
@@ -107,8 +107,11 @@ class Poker(commands.Cog):
             user = bot.get_user(int(playerID))
             playerList += user.name + "\n"
 
-        if len(GAME.communityCards) == 5:
+        if len(GAME.communityCards) == 5 and GAME.pre_lastBet is True:
             embed.description = "回合結束，露出所有玩家的手..."
+            GAME.lastBet = True
+        elif len(GAME.communityCards) == 5:
+            GAME.pre_lastBet = True
         elif len(GAME.communityCards) > 3:
             embed.description = "下一張卡發了。"
         embed.add_field(name="玩家們", value=playerList)
