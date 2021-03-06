@@ -119,12 +119,12 @@ class TexasHoldEm(Game):
                      "deck/KD.png", "deck/KC.png", "deck/KH.png", "deck/KS.png"]
         self.pot = 0
         self.communityCards.clear()
-        self.deal(bot.get_user(814558209859518555), 3)
+        #self.deal(bot.get_user(814558209859518555), 3)
 
-        embed = discord.Embed(title="德州撲克", description="開始新手。 底注是$ 50", colour=0x00ff00)
+        embed = discord.Embed(title="德州撲克", description="開始新手。 底注是 $50", colour=0x00ff00)
         embed.set_thumbnail(url=TexasHoldEm.imageUrl)
         embed.set_footer(text="使用 $out 退出此遊戲。")
-        file = showHand(bot.get_user(int(bot.user.id)), self.communityCards)
+        #file = showHand(bot.get_user(int(bot.user.id)), self.communityCards)
         embed.set_image(url="attachment://hand.png")
 
         playerList = ""
@@ -171,7 +171,7 @@ class TexasHoldEm(Game):
         embed.add_field(name="遊戲編號", value=str(self.ID))
         embed.add_field(name="檯上卡片", value="已發的牌: " + str(len(self.communityCards)), inline=False)
 
-        await self.channel.send(file=file, embed=embed)
+        await self.channel.send(embed=embed)
 
     async def gameLoop(self):
         if not self.gameUnderway:

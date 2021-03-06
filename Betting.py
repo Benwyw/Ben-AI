@@ -43,21 +43,35 @@ class Betting(commands.Cog):
             return
 
         embed.set_footer(text="格式為 $raise <加注金額>。")
-        embed.add_field(name="Your Balance", value="$" + str(authorMoney), inline=False)
+        embed.add_field(name="您的餘額", value="$" + str(authorMoney), inline=False)
 
         if GAME.playerStatus[ID] == "Fold":
             embed.description = "您不參與當前的一手牌。 等待下一個開始。"
             await ctx.send(embed=embed)
             return
 
+        '''if GAME.playerStatus[ID] == "Raise":
+            embed.description = "您已加注，不能再加注。 等待下一張牌。"
+            await ctx.send(embed=embed)
+            return
+        else:
+            GAME.playerStatus[ID] = "Raise"'''
+
         if authorMoney < raiseBy:
-            embed.description = "您沒有足夠資金來加注 $" + str(raiseBy) + "."
+            embed.description = "您沒有足夠資金來加注 $" + str(raiseBy) + "。"
             await ctx.send(embed=embed)
             return
 
         if raiseBy + GAME.bets[ID] <= GAME.maxBet:
             embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
             embed.description = "沒有擊敗當前最高的賭注。"
+            await ctx.send(embed=embed)
+            return
+
+        if raiseBy + GAME.bets[ID] > 5050:
+            embed.add_field(name="您的總下注", value="$" + str(GAME.bets[ID]), inline=False)
+            embed.add_field(name="最高加注限額", value="$5000", inline=False)
+            embed.description = "無法加注 ${}。".format(raiseBy)
             await ctx.send(embed=embed)
             return
 

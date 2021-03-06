@@ -553,14 +553,14 @@ class Game(commands.Cog):
             return
 
         emoji1 = '1️⃣'
-        emoji2 = '2️⃣'
+        #emoji2 = '2️⃣'
         embed = discord.Embed(title="遊戲選擇", description="通過使用給定的表情符號對此消息做出反應來選擇遊戲類型。", color=0x00ff00)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
         embed.add_field(name="德州撲克", value=emoji1)
-        embed.add_field(name="大統領", value=emoji2)
+        #embed.add_field(name="大統領", value=emoji2)
         msg = await ctx.send(embed=embed)
         await msg.add_reaction(emoji1)
-        await msg.add_reaction(emoji2)
+        #await msg.add_reaction(emoji2)
         rxn = None
 
         def check(reaction, user):
@@ -585,7 +585,7 @@ class Game(commands.Cog):
                 embed.add_field(name="加入", value="$in " + str(ID))
                 embed.set_thumbnail(url=GAME.imageUrl)
                 await ctx.send(embed=embed)
-            elif str(rxn[0].emoji) == emoji2:
+            '''elif str(rxn[0].emoji) == emoji2:
                 ID = randrange(100000, 1000000)
                 while hasGame(ID):
                     ID = randrange(100000, 1000000)
@@ -595,7 +595,7 @@ class Game(commands.Cog):
                 embed.add_field(name="遊戲編號", value=str(ID))
                 embed.add_field(name="加入", value="$in " + str(ID))
                 embed.set_thumbnail(url=GAME.imageUrl)
-                await ctx.send(embed=embed)
+                await ctx.send(embed=embed)'''
 
 
     @commands.command(description="使用6位數字ID參加遊戲。",
