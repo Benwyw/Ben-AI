@@ -11,13 +11,20 @@ password = os.getenv('DBPW')
 database = os.getenv('DATABASE')
 
 class DBConnection:
+    botDB = mysql.connector.connect(host=host, user=user,
+                                    password=password, database=database)
 
     @classmethod
     def connection(cls):
-        botDB = mysql.connector.connect(host=host, user=user,
-                                        password=password, database=database)
-        DBCursor = botDB.cursor()
-        return (botDB, DBCursor)
+        if DBConnection.botDB.is_connected():
+            print("Connected already")
+        else:
+            print("Not connected")
+            DBConnection.botDB = mysql.connector.connect(host=host, user=user,
+                                            password=password, database=database)
+
+        DBCursor = DBConnection.botDB.cursor()
+        return (DBConnection.botDB, DBCursor)
 
     @classmethod
     def fetchUserData(cls, dataType: str, userID: str):
@@ -26,8 +33,8 @@ class DBConnection:
         sqlQuery = 'select * from userData where userID = %s'
         DBCursor.execute(sqlQuery, vals)
         result = DBCursor.fetchone()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
 
         if dataType == "userBalance":
             return result[1]
@@ -44,8 +51,8 @@ class DBConnection:
         sqlQuery = 'select userID, userWin from userData order by userWin desc'
         DBCursor.execute(sqlQuery)
         result = DBCursor.fetchall()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
         return result
 
     @classmethod
@@ -55,8 +62,8 @@ class DBConnection:
         sqlQuery = 'update userData set userBalance = %s where userID = %s'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
 
     @classmethod
     def updateUserWin(cls, userID: str, win: int):
@@ -65,8 +72,8 @@ class DBConnection:
         sqlQuery = 'update userData set userWin = %s where userID = %s'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
 
     @classmethod
     def updateUserSortPref(cls, userID: str, sortPref: str):
@@ -75,8 +82,8 @@ class DBConnection:
         sqlQuery = 'update userData set sortPref = %s where userID = %s'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
 
     @classmethod
     def updateUserHandColor(cls, userID: str, color: str):
@@ -85,16 +92,16 @@ class DBConnection:
         sqlQuery = 'update userData set colorPref = %s where userID = %s'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
 
     @classmethod
     def checkUserInDB(cls, userID: str):
         botDB, DBCursor = cls.connection()
         DBCursor.execute("select * from userData where userID = " + userID)
         result = DBCursor.fetchall()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()
         return len(result) != 0
 
     @classmethod
@@ -105,5 +112,5 @@ class DBConnection:
         dataTuple = (userID, 10000, "#00ff00", 'd', 0)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
-        DBCursor.close()
-        botDB.close()
+        #DBCursor.close()
+        #botDB.close()

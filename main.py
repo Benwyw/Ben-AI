@@ -36,6 +36,7 @@ from DBConnection import DBConnection
 from sortingOrders import order, presOrder, pokerOrder, suitOrder
 from io import BytesIO
 from discord.ext.tasks import loop
+from discord.ext import tasks
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 BOT_PREFIX = '$'
@@ -1857,10 +1858,30 @@ async def on_guild_join(guild):
         if not DBConnection.checkUserInDB(str(member.id)):
             DBConnection.addUserToDB(str(member.id))
 
-bot.load_extension('Poker')
-bot.load_extension('Economy')
-bot.load_extension('Betting')
-bot.load_extension('Pres')
-load_dotenv()
-bot.owner_id = 254517813417476097
-bot.run(os.getenv('TOKEN'))
+'''counter = 0
+
+@tasks.loop(minutes=1.0, count=None)
+async def my_background_task():
+    global counter
+    channel = bot.get_channel(123456789) # channel id as an int
+    counter += 1
+    await channel.send(f'{counter}')
+my_background_task.start()'''
+
+try:
+    bot.load_extension('Poker')
+    bot.load_extension('Economy')
+    bot.load_extension('Betting')
+    bot.load_extension('Pres')
+    load_dotenv()
+    bot.owner_id = 254517813417476097
+    bot.run(os.getenv('TOKEN'))
+except:
+    pass
+finally:
+    try:
+        if DBConnection.botDB.is_connected():
+            DBConnection.DBCursor.close()
+            DBConnection.botDB.close()
+    except:
+        pass
