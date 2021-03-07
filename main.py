@@ -670,6 +670,7 @@ class Game(commands.Cog):
             await ctx.send(embed=embed)
             return
 
+        GAME.playerStatus[str(ctx.author.id)] = "Fold"
         GAME.players.remove(str(ctx.author.id))
 
         embed.description = "您離開了遊戲。"
