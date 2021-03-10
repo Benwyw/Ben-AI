@@ -1752,6 +1752,24 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    if str(message.author.id) in ['407481608560574464','794228652547375104','805046279377387521'] and message.content.startswith('$'):
+        author_nick = message.author.display_name()
+
+        ai_cheng_embed = discord.Embed()
+        ai_cheng_embed.set_image(url='https://i.imgur.com/C1E8ANa.png')
+
+        seed = randrange(3)
+        if seed == 0:
+            msg = "{}，天蠍AI很記仇的。".format(author_nick)
+        elif seed == 1:
+            msg = "叫聲爸爸。"
+        elif seed == 2:
+            msg = "?"
+
+        ai_cheng_embed.set_footer(text=msg)
+        await message.channel.send(embed=ai_cheng_embed)
+        return
+
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
                           '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p',
