@@ -1752,7 +1752,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if str(message.author.id) in ['407481608560574464','794228652547375104','805046279377387521'] and message.content.startswith('$'):
+    '''if str(message.author.id) in ['407481608560574464','794228652547375104','805046279377387521'] and message.content.startswith('$'):
         author_nick = message.author.display_name
 
         ai_cheng_embed = discord.Embed()
@@ -1768,7 +1768,7 @@ async def on_message(message):
 
         ai_cheng_embed.set_footer(text=msg)
         await message.channel.send(embed=ai_cheng_embed)
-        return
+        return'''
 
     #Delete after execute
     music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
