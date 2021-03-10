@@ -1753,7 +1753,7 @@ async def on_message(message):
         return
 
     if str(message.author.id) in ['407481608560574464','794228652547375104','805046279377387521'] and message.content.startswith('$'):
-        author_nick = message.author.display_name()
+        author_nick = message.author.display_name
 
         ai_cheng_embed = discord.Embed()
         ai_cheng_embed.set_image(url='https://i.imgur.com/C1E8ANa.png')
