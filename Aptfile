@@ -4,4 +4,5 @@ libopus-dev
 libssl-dev
 libffi-dev
 libsodium-dev
-:repo:deb http://ppa.launchpad.net/mc3man/xerus-media/ubuntu xenial main
+:repo:deb http://ppa.launchpad.net/mc3man/xerus-media/ubuntu xenial main 
+:repo:deb-src http://ppa.launchpad.net/mc3man/xerus-media/ubuntu xenial main
