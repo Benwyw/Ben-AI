@@ -1792,7 +1792,7 @@ async def on_message(message):
 
 
     #Mentions Ben AI
-    if bot.user.mentioned_in(message):
+    if bot.user.mentioned_in(message) and message.content not in ('@everyone','@here'):
         e = discord.Embed()
         seed = randrange(6)
         if seed == 0:
