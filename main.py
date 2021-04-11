@@ -53,6 +53,12 @@ matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
 load_dotenv()
 ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
 
+#========================Checks========================
+def is_in_guild(guild_id):
+    async def predicate(ctx):
+        return ctx.guild and ctx.guild.id == guild_id
+    return commands.check(predicate)
+
 #========================Game========================
 # Card constants
 offset = 10
@@ -1434,6 +1440,50 @@ class Special(commands.Cog):
         else:
             await ctx.send("Sent a message to: "+str(person))
 
+    @commands.command(name='ver')
+    @commands.check_any(commands.is_owner(), commands.has_role('Owner', 'Public Relations Team'))
+    @is_in_guild(671654280985313282)
+    async def _ver(self, ctx: commands.Context, message):
+        '''特別指令。驗證玩家Minecraft。'''
+
+        if ctx.channel.id is 692466531447210105:
+            channel_console = bot.get_channel(686911996309930006)
+            vmsg = "You're now verified. Lands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/. Discord: https://discord.gg/wtp85zc";
+            player_name = message
+
+            if not message.contains("Benlien"):
+                channel_console.sendMessage("lp user " + player_name + " parent set member").queue();
+                channel_console.sendMessage("msg " + player_name + " " + vmsg).queue();
+                channel_console.sendMessage("mail send " + player_name + " " + vmsg).queue();
+                ctx.sendMessage("Successfully verified and notified player(in-game): "+player_name).queue();
+            else:
+                ctx.send("You cannot verify the owner!")
+
+    @commands.command(name='discver')
+    @commands.check_any(commands.is_owner(), commands.has_role('Owner', 'Public Relations Team'))
+    @is_in_guild(671654280985313282)
+    async def _discver(self, ctx: commands.Context, message):
+        '''特別指令。驗證玩家Discord。'''
+
+        if ctx.channel.id is 692466531447210105:
+            vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
+            user = bot.get_user(message.mentions[0].id)
+
+            role = discord.utils.find(lambda r: r.name == 'Verified', ctx.message.guild.roles)
+
+            if not role in user:
+                await bot.add_roles(user,role)
+                try:
+                    await user.send(vmsg)
+                except Exception as e:
+                    channel = bot.get_channel(809527650955296848)
+                    await ctx.send("Unable to send message to: "+str(user))
+                    await channel.send(str(e))
+                else:
+                    await ctx.send("<:pencil:692125465464406039> "+vmsg+" <:incoming_envelope:692125609228501052> "+str(user));
+            else:
+                await ctx.send("{} already in Verified group in Discord server!".format(str(user)))
+
     @commands.command(name='menu')
     async def _menu(self, ctx: commands.Context):
         """Menu測試"""
@@ -1875,6 +1925,21 @@ async def on_guild_join(guild):
     for member in guild.members:
         if not DBConnection.checkUserInDB(str(member.id)):
             DBConnection.addUserToDB(str(member.id))
+
+@bot.event
+async def on_member_join(member):
+    if member.guild.id == 671654280985313282:
+        wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
+        channel = bot.get_channel(692466531447210105)
+
+        try:
+            await member.send(wmsg)
+        except Exception as e:
+            logs_channel = bot.get_channel(809527650955296848)
+            await channel.send("Unable to send welcome message to: "+str(member))
+            await logs_channel.send(str(e))
+        else:
+            await channel.send("<:pencil:692125465464406039> "+wmsg+" <:incoming_envelope:692125609228501052> "+str(member));
 
 '''counter = 0
 
