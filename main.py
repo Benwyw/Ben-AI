@@ -1452,22 +1452,21 @@ class Special(commands.Cog):
             player_name = message
 
             if not message.contains("Benlien"):
-                channel_console.sendMessage("lp user " + player_name + " parent set member").queue();
-                channel_console.sendMessage("msg " + player_name + " " + vmsg).queue();
-                channel_console.sendMessage("mail send " + player_name + " " + vmsg).queue();
-                ctx.sendMessage("Successfully verified and notified player(in-game): "+player_name).queue();
+                await channel_console.send("lp user " + player_name + " parent set member");
+                await channel_console.send("msg " + player_name + " " + vmsg);
+                await channel_console.send("mail send " + player_name + " " + vmsg);
+                await ctx.sendMessage("Successfully verified and notified player(in-game): "+player_name);
             else:
-                ctx.send("You cannot verify the owner!")
+                await ctx.send("You cannot verify the owner!")
 
     @commands.command(name='discver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Public Relations Team'))
     @is_in_guild(671654280985313282)
     async def _discver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Discord。'''
-
         if ctx.channel.id == 692466531447210105:
             vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
-            user = bot.get_user(message.mentions[0].id)
+            user = bot.get_user(int(str(message).replace("<@!","").replace(">","")))
 
             role = discord.utils.find(lambda r: r.name == 'Verified', ctx.message.guild.roles)
 
