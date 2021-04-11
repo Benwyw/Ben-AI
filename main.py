@@ -1467,11 +1467,12 @@ class Special(commands.Cog):
         if ctx.channel.id == 692466531447210105:
             vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
             user = bot.get_user(int(str(message).replace("<@!","").replace(">","")))
+            member = ctx.guild.get_member(user.id)
 
             role = discord.utils.find(lambda r: r.name == 'Verified', ctx.message.guild.roles)
 
-            if not role in user:
-                await bot.add_roles(user,role)
+            if not role in member.roles:
+                await member.add_roles(role)
                 try:
                     await user.send(vmsg)
                 except Exception as e:
