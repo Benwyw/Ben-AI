@@ -1460,7 +1460,7 @@ class Special(commands.Cog):
                 ctx.send("You cannot verify the owner!")
 
     @commands.command(name='discver')
-    @commands.check_any(commands.is_owner(), commands.has_role('Owner', 'Public Relations Team'))
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Public Relations Team'))
     @is_in_guild(671654280985313282)
     async def _discver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Discord。'''
