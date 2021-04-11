@@ -1441,12 +1441,12 @@ class Special(commands.Cog):
             await ctx.send("Sent a message to: "+str(person))
 
     @commands.command(name='ver')
-    @commands.check_any(commands.is_owner(), commands.has_role('Owner', 'Public Relations Team'))
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Public Relations Team'))
     @is_in_guild(671654280985313282)
     async def _ver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Minecraft。'''
 
-        if ctx.channel.id is 692466531447210105:
+        if ctx.channel.id == 692466531447210105:
             channel_console = bot.get_channel(686911996309930006)
             vmsg = "You're now verified. Lands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/. Discord: https://discord.gg/wtp85zc";
             player_name = message
@@ -1465,7 +1465,7 @@ class Special(commands.Cog):
     async def _discver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Discord。'''
 
-        if ctx.channel.id is 692466531447210105:
+        if ctx.channel.id == 692466531447210105:
             vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
             user = bot.get_user(message.mentions[0].id)
 
