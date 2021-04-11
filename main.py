@@ -1449,13 +1449,13 @@ class Special(commands.Cog):
         if ctx.channel.id == 692466531447210105:
             channel_console = bot.get_channel(686911996309930006)
             vmsg = "You're now verified. Lands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/. Discord: https://discord.gg/wtp85zc";
-            player_name = message
+            player_name = str(message)
 
-            if not message.contains("Benlien"):
+            if player_name != 'Benlien':
                 await channel_console.send("lp user " + player_name + " parent set member");
                 await channel_console.send("msg " + player_name + " " + vmsg);
                 await channel_console.send("mail send " + player_name + " " + vmsg);
-                await ctx.sendMessage("Successfully verified and notified player(in-game): "+player_name);
+                await ctx.send("Successfully verified and notified player(in-game): "+player_name);
             else:
                 await ctx.send("You cannot verify the owner!")
 
