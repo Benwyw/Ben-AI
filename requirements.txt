@@ -12,3 +12,4 @@ tika
 mysql
 mysql-connector
 Pillow
+sanic
