@@ -1,5 +1,4 @@
 import os
-from main import bot
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from DBConnection import DBConnection
@@ -17,13 +16,17 @@ async def fetch():
 
     count = 1
     for user in rankData:
-        tempID = user[0]
-        tempWIN = user[1]
+        tempID = str(user[0])
+        tempWIN = str(user[1])
 
         if count <= 5:
-            user = await bot.fetch_user(tempID)
+            tempStar = ''
+            for i in range(1,len(tempID)):
+                tempStar += '*'
 
-            data += "{}. {} (勝場: {})\n".format(count, user.display_name, tempWIN)
+            userID = tempID[:4]+tempStar
+
+            data += "{}. {} (勝場: {})\n".format(count, user, tempWIN)
 
         count += 1
 
