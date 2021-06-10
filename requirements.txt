@@ -13,4 +13,3 @@ mysql
 mysql-connector
 Pillow
 sanic
-gunicorn
