@@ -13,3 +13,4 @@ mysql
 mysql-connector
 Pillow
 sanic
+apscheduler
