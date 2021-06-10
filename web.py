@@ -1,5 +1,5 @@
 import os
-import main
+from main import bot
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from DBConnection import DBConnection
@@ -21,7 +21,7 @@ async def fetch():
         tempWIN = user[1]
 
         if count <= 5:
-            user = await main.bot.fetch_user(tempID)
+            user = await bot.fetch_user(tempID)
 
             data += "{}. {} (勝場: {})\n".format(count, user.display_name, tempWIN)
 
