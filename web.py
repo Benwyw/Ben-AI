@@ -26,7 +26,7 @@ async def fetch():
 
             userID = tempID[:4]+tempStar
 
-            data += "{}. {} (勝場: {})\n".format(count, user, tempWIN)
+            data += "{}. {} (勝場: {})\n".format(count, userID, tempWIN)
 
         count += 1
 
