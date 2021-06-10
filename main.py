@@ -46,6 +46,10 @@ from alpha_vantage.timeseries import TimeSeries
 import matplotlib
 import matplotlib.pyplot as plt
 
+#Web Server
+from sanic import Sanic
+from sanic.response import json
+
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
 
@@ -1951,6 +1955,14 @@ async def my_background_task():
     await channel.send(f'{counter}')
 my_background_task.start()'''
 
+#Web Server
+app = Sanic("My Hello, world app")
+
+@app.route('/')
+async def test(request):
+    return json({'hello': 'world'})
+
+#__main__
 try:
     bot.load_extension('Poker')
     bot.load_extension('Economy')
@@ -1958,7 +1970,14 @@ try:
     bot.load_extension('Pres')
     load_dotenv()
     bot.owner_id = 254517813417476097
-    bot.run(os.getenv('TOKEN'))
+    #bot.run(os.getenv('TOKEN'))
+
+    bot_app = bot.start(os.getenv('TOKEN'))
+    bot_task = asyncio.ensure_future(bot_app)
+    webserver = app.create_server(host="0.0.0.0", port=os.getenv('PORT') or 80)
+    webserver_task = asyncio.ensure_future(webserver)
+    loop = asyncio.get_event_loop()
+    loop.run_forever()
 except:
     pass
 finally:
