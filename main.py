@@ -1319,8 +1319,8 @@ class Special(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name='binded')
-    async def _binded(self, ctx: commands.Context):
+    @commands.command(name='bound')
+    async def _bound(self, ctx: commands.Context):
         '''檢閱Minecraft伺服器綁定狀態'''
 
         ID = ctx.author.id
@@ -1974,6 +1974,7 @@ async def on_message(message):
                            '$cards','$next',
                            '$ctb','$enter','$pass',
                            '$reward','$bonus','$b','$prize','$rank','$draw']
+    minecraft_command_List = ['$bind', '$bound', '$unbind']
 
     if message.content.split(' ')[0] in casino_command_List:
         if not DBConnection.checkUserInDB(str(message.author.id)):
@@ -1981,7 +1982,7 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-    if message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List:
+    if message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List or message.content.split(' ')[0] in minecraft_command_List:
         await message.delete()
 
 
