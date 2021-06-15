@@ -18,6 +18,8 @@ import math
 import random
 import os
 import io
+
+import pytz
 import requests
 
 import discord
@@ -1405,8 +1407,33 @@ class Special(commands.Cog):
         '''特別指令。公告。'''
 
         #client.get_channel("182583972662")
+        logs_channel = bot.get_channel(809527650955296848)
+
         for guild in bot.guilds:
-            await guild.text_channels[0].send(message)
+            try:
+                await guild.system_channel.send(message)
+            except Exception as e:
+                # do logs
+                await ctx.send("Default channel not found, sent to text 01")
+                await logs_channel.send(str(e))
+
+                # backup announce method
+                await guild.text_channels[0].send(message)
+            finally:
+                embed = discord.Embed()
+                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
+                tz = pytz.timezone('Asia/Hong_Kong')
+                hk_now = datetime.now(tz)
+                timestamp = str(hk_now)
+
+                embed.title = "Announced"
+                embed.description = str(message)
+                embed.set_footer(text=timestamp)
+
+                await ctx.send(embed)
+                await logs_channel.send("Announced: {}".format(message))
+                await message.delete()
 
     @commands.command(name='status')
     @commands.is_owner()
