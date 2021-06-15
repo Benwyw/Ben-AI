@@ -1322,6 +1322,7 @@ class Special(commands.Cog):
 
             count += 1
 
+        count = 1
         for user in moneyData:
             tempID = user[0]
             tempMONEY = user[1]
