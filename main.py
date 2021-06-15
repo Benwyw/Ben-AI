@@ -1419,21 +1419,21 @@ class Special(commands.Cog):
 
                 # backup announce method
                 await guild.text_channels[0].send(message)
-            finally:
-                embed = discord.Embed()
-                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
-                tz = pytz.timezone('Asia/Hong_Kong')
-                hk_now = datetime.now(tz)
-                timestamp = str(hk_now)
+        embed = discord.Embed()
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
-                embed.title = "Announced"
-                embed.description = str(message)
-                embed.set_footer(text=timestamp)
+        tz = pytz.timezone('Asia/Hong_Kong')
+        hk_now = datetime.now(tz)
+        timestamp = str(hk_now)
 
-                await ctx.send(embed)
-                await logs_channel.send("Announced: {}".format(message))
-                await message.delete()
+        embed.title = "Announced"
+        embed.description = str(message)
+        embed.set_footer(text=timestamp)
+
+        await ctx.send(embed=embed)
+        await logs_channel.send("Announced: {}".format(message))
+        await ctx.message.delete()
 
     @commands.command(name='status')
     @commands.is_owner()
