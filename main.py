@@ -18,13 +18,13 @@ import math
 import random
 import os
 import io
-
 import pytz
 import requests
-
 import discord
 import youtube_dl
 import pandas as pd
+import MinecraftServer as mc
+
 from discord.ext import commands
 from dotenv import load_dotenv
 from random import randrange
@@ -1284,6 +1284,64 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(name='bind')
+    @commands.cooldown(1, 60, commands.BucketType.user)
+    async def _bind(self, ctx: commands.Context, message):
+        '''與Minecraft伺服器綁定 $bind (username)'''
+
+        ID = ctx.author.id
+        mc_Username = message
+
+        DBConnection.updateUserMcName(ID, mc_Username)
+
+        embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
+        embed.description = "Minecraft名: {}".format(mc_Username)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed.set_footer(text="IP: mc.benwyw.com")
+
+        await ctx.send(embed=embed)
+
+    @commands.command(name='unbind')
+    @commands.cooldown(1, 60, commands.BucketType.user)
+    async def _unbind(self, ctx: commands.Context):
+        '''與Minecraft伺服器解除綁定'''
+
+        ID = ctx.author.id
+
+        DBConnection.updateUserMcName(ID, None)
+
+        embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
+        embed.description = "Minecraft名: 已解除綁定"
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed.set_footer(text="IP: mc.benwyw.com")
+
+        await ctx.send(embed=embed)
+
+    @commands.command(name='binded')
+    async def _binded(self, ctx: commands.Context):
+        '''檢閱Minecraft伺服器綁定狀態'''
+
+        ID = ctx.author.id
+
+        mc_Username = DBConnection.fetchUserMcName(ID)[0]
+
+        embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
+
+        if mc_Username is None:
+            embed.description = "Minecraft名: 尚未綁定伺服器，\n請使用 $bind (Minecraft名)"
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            embed.set_footer(text="IP: mc.benwyw.com")
+        else:
+            embed.description = "Minecraft名: {}".format(mc_Username)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            embed.set_footer(text="IP: mc.benwyw.com")
+
+        await ctx.send(embed=embed)
+
     @commands.command(name='rank')
     async def _rank(self, ctx: commands.Context):
         '''查閱全宇宙排行榜 及 你的排名'''
@@ -1359,7 +1417,10 @@ class Special(commands.Cog):
         middle = "抽中了"
 
         e = discord.Embed()
+
         ID = ctx.author.id
+        console_channel = bot.get_channel(686911996309930006)
+        serverchat_channel = bot.get_channel(684024056944787489)
 
         seed = random.choices(chanceList, weights=(1.5, 5.5, 15, 33, 45), k=1)
         seed = int(str(seed).replace("[","").replace("]",""))
@@ -1398,7 +1459,36 @@ class Special(commands.Cog):
 
         e.set_image(url=img)
         e.set_author(name=msg, url=e.Empty, icon_url=e.Empty)
-        e.set_footer(text="{}得到了 ${} | ${} --> ${}".format(first,money,oldTotal,newTotal))
+
+        default_content = "{}得到了 ${} | ${} --> ${}".format(first,money,oldTotal,newTotal)
+
+        # if user binded with MC name:
+        binded = False
+
+        mc_Username = DBConnection.fetchUserMcName(ID)[0]
+
+        if mc_Username is None:
+            binded = False
+        else:
+            binded = True
+
+        if binded is True:
+            if mc.status() == 'online':
+                await console_channel.send("eco give {} {}".format(mc_Username, money))
+                await serverchat_channel.send("{} received ${} from per-10 mins lucky draw '$draw'!".format(mc_Username, money))
+                mc_content_1 = "\n{}得到了 ${}".format(mc_Username,money)
+            else:
+                mc_content_1 = "\nServer is offline"
+        else:
+            mc_content_1 = "\n尚未綁定伺服器 $bind"
+
+        mc_content_2 = " | mc.benwyw.com"
+        mc_content = mc_content_1 + mc_content_2
+
+        final_content = default_content + mc_content
+
+        e.set_footer(text=final_content)
+
         await ctx.send(embed=e)
 
     @commands.command(name='announce')

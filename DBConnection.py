@@ -17,9 +17,9 @@ class DBConnection:
     @classmethod
     def connection(cls):
         if DBConnection.botDB.is_connected():
-            print("Connected already")
+            pass
         else:
-            print("Not connected")
+            #print("Not connected")
             DBConnection.botDB = mysql.connector.connect(host=host, user=user,
                                             password=password, database=database)
 
@@ -46,6 +46,15 @@ class DBConnection:
             return result[4]
 
     @classmethod
+    def fetchUserMcName(cls, userID: str):
+        botDB, DBCursor = cls.connection()
+        vals = (userID, )
+        sqlQuery = 'select mcName from userData where userID = %s'
+        DBCursor.execute(sqlQuery, vals)
+        result = DBCursor.fetchone()
+        return result
+
+    @classmethod
     def fetchAllRankData(cls):
         botDB, DBCursor = cls.connection()
         sqlQuery = 'select userID, userWin from userData order by userWin desc'
@@ -61,8 +70,6 @@ class DBConnection:
         sqlQuery = 'select userID, userBalance from userData order by userBalance desc'
         DBCursor.execute(sqlQuery)
         result = DBCursor.fetchall()
-        #DBCursor.close()
-        #botDB.close()
         return result
 
     @classmethod
@@ -104,6 +111,14 @@ class DBConnection:
         botDB.commit()
         #DBCursor.close()
         #botDB.close()
+
+    @classmethod
+    def updateUserMcName(cls, userID: str, mcName: str):
+        botDB, DBCursor = cls.connection()
+        vals = (mcName, userID)
+        sqlQuery = 'update userData set mcName = %s where userID = %s'
+        DBCursor.execute(sqlQuery, vals)
+        botDB.commit()
 
     @classmethod
     def checkUserInDB(cls, userID: str):
