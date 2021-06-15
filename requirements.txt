@@ -15,4 +15,3 @@ Pillow
 sanic
 apscheduler
 pytz
-json
