@@ -1286,19 +1286,29 @@ class Special(commands.Cog):
     async def _rank(self, ctx: commands.Context):
         '''查閱全宇宙排行榜 及 你的排名'''
 
-        embed = discord.Embed(title="全宇宙首五名 排行榜",
+        embed = discord.Embed(title="全宇宙首十名 排行榜",
                               description="根據德州撲克勝場已定。",
                               color=0x00ff00)
         embed.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
 
+        embed2 = discord.Embed(title="你的排名", color=0x00ff00)
+        embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed2.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
+
+        embed3 = discord.Embed(title="全宇宙首十名 排行榜",
+                              description="根據德州撲克金錢已定。",
+                              color=0x00ff00)
+        embed3.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
+
         rankData = DBConnection.fetchAllRankData()
+        moneyData = DBConnection.fetchAllMoneyData()
 
         count = 1
         for user in rankData:
             tempID = user[0]
             tempWIN = user[1]
 
-            if count <= 5:
+            if count <= 10:
                 user = await bot.fetch_user(tempID)
 
                 embed.add_field(name="{}. {}".format(count,user.display_name),
@@ -1307,15 +1317,31 @@ class Special(commands.Cog):
             if int(ctx.author.id) == int(tempID):
                 userWin = DBConnection.fetchUserData("userWin", tempID)
 
-                embed2 = discord.Embed(title="你的排名", color=0x00ff00)
-                embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-                embed2.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
                 embed2.description = "勝場: {}".format(userWin)
-                embed2.add_field(name="全宇宙排行", value="No.{} | 勝場: {}".format(count,tempWIN))
+                embed2.add_field(name="全宇宙排行(勝場)", value="No.{} | 勝場: {}".format(count,tempWIN))
+
+            count += 1
+
+        for user in moneyData:
+            tempID = user[0]
+            tempMONEY = user[1]
+
+            if count <= 10:
+                user = await bot.fetch_user(tempID)
+
+                embed3.add_field(name="{}. {}".format(count,user.display_name),
+                                 value="金錢: {}".format(tempMONEY), inline=False)
+
+            if int(ctx.author.id) == int(tempID):
+                userBalance = DBConnection.fetchUserData("userBalance", tempID)
+
+                embed2.description += " | 金錢: {}".format(userBalance)
+                embed2.add_field(name="全宇宙排行(金錢)", value="No.{} | 金錢: {}".format(count,tempMONEY))
 
             count += 1
 
         await ctx.send(embed=embed)
+        await ctx.send(embed=embed3)
         await ctx.send(embed=embed2)
 
 

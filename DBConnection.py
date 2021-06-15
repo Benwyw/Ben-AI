@@ -56,6 +56,16 @@ class DBConnection:
         return result
 
     @classmethod
+    def fetchAllMoneyData(cls):
+        botDB, DBCursor = cls.connection()
+        sqlQuery = 'select userID, userBalance from userData order by userBalance desc'
+        DBCursor.execute(sqlQuery)
+        result = DBCursor.fetchall()
+        #DBCursor.close()
+        #botDB.close()
+        return result
+
+    @classmethod
     def updateUserBalance(cls, userID: str, balance: int):
         botDB, DBCursor = cls.connection()
         vals = (balance, userID)
