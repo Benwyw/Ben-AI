@@ -2086,6 +2086,111 @@ async def on_member_join(member):
         else:
             await channel.send("<:pencil:692125465464406039> "+wmsg+" <:incoming_envelope:692125609228501052> "+str(member));
 
+@bot.event
+async def on_member_join(member):
+    if member == bot.user:
+        return
+    if member.guild.id != 351742829254410250:
+        return
+
+    try:
+        pok_channel = bot.get_channel(858022877450600458)
+
+        await pok_channel.send("{} 加入了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
+
+    except:
+        pass
+
+@bot.event
+async def on_member_remove(member):
+    if member == bot.user:
+        return
+    if member.guild.id != 351742829254410250:
+        return
+
+    try:
+        pok_channel = bot.get_channel(858022877450600458)
+
+        await pok_channel.send("{} 離開了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
+
+    except:
+        pass
+
+@bot.event
+async def on_member_update(before, after):
+    if before == bot.user:
+        return
+    if before.guild.id != 351742829254410250:
+        return
+
+    try:
+        pok_channel = bot.get_channel(858022877450600458)
+
+        if str(before.status) == "offline":
+            if str(after.status) == "online":
+                await pok_channel.send("{} 已上線".format(before))
+
+        if str(before.status) == "online":
+            if str(after.status) == "offline":
+                await pok_channel.send("{} 已離線".format(before))
+
+        if str(before.nick) != str(after.nick):
+            await pok_channel.send("{} 已由 __{}__ 改名至 __{}__".format(before,before.nick,after.nick))
+
+    except:
+        pass
+
+@bot.event
+async def on_raw_message_delete(payload):
+    if payload.guild_id != 351742829254410250:
+        return
+
+    try:
+        pok_channel = bot.get_channel(858022877450600458)
+        await pok_channel.send("__信息已被刪除__\n{}".format(payload.cached_message.content))
+
+    except:
+        pass
+
+@bot.event
+async def on_voice_state_update(member, before, after): # Pok
+    # Protection
+    if member == bot.user:
+        return
+    if member.guild.id != 351742829254410250:
+        return
+
+    try:
+        pok_channel = bot.get_channel(858022877450600458)
+
+        if before.channel is None and after.channel is not None:
+            await pok_channel.send("{} 進入了 __{}__".format(member, after.channel))
+
+        if before.channel is not None and after.channel is not None:
+            if before.channel == after.channel:
+                await pok_channel.send("{} 在 __{}__ 已靜音或拒聽".format(member, after.channel))
+            else:
+                await pok_channel.send("{} 由 __{}__ 移入了 __{}__".format(member, before.channel, after.channel))
+
+        if before.channel is not None and after.channel is None:
+            await pok_channel.send("{} 離開了 __{}__".format(member, before.channel))
+
+    except:
+        pass
+
+    '''if voice_state is not None and len(voice_state.channel.members) == 1 or member == bot.user and after.channel is None:
+        # You should also check if the song is still playing
+        try:
+            await voice_state.disconnect()
+            #for task in asyncio.Task.all_tasks(bot.loop):
+                #await task.cancel()
+            #self.voice_states.get(member.guild.id).audio_player.cancel()
+            del self.voice_states[member.guild.id]
+        except:
+            pass
+    else:
+        return'''
+
 '''counter = 0
 
 @tasks.loop(minutes=1.0, count=None)
