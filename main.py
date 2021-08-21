@@ -43,6 +43,11 @@ from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 BOT_PREFIX = '$'
 
+#========================Minecraft========================
+global mc_ops, temp_blocked_list
+mc_ops = ['benlien', 'willywilly234', 'rykos714', 'pokz98']
+temp_blocked_list = []
+
 #========================Alpha Vantage========================
 from alpha_vantage.timeseries import TimeSeries
 import matplotlib
@@ -763,6 +768,8 @@ class VoiceError(Exception):
 class YTDLError(Exception):
     pass
 
+class OpError(Exception):
+    pass
 
 class YTDLSource(discord.PCMVolumeTransformer):
     YTDL_OPTIONS = {
@@ -1535,98 +1542,252 @@ class Special(commands.Cog):
         else:
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | 冇野幫到你"))
 
+    @commands.command(name='block')
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
+    @is_in_guild(671654280985313282)
+    async def _tempblk(self, ctx: commands.Context, message):
+        '''特別指令。Temp block verification request。'''
+        if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+            req_ver_channel = bot.get_channel(878538264762527744)
+            req_ver_embed_to_staff = discord.Embed()
+            req_ver_embed_to_staff.title = "已被暫時封鎖驗證請求"
+            req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            req_ver_embed_to_staff.set_footer(text=timestamp)
+
+            if "!" in message:
+                user = bot.get_user(int(str(message).replace("<@!","").replace(">","")))
+            else:
+                user = bot.get_user(int(str(message).replace("<@","").replace(">","")))
+            member = ctx.guild.get_member(user.id)
+
+            if user.id in temp_blocked_list:
+                req_ver_embed_to_staff.description = "已在臨時封鎖驗證名單中"
+                req_ver_embed_to_staff.color = 0x000000
+            else:
+                temp_blocked_list.append(user.id)
+                req_ver_embed_to_staff.description = "已放入臨時封鎖驗證名單中"
+                req_ver_embed_to_staff.color = 0xff0000
+                await member.send("You have been blocked from sending verification request temporarily.")
+            temp_blocked_list_names = ""
+            if temp_blocked_list:
+                for name in temp_blocked_list:
+                    name_displayname = bot.get_user(name)
+                    temp_blocked_list_names += "{}\n".format(name_displayname)
+            else:
+                temp_blocked_list_names = "(empty)"
+
+            req_ver_embed_to_staff.set_author(name=member.display_name, icon_url=member.avatar_url)
+            req_ver_embed_to_staff.add_field(name="臨時封鎖驗證名單", value=str(temp_blocked_list_names), inline=True)
+            req_ver_embed_to_staff.add_field(name="執行者", value=ctx.author.display_name, inline=True)
+
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)
+
+    @commands.command(name='unblock')
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
+    @is_in_guild(671654280985313282)
+    async def _unblk(self, ctx: commands.Context, message):
+        '''特別指令。Unblock verification request。'''
+        if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+            req_ver_channel = bot.get_channel(878538264762527744)
+            req_ver_embed_to_staff = discord.Embed()
+            req_ver_embed_to_staff.title = "已被解除封鎖驗證請求"
+            req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            req_ver_embed_to_staff.set_footer(text=timestamp)
+
+            if "!" in message:
+                user = bot.get_user(int(str(message).replace("<@!","").replace(">","")))
+            else:
+                user = bot.get_user(int(str(message).replace("<@","").replace(">","")))
+
+            member = ctx.guild.get_member(user.id)
+
+            if user.id in temp_blocked_list:
+                temp_blocked_list.remove(user.id)
+                req_ver_embed_to_staff.description = "已從臨時封鎖驗證名單移除"
+                req_ver_embed_to_staff.color = 0x00ff000
+                await member.send("You have been unblocked from sending verification request.")
+            else:
+                req_ver_embed_to_staff.description = "不在臨時封鎖驗證名單中"
+                req_ver_embed_to_staff.color = 0x000000
+
+            temp_blocked_list_names = ""
+            if temp_blocked_list:
+                for name in temp_blocked_list:
+                    name_displayname = bot.get_user(name)
+                    temp_blocked_list_names += "{}\n".format(name_displayname)
+            else:
+                temp_blocked_list_names = "(empty)"
+
+            req_ver_embed_to_staff.set_author(name=member.display_name, icon_url=member.avatar_url)
+            req_ver_embed_to_staff.add_field(name="臨時封鎖驗證名單", value=str(temp_blocked_list_names), inline=True)
+            req_ver_embed_to_staff.add_field(name="執行者", value=ctx.author.display_name, inline=True)
+
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)
+
+    @commands.command(name='blocklist')
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
+    @is_in_guild(671654280985313282)
+    async def _blklist(self, ctx: commands.Context):
+        '''特別指令。Unblock verification request。'''
+        if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+            req_ver_channel = bot.get_channel(878538264762527744)
+            req_ver_embed_to_staff = discord.Embed()
+            req_ver_embed_to_staff.title = "臨時封鎖驗證名單"
+            req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            req_ver_embed_to_staff.set_footer(text=timestamp)
+
+            temp_blocked_list_names = ""
+            if temp_blocked_list:
+                for name in temp_blocked_list:
+                    name_displayname = bot.get_user(name)
+                    temp_blocked_list_names += "{}\n".format(name_displayname)
+            else:
+                temp_blocked_list_names = "(empty)"
+
+            req_ver_embed_to_staff.description = str(temp_blocked_list_names)
+
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)
+
     @commands.command(name='dm')
-    @commands.is_owner()
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
+    @is_in_guild(671654280985313282)
     async def _dm(self, ctx: commands.Context, target, content):
-        """特別指令。同Bot DM，會由Bot DM Ben。"""
+        """特別指令。Bot DM for Minecraft Staff usage。"""
+        if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            req_ver_channel = bot.get_channel(878538264762527744)
 
-        target = target.lower()
+            target = target.lower()
 
-        if 'ben' in target:
-            memberID = 254517813417476097
-        elif 'ronald' in target:
-            memberID = 525298794653548751
-        elif 'chris' in target:
-            memberID = 562972196880777226
-        elif 'anson' in target:
-            memberID = 199877205071888384
-        elif 'andy' in target:
-            memberID = 407481608560574464
+            if 'ben' in target:
+                memberID = 254517813417476097
+            #elif 'ronald' in target:
+                #memberID = 525298794653548751
+            #elif 'chris' in target:
+                #memberID = 562972196880777226
+            #elif 'anson' in target:
+                #memberID = 199877205071888384
+            #elif 'andy' in target:
+                #memberID = 407481608560574464
 
-        elif 'pok' in target:
-            memberID = 346518519015407626
-        elif 'chester' in target:
-            memberID = 349924747686969344
-        elif 'daniel' in target:
-            memberID = 270781455678832641
-        elif 'kei' in target:
-            memberID = 363347146080256001
-        elif 'olaf' in target:
-            memberID = 272977239014899713
-        elif 'brian' in target:
-            memberID = 262267347379683329
-        elif 'blue' in target:
-            memberID = 394354007650336769
-        elif 'nelson' in target:
-            memberID = 372395366986940416
-        elif 'ivan' in target:
-            memberID = 269394999890673664
-        else:
-            memberID = int(target)
+            elif 'pok' in target:
+                memberID = 346518519015407626
+            elif 'chester' in target:
+                memberID = 349924747686969344
+            elif 'daniel' in target:
+                memberID = 270781455678832641
+            elif 'kei' in target:
+                memberID = 363347146080256001
+            #elif 'olaf' in target:
+                #memberID = 272977239014899713
+            elif 'brian' in target:
+                memberID = 262267347379683329
+            #elif 'blue' in target:
+                #memberID = 394354007650336769
+            elif 'nelson' in target:
+                memberID = 372395366986940416
+            elif 'ivan' in target:
+                memberID = 269394999890673664
+            else:
+                memberID = int(target)
 
-        person = bot.get_user(memberID)
-        try:
-            await person.send(content)
-        except Exception as e:
-            channel = bot.get_channel(809527650955296848)
-            await ctx.send("Unable to send message to: "+str(person))
-            await channel.send(str(e))
-        else:
-            await ctx.send("Sent a message to: "+str(person))
+            person = bot.get_user(memberID)
+            try:
+                await person.send(content)
+            except Exception as e:
+                await ctx.send("無法傳訊至: "+str(person))
+                await req_ver_channel.send(str(e))
+            else:
+                await ctx.send("成功傳訊至: "+str(person))
 
     @commands.command(name='ver')
-    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Public Relations Team'))
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _ver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Minecraft。'''
-
-        if ctx.channel.id == 692466531447210105:
+        if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             channel_console = bot.get_channel(686911996309930006)
-            vmsg = "You're now verified. Lands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/. Discord: https://discord.gg/wtp85zc";
-            player_name = str(message)
+            req_ver_channel = bot.get_channel(878538264762527744)
 
-            if player_name != 'Benlien':
-                await channel_console.send("lp user " + player_name + " parent set member");
-                await channel_console.send("msg " + player_name + " " + vmsg);
-                await channel_console.send("mail send " + player_name + " " + vmsg);
-                await ctx.send("Successfully verified and notified player(in-game): "+player_name);
-            else:
-                await ctx.send("You cannot verify the owner!")
+            vmsg = "You're now verified. Lands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/. Discord: https://discord.gg/wtp85zc"
+            player_name = str(message)
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+            req_ver_embed_to_staff = discord.Embed()
+
+            req_ver_embed_to_staff.title = "已處理Minecraft驗證請求"
+            req_ver_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            req_ver_embed_to_staff.add_field(name="Minecraft", value=player_name, inline=True)
+            req_ver_embed_to_staff.set_footer(text=timestamp)
+
+            try:
+                if player_name.lower not in mc_ops:
+                    await channel_console.send("lp user " + player_name + " parent set member")
+                    await channel_console.send("msg " + player_name + " " + vmsg)
+                    await channel_console.send("mail send " + player_name + " " + vmsg)
+                else:
+                    raise OpError("不能Verify具OP權限的管理員。")
+
+                req_ver_embed_to_staff.color = 0x00ff00
+                req_ver_embed_to_staff.description = "處理成功"
+            except Exception as e:
+                req_ver_embed_to_staff.color = 0xff0000
+                req_ver_embed_to_staff.description = str(e)
+
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
     @commands.command(name='discver')
-    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Public Relations Team'))
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _discver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Discord。'''
-        if ctx.channel.id == 692466531447210105:
-            vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
-            user = bot.get_user(int(str(message).replace("<@!","").replace(">","")))
-            member = ctx.guild.get_member(user.id)
+        if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            req_ver_channel = bot.get_channel(878538264762527744)
+            log_channel = bot.get_channel(809527650955296848)
+            #vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
 
+            if "!" in message:
+                user = bot.get_user(int(str(message).replace("<@!","").replace(">","")))
+            else:
+                user = bot.get_user(int(str(message).replace("<@","").replace(">","")))
+
+            member = ctx.guild.get_member(user.id)
             role = discord.utils.find(lambda r: r.name == 'Verified', ctx.message.guild.roles)
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+            req_ver_embed_to_staff = discord.Embed()
+            req_ver_embed_to_member = discord.Embed()
+
+            req_ver_embed_to_staff.title = "已處理Discord驗證請求"
+            req_ver_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            req_ver_embed_to_staff.add_field(name="Discord", value=user, inline=True)
+            req_ver_embed_to_staff.set_footer(text=timestamp)
+
+            req_ver_embed_to_member.title = "Verification"
+            req_ver_embed_to_member.description = "Your Discord verification request was approved"
+            req_ver_embed_to_member.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            req_ver_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            req_ver_embed_to_member.add_field(name="Discord", value=user, inline=True)
+            req_ver_embed_to_member.add_field(name="Lands Guide", value="https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/", inline=False)
+            req_ver_embed_to_member.set_footer(text=timestamp)
 
             if not role in member.roles:
                 await member.add_roles(role)
                 try:
-                    await user.send(vmsg)
+                    await user.send(embed=req_ver_embed_to_member)
+                    req_ver_embed_to_staff.description = "處理成功"
+                    req_ver_embed_to_staff.color = 0x00ff00
                 except Exception as e:
-                    channel = bot.get_channel(809527650955296848)
-                    await ctx.send("Unable to send message to: "+str(user))
-                    await channel.send(str(e))
-                else:
-                    await ctx.send("<:pencil:692125465464406039> "+vmsg+" <:incoming_envelope:692125609228501052> "+str(user));
+                    req_ver_embed_to_staff.description = "無法回覆 {} 請求提交成功".format(str(user))
+                    req_ver_embed_to_staff.color = 0xff0000
+                    await log_channel.send(str(e))
             else:
-                await ctx.send("{} already in Verified group in Discord server!".format(str(user)))
+                req_ver_embed_to_staff.description = "{} 已驗證".format(str(user))
+                req_ver_embed_to_staff.color = 0xff0000
+
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
     @commands.command(name='menu')
     async def _menu(self, ctx: commands.Context):
@@ -1838,7 +1999,7 @@ class General(commands.Cog):
         await ctx.send(embed=e, file=chart)
 
 
-bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', intents=discord.Intents.all())
+bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
 bot.add_cog(Music(bot))
 bot.add_cog(Special(bot))
 bot.add_cog(General(bot))
@@ -1937,11 +2098,47 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_message(message):
     if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
-        #await channel.send("{}: {}".format(message.author,message.content))
-        if message.author.id not in dmList:
-            await bot.get_user(254517813417476097).send("{}({}): {}".format(message.author,message.author.id,message.content))
-        else:
-            await bot.get_user(254517813417476097).send("{}: {}".format(message.author,message.content))
+        if not str(message.content).startswith("$") and message.author.id not in temp_blocked_list:
+            req_ver_author = message.author
+            req_ver_author_id = message.author.id
+            req_ver_mc_name = message.content
+            req_ver_channel = bot.get_channel(878538264762527744)
+            req_ver_reply = bot.get_user(req_ver_author_id)
+            req_ver_embed_to_staff = discord.Embed()
+            req_ver_embed_to_member = discord.Embed()
+
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+            req_ver_embed_to_staff.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.avatar_url)
+            req_ver_embed_to_staff.title = "請求驗證 | Request Verify"
+            req_ver_embed_to_staff.color = 0x00ff00
+            req_ver_embed_to_staff.add_field(name="Minecraft", value=req_ver_mc_name, inline=True)
+            req_ver_embed_to_staff.add_field(name="Discord", value=req_ver_author, inline=True)
+            req_ver_embed_to_staff.add_field(name="驗證指令", value="Minecraft: `$ver {}`\nDiscord: `$discver @{}`".format(req_ver_mc_name,req_ver_author), inline=False)
+            req_ver_embed_to_staff.add_field(name="其他指令", value="發送提醒: `$dm {} \"請輸入提醒\"`\n臨時封鎖: `$block @{}`\n移除封鎖: `$unblock @{}`".format(req_ver_author_id,req_ver_author,req_ver_author), inline=True)
+            req_ver_embed_to_staff.set_footer(text=timestamp)
+
+            req_ver_embed_to_member.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.avatar_url)
+            req_ver_embed_to_member.title = "Verification"
+            req_ver_embed_to_member.description = "You will be moved to Verified once review completed"
+            req_ver_embed_to_member.color = 0x00ff00
+            req_ver_embed_to_member.add_field(name="Minecraft", value=req_ver_mc_name, inline=True)
+            req_ver_embed_to_member.add_field(name="Discord", value=req_ver_author, inline=True)
+            req_ver_embed_to_member.set_footer(text=timestamp)
+
+            try:
+                await req_ver_reply.send(embed=req_ver_embed_to_member)
+            except Exception as e:
+                log_channel = bot.get_channel(809527650955296848)
+                req_ver_embed_to_staff.description = "無法回覆 {} 請求提交正在處理".format(str(req_ver_author))
+                await log_channel.send(str(e))
+            else:
+                req_ver_embed_to_staff.description = "已回覆 {} 請求提交正在處理".format(str(req_ver_author))
+
+            if message.author.id not in dmList:
+                await req_ver_channel.send(embed=req_ver_embed_to_staff)
+            else:
+                await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
     if message.author == bot.user:
         return
@@ -1974,7 +2171,7 @@ async def on_message(message):
                            '$cards','$next',
                            '$ctb','$enter','$pass',
                            '$reward','$bonus','$b','$prize','$rank','$draw']
-    minecraft_command_List = ['$bind', '$bound', '$unbind']
+    minecraft_command_List = ['$bind', '$bound', '$unbind', '$ver', '$discver' '$dm', '$block', '$unblock', '$blocklist']
 
     if message.content.split(' ')[0] in casino_command_List:
         if not DBConnection.checkUserInDB(str(message.author.id)):
@@ -1982,7 +2179,8 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-    if message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List or message.content.split(' ')[0] in minecraft_command_List:
+    if (message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List or message.content.split(' ')[0] in minecraft_command_List) and \
+            not(message.guild is None and message.author != bot.user):
         await message.delete()
 
 
@@ -2073,33 +2271,48 @@ async def on_guild_join(guild):
 
 @bot.event
 async def on_member_join(member):
-    if member.guild.id == 671654280985313282:
-        wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com";
-        channel = bot.get_channel(692466531447210105)
-
-        try:
-            await member.send(wmsg)
-        except Exception as e:
-            logs_channel = bot.get_channel(809527650955296848)
-            await channel.send("Unable to send welcome message to: "+str(member))
-            await logs_channel.send(str(e))
-        else:
-            await channel.send("<:pencil:692125465464406039> "+wmsg+" <:incoming_envelope:692125609228501052> "+str(member));
-
-@bot.event
-async def on_member_join(member):
     if member == bot.user:
         return
-    if member.guild.id != 351742829254410250:
-        return
 
-    try:
-        pok_channel = bot.get_channel(858022877450600458)
+    if member.guild.id == 671654280985313282:
+        bot_channel_embed_to_staff = discord.Embed()
+        bot_channel_embed_to_member = discord.Embed()
 
-        await pok_channel.send("{} 加入了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
-    except:
-        pass
+        bot_channel_embed_to_staff.set_author(name=member.display_name, icon_url=member.avatar_url)
+        bot_channel_embed_to_staff.title = "已加入Discord伺服器"
+        bot_channel_embed_to_staff.add_field(name="Discord", value=member, inline=True)
+        bot_channel_embed_to_staff.set_footer(text=timestamp)
+
+        bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
+        bot_channel_embed_to_member.title = "Welcome to Ben\'s Minecraft server"
+        bot_channel_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        bot_channel_embed_to_member.add_field(name="IP", value="mc.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
+        bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username", inline=False)
+        bot_channel_embed_to_member.set_footer(text=timestamp)
+
+        #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
+        bot_channel = bot.get_channel(692466531447210105)
+        try:
+            await member.send(embed=bot_channel_embed_to_member)
+            bot_channel_embed_to_staff.description = "歡迎信息發送成功"
+            bot_channel_embed_to_staff.color = 0x00ff00
+        except Exception as e:
+            bot_channel_embed_to_staff.description = "無法發送歡迎信息"
+            bot_channel_embed_to_staff.color = 0xff0000
+            logs_channel = bot.get_channel(809527650955296848)
+            await logs_channel.send(str(e))
+        await bot_channel.send(embed=bot_channel_embed_to_staff)
+
+    if member.guild.id == 351742829254410250:
+        try:
+            pok_channel = bot.get_channel(858022877450600458)
+            await pok_channel.send("{} 加入了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
+        except:
+            pass
 
 @bot.event
 async def on_member_remove(member):
