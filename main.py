@@ -1428,7 +1428,7 @@ class Special(commands.Cog):
         ID = ctx.author.id
         console_channel = bot.get_channel(686911996309930006)
         serverchat_channel = bot.get_channel(684024056944787489)
-        serverchat_seasonal_channel = bot.get_channel(887706508824027136)
+        console_seasonal_channel = bot.get_channel(888429949873172570)
 
         seed = random.choices(chanceList, weights=(1.5, 5.5, 15, 33, 45), k=1)
         seed = int(str(seed).replace("[","").replace("]",""))
@@ -1486,7 +1486,7 @@ class Special(commands.Cog):
                 await serverchat_channel.send("{} received ${} from per-10 mins lucky draw '$draw'!".format(mc_Username, money))
                 mc_content_1 = "\n{}得到了 ${}".format(mc_Username,money)
                 if mc.status_seasonal() == 'online':
-                    await serverchat_seasonal_channel.send("{} received ${} from per-10 mins lucky draw '$draw'!".format(mc_Username, money))
+                    await console_seasonal_channel.send("!cmd say {} received ${} from per-10 mins lucky draw '$draw'!".format(mc_Username, money))
             else:
                 mc_content_1 = "\nServer is offline"
         else:
