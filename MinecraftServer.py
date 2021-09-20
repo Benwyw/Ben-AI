@@ -12,3 +12,16 @@ def status():
                     return 'online'
                 else:
                     return 'offline'
+
+def status_seasonal():
+    with urllib.request.urlopen("https://api.mcsrvstat.us/2/play.benwyw.com") as url:
+        data = json.loads(url.read().decode())
+
+        pairs = data.items()
+
+        for key, value in pairs:
+            if key == 'debug':
+                if value['ping'] == True:
+                    return 'online'
+                else:
+                    return 'offline'
