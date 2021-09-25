@@ -2291,10 +2291,13 @@ async def on_member_join(member):
         bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
         bot_channel_embed_to_member.title = "Welcome to Ben\'s Minecraft server"
         bot_channel_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
-        bot_channel_embed_to_member.add_field(name="IP", value="mc.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="IP (Survival)", value="mc.benwyw.com", inline=True)
         bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
-        bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
         bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username", inline=False)
+        bot_channel_embed_to_member.add_field(name="IP (Seasonal)", value="play.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Version", value="Forge 1.12.2", inline=True)
+        bot_channel_embed_to_member.add_field(name="Mod", value="Pixelmon Reforged 8.2.0", inline=True)
+        bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
         bot_channel_embed_to_member.set_footer(text=timestamp)
 
         #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
