@@ -2243,28 +2243,28 @@ async def on_message(message):
         await message.channel.send(msg, tts=True)
 
     #Shield
-    if 'ben' in message.content.lower() and 'gay' in message.content.lower():
-        try:
-            await message.delete()
-        except:
-            pass
+    # if 'ben' in message.content.lower() and 'gay' in message.content.lower():
+    #     try:
+    #         await message.delete()
+    #     except:
+    #         pass
 
-        if 'ben' in message.author.display_name.lower() or 'ben' in message.author.name.lower():
-            seed = randrange(5)
-            if seed == 0:
-                msg = "Pok is gay"
-            elif seed == 1:
-                msg = "Pok is fucking gay"
-            elif seed == 2:
-                msg = "Pok guy jai"
-            elif seed == 3:
-                msg = "Wow! Jennifer Pok-pez?"
-            elif seed == 4:
-                msg = "POKemon鳩"
+    #     if 'ben' in message.author.display_name.lower() or 'ben' in message.author.name.lower():
+    #         seed = randrange(5)
+    #         if seed == 0:
+    #             msg = "Pok is gay"
+    #         elif seed == 1:
+    #             msg = "Pok is fucking gay"
+    #         elif seed == 2:
+    #             msg = "Pok guy jai"
+    #         elif seed == 3:
+    #             msg = "Wow! Jennifer Pok-pez?"
+    #         elif seed == 4:
+    #             msg = "POKemon鳩"
 
-            await message.channel.send(msg)
-        else:
-            await message.channel.send(str(message.author.display_name)+" is gay")
+    #         await message.channel.send(msg)
+    #     else:
+    #         await message.channel.send(str(message.author.display_name)+" is gay")
 
 @bot.event
 async def on_guild_join(guild):
