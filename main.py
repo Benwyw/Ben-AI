@@ -1295,6 +1295,7 @@ class Special(commands.Cog):
     async def _get(self, ctx: commands.Context, code):
         '''所有 play.benwyw.com 既 Server 列表'''
 
+        status = ""
         baroUserList = [254517813417476097, 346518519015407626, 270781455678832641, 49924747686969344, 372395366986940416, 363347146080256001, 313613491816890369]
         #254517813417476097 Ben
         #346518519015407626 Pok
@@ -1317,15 +1318,24 @@ class Special(commands.Cog):
                 embed.add_field(name="Remarks", value='Private', inline=True)
                 embed.add_field(name="Server name", value='`Pok guys`', inline=True)
                 embed.add_field(name="Password", value='||`pokisgay`||', inline=True)
+                status = "Success"
             else:
                 embed.add_field(name="Error", value='Code `{}` not found. Please check `$server`.'.format(code))
+                status = "Code not found"
         else:
             embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
+            status = "No permission"
 
         embed.set_footer(text="www.benwyw.com")
 
         #Private Message:
         await ctx.author.send(embed=embed)
+
+        #Channel Message:
+        await ctx.send("請查閱私人訊息。")
+
+        #log Message:
+        await bot.get_channel(809527650955296848).send("{} 已查詢私人伺服器資訊 (Code = {}, Status = {})".format(ctx.author,code, status))
 
     @commands.command(name='server', aliases=['ser','serverlist'])
     async def _server(self, ctx: commands.Context):
