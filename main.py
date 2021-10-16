@@ -1293,7 +1293,7 @@ class Special(commands.Cog):
 
     @commands.command(name='get')
     async def _get(self, ctx: commands.Context, code):
-        '''所有 play.benwyw.com 既 Server 列表'''
+        '''在__私訊__收到 play.benwyw.com 既 Private Server 資訊'''
 
         status = ""
         baroUserList = [254517813417476097, 346518519015407626, 270781455678832641, 49924747686969344, 372395366986940416, 363347146080256001, 313613491816890369]
