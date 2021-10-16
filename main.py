@@ -1291,10 +1291,108 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(name='get')
-    async def _get(self, ctx: commands.Context, code):
+    @commands.command(name='updateserverpw')
+    @commands.is_owner()
+    async def updateserverpw(self, ctx: commands.Context, message):
+        '''Update server pw by (id pw)'''
+
+        result = "No operations."
+        if (message is not None and ' ' in message):
+            id = message.split(' ')[0]
+            pw = message.split(' ')[1]
+
+            DBConnection.updateServerPw(str(id), str(pw))
+            result = "Successfully updated {} {} in serverlist".format(id, pw)
+        else:
+            result = "You cannot update NULL!"
+        
+        await ctx.send(result)
+
+    @commands.command(name='deleteserver')
+    @commands.is_owner()
+    async def deleteserver(self, ctx: commands.Context, message):
+        '''Delete server by (id)'''
+
+        result = "No operations."
+        if (message is not None):
+            id = message
+            DBConnection.deleteServer(str(id))
+            result = "Successfully deleted {} in serverlist".format(id)
+        else:
+            result = "You cannot delete NULL!"
+        
+        await ctx.send(result)
+
+    @commands.command(name='updateserver')
+    @commands.is_owner()
+    async def updateserver(self, ctx: commands.Context, message):
+        '''Update server pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
+
+        result = "No operations."
+        if (message is not None and ' ' in message):
+            id = message.split('$')[0]
+            pw = message.split('$')[1]
+            game = message.split('$')[2]
+            port = message.split('$')[3]
+            remarks = message.split('$')[4]
+
+            if pw != "-":
+                if remarks != "-":
+                    remarks = "Private | " + remarks + " | `$getserver {}`".format(id)
+                else:
+                    remarks = "Private | `$getserver {}`".format(id)
+            else:
+                if remarks != "-":
+                    remarks = "Public | " + remarks
+                else:
+                    remarks = "Public" + remarks
+
+            DBConnection.updateServer(id, pw, game, port, remarks)
+            result = "Successfully updated {} {} {} {} {} in serverlist".format(id, pw, game, port, remarks)
+        else:
+            result = "You cannot update NULL! Template: `$createserver \"id$pw$Game$Port$Remarks\"`"
+        
+        await ctx.send(result)
+
+    @commands.command(name='createserver')
+    @commands.is_owner()
+    async def createserver(self, ctx: commands.Context, message):
+        '''Create server id pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
+
+        result = "No operations."
+        if (message is not None and '$' in message):
+            id = message.split('$')[0]
+            pw = message.split('$')[1]
+            game = message.split('$')[2]
+            port = message.split('$')[3]
+            remarks = message.split('$')[4]
+
+            if pw != "-":
+                if remarks != "-":
+                    remarks = "Private | " + remarks + " | `$getserver {}`".format(id)
+                else:
+                    remarks = "Private | `$getserver {}`".format(id)
+            else:
+                if remarks != "-":
+                    remarks = "Public | " + remarks
+                else:
+                    remarks = "Public" + remarks
+
+            DBConnection.createServer(id, pw, game, port, remarks)
+            result = "Successfully created {} {} {} {} {} in serverlist".format(id, pw, game, port, remarks)
+        else:
+            result = "You cannot create NULL! Template: `$createserver \"id$pw$Game$Port$Remarks\"`"
+        
+        await ctx.send(result)
+
+    @commands.command(name='getserver')
+    async def _getserver(self, ctx: commands.Context, code):
         '''在__私訊__收到 play.benwyw.com 既 Private Server 資訊'''
 
+        game = ""
+        port = ""
+        remarks = ""
+        password = ""
         status = ""
         baroUserList = [254517813417476097, 346518519015407626, 270781455678832641, 49924747686969344, 372395366986940416, 363347146080256001, 313613491816890369]
         #254517813417476097 Ben
@@ -1310,15 +1408,19 @@ class Special(commands.Cog):
         embed.description = "IP: `play.benwyw.com`"
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        code = code.lower()
 
         if code is not None and ctx.author.id in baroUserList:
-            if code.lower() == 'baro':
-                embed.add_field(name="Game", value='Barotrauma', inline=True)
-                embed.add_field(name="Port", value='-', inline=True)
-                embed.add_field(name="Remarks", value='Private', inline=True)
-                embed.add_field(name="Server name", value='`Pok guys`', inline=True)
-                embed.add_field(name="Password", value='||`pokisgay`||', inline=True)
-                status = "Success"
+            selectServer = DBConnection.selectServer(code)
+            if  selectServer is not None:
+                if selectServer[1] != "-":
+                    game = selectServer[2]
+                    port = selectServer[3]
+                    remarks = selectServer[4]
+                    password = "||`{}`||".format(selectServer[1])
+                    status = "Success"
+                else:
+                    status = "No password"
             else:
                 embed.add_field(name="Error", value='Code `{}` not found. Please check `$server`.'.format(code))
                 status = "Code not found"
@@ -1326,16 +1428,25 @@ class Special(commands.Cog):
             embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
             status = "No permission"
 
-        embed.set_footer(text="www.benwyw.com")
+        if status == "No password":
+            await ctx.send("Requesting code is not a private server!")
+        else:
+            if status == "Success":
+                embed.add_field(name="Game", value=game, inline=True)
+                embed.add_field(name="Port", value=port, inline=True)
+                embed.add_field(name="Remarks", value=remarks, inline=True)
+                embed.add_field(name="Password", value=password, inline=True)
+            
+            embed.set_footer(text="www.benwyw.com")
 
-        #Private Message:
-        await ctx.author.send(embed=embed)
+            #Private Message:
+            await ctx.author.send(embed=embed)
 
-        #Channel Message:
-        await ctx.send("請查閱私人訊息。")
+            #Channel Message:
+            await ctx.send("請查閱私人訊息。")
 
-        #log Message:
-        await bot.get_channel(809527650955296848).send("{} 已查詢私人伺服器資訊 (Code = {}, Status = {})".format(ctx.author,code, status))
+            #log Message:
+            await bot.get_channel(809527650955296848).send("{} 已查詢私人伺服器資訊 (Code = {}, Status = {})".format(ctx.author,code, status))
 
     @commands.command(name='server', aliases=['ser','serverlist'])
     async def _server(self, ctx: commands.Context):
@@ -1351,31 +1462,48 @@ class Special(commands.Cog):
         #embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock\nPublic | Pixelmon Reforged 8.3.0\nPublic | Vanilla\nPrivate | `$get baro`', inline=True)
         #embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
 
-        
+        serverList = DBConnection.selectAllServer()
+        count = 0
+        for server in serverList:
+            #id = server[0]
+            #pw = server[1]
+            game = server[2]
+            port = server[3]
+            remarks = server[4]
+
+            if count == 0:
+                embed.add_field(name="Game", value=game, inline=True)
+                embed.add_field(name="Port", value=port, inline=True)
+                embed.add_field(name="Remarks", value=remarks, inline=True)
+            else:
+                embed.add_field(name="\u200b", value=game, inline=True)
+                if port != "-":
+                    port = "`{}`".format(port)
+                else:
+                    port = "{}".format(port)
+                embed.add_field(name="\u200b", value=port, inline=True)
+                embed.add_field(name="\u200b", value=remarks, inline=True)
+
+            count += 1
+
+        '''
         embed.add_field(name="Game", value='Minecraft (Survival)', inline=True)
         embed.add_field(name="Port", value='`25565`', inline=True)
         embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock', inline=True)
-        #embed.add_field(name="Password", value='-', inline=False)
-        
-        #embed.add_field(name=" ", value=' ', inline=False)
 
         embed.add_field(name="\u200b", value='Minecraft (Pixelmon)', inline=True)
         embed.add_field(name="\u200b", value='-', inline=True)
         embed.add_field(name="\u200b", value='Public | Pixelmon Reforged 8.3.0', inline=True)
-        #embed.add_field(name="Password", value='-', inline=False)
-        #embed.add_field(name=" ", value=' ', inline=False)
 
         embed.add_field(name="\u200b", value='Terraria (Expert)', inline=True)
         embed.add_field(name="\u200b", value='`7777`', inline=True)
         embed.add_field(name="\u200b", value='Public | Vanilla', inline=True)
-        #embed.add_field(name="Password", value='-', inline=False)
-        #embed.add_field(name=" ", value=' ', inline=False)
 
-        embed.add_field(name="\u200b", value='Barotrauma', inline=True)
-        embed.add_field(name="\u200b", value='-', inline=True)
-        embed.add_field(name="\u200b", value='Private | `$get baro`', inline=True)
-        
-        #embed.add_field(name=" ", value=' ', inline=False)
+        if DBConnection.selectServer("baro") is not None:
+            embed.add_field(name="\u200b", value='Barotrauma', inline=True)
+            embed.add_field(name="\u200b", value='-', inline=True)
+            embed.add_field(name="\u200b", value='Private | `$get baro`', inline=True)
+        '''
 
         embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊。', inline=False)
 

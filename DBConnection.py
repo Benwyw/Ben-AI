@@ -139,3 +139,59 @@ class DBConnection:
         botDB.commit()
         #DBCursor.close()
         #botDB.close()
+
+    @classmethod
+    def createServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
+        botDB, DBCursor = cls.connection()
+        query = """INSERT INTO serverlist (id, pw, game, port, remarks) 
+                VALUES (%s, %s, %s, %s, %s) """
+        dataTuple = (id, pw, game, port, remarks)
+        DBCursor.execute(query, dataTuple)
+        botDB.commit()
+
+    @classmethod
+    def updateServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
+        botDB, DBCursor = cls.connection()
+        query = """UPDATE serverlist
+                SET pw=%s, game=%s, port=%s, remarks=%s
+                WHERE id=%s """
+        dataTuple = (pw, game, port, remarks, id)
+        DBCursor.execute(query, dataTuple)
+        botDB.commit()
+
+    @classmethod
+    def updateServerPw(cls, id: str, pw: str):
+        botDB, DBCursor = cls.connection()
+        query = """UPDATE serverlist
+                SET pw=%s
+                WHERE id=%s """
+        dataTuple = (pw, id)
+        DBCursor.execute(query, dataTuple)
+        botDB.commit()
+
+    @classmethod
+    def deleteServer(cls, id: str):
+        botDB, DBCursor = cls.connection()
+        query = """DELETE FROM serverlist
+                WHERE id=%s """
+        data = (id,)
+        DBCursor.execute(query, data)
+        botDB.commit()
+
+    @classmethod
+    def selectServer(cls, id: str):
+        botDB, DBCursor = cls.connection()
+        vals = (id, )
+        sqlQuery = """SELECT id, pw, game, port, remarks
+                FROM serverlist
+                WHERE id = %s"""
+        DBCursor.execute(sqlQuery, vals)
+        return DBCursor.fetchone()
+
+    @classmethod
+    def selectAllServer(cls):
+        botDB, DBCursor = cls.connection()
+        sqlQuery = 'select id, pw, game, port, remarks from serverlist order by game, remarks'
+        DBCursor.execute(sqlQuery)
+        result = DBCursor.fetchall()
+        return result
