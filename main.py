@@ -1336,32 +1336,38 @@ class Special(commands.Cog):
         #embed.set_author(name='Test Name', icon_url=ctx.author.avatar_url)
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
 
-        embed.add_field(name="Game", value='Minecraft (Survival)\nMinecraft (Pixelmon)\nTerraria (Expert)\nBarotrauma', inline=True)
-        embed.add_field(name="Port", value='`25565`\n-\n`7777`\n-', inline=True)
-        embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock\nPublic | Pixelmon Reforged 8.3.0\nPublic | Vanilla\nPrivate | `$get baro`', inline=True)
-        embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
+        #embed.add_field(name="Game", value='Minecraft (Survival)\nMinecraft (Pixelmon)\nTerraria (Expert)\nBarotrauma', inline=True)
+        #embed.add_field(name="Port", value='`25565`\n-\n`7777`\n-', inline=True)
+        #embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock\nPublic | Pixelmon Reforged 8.3.0\nPublic | Vanilla\nPrivate | `$get baro`', inline=True)
+        #embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
 
-        '''
+        
         embed.add_field(name="Minecraft", value='Survival', inline=True)
         embed.add_field(name="Port", value='25565', inline=True)
-        embed.add_field(name="Remarks", value='Public | Java | Bedrock', inline=True)
-        embed.add_field(name="Password", value='-', inline=False)
+        embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock', inline=True)
+        #embed.add_field(name="Password", value='-', inline=False)
+        
+        embed.add_field(name="===", value='---', inline=False)
 
         embed.add_field(name="Minecraft", value='Pixelmon', inline=True)
         embed.add_field(name="Port", value='-', inline=True)
         embed.add_field(name="Remarks", value='Public | Pixelmon Reforged 8.3.0', inline=True)
-        embed.add_field(name="Password", value='-', inline=False)
+        #embed.add_field(name="Password", value='-', inline=False)
+        embed.add_field(name="===", value='---', inline=False)
 
         embed.add_field(name="Terraria", value='Expert', inline=True)
         embed.add_field(name="Port", value='`7777`', inline=True)
         embed.add_field(name="Remarks", value='Public | Vanilla', inline=True)
-        embed.add_field(name="Password", value='-', inline=False)
+        #embed.add_field(name="Password", value='-', inline=False)
+        embed.add_field(name="===", value='---', inline=False)
 
         embed.add_field(name="Barotrauma", value='-', inline=True)
         embed.add_field(name="Port", value='-', inline=True)
-        embed.add_field(name="Remarks", value='`Pok guys`', inline=True)
-        embed.add_field(name="Password", value='||pokisgay||', inline=False)
-        '''
+        embed.add_field(name="Remarks", value='Private | `$get baro`', inline=True)
+        
+        embed.add_field(name="===", value='---', inline=False)
+
+        embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
 
         embed.set_footer(text="www.benwyw.com")
 
