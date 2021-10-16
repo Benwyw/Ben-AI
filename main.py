@@ -1422,7 +1422,6 @@ class Special(commands.Cog):
                 else:
                     status = "No password"
             else:
-                embed.add_field(name="Error", value='Code `{}` not found. Please check `$server`.'.format(code))
                 status = "Code not found"
         else:
             embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
@@ -1430,6 +1429,8 @@ class Special(commands.Cog):
 
         if status == "No password":
             await ctx.send("Requesting code is not a private server!")
+        elif status == "Code not found":
+            await ctx.send("Requesting code does not exist.")
         else:
             if status == "Success":
                 embed.add_field(name="Game", value=game, inline=True)
