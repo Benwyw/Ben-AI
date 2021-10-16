@@ -1297,16 +1297,24 @@ class Special(commands.Cog):
         '''Update server pw by (id pw)'''
 
         result = "No operations."
+        id = ""
+        pw = ""
+        status = ""
         if (message is not None and ' ' in message):
             id = message.split(' ')[0]
             pw = message.split(' ')[1]
 
             DBConnection.updateServerPw(str(id), str(pw))
             result = "Successfully updated {} {} in serverlist".format(id, pw)
+            status = "Success"
         else:
             result = "You cannot update NULL!"
+            status = "Failed"
         
         await ctx.send(result)
+        if status == "Success":
+            await bot.get_channel(356782441777725440).send("私人伺服器已更新密碼 | `$getserver {}`".format(id))
+            await bot.get_channel(772038210057535488).send("私人伺服器已更新密碼 | `$getserver {}`".format(id))
 
     @commands.command(name='deleteserver')
     @commands.is_owner()
