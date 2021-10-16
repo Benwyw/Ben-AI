@@ -1291,6 +1291,82 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(name='get')
+    async def _get(self, ctx: commands.Context, code):
+        '''所有 play.benwyw.com 既 Server 列表'''
+
+        baroUserList = [254517813417476097, 346518519015407626, 270781455678832641, 49924747686969344, 372395366986940416, 363347146080256001, 313613491816890369]
+        #254517813417476097 Ben
+        #346518519015407626 Pok
+        #270781455678832641 Daniel
+        #349924747686969344 Chest
+        #372395366986940416 Nelson
+        #363347146080256001 Kei
+        #313613491816890369 keith   Pok's friend
+
+
+        embed = discord.Embed(title="Private server info | 私人伺服器資訊", color=0x00ff00)
+        embed.description = "IP: `play.benwyw.com`"
+        embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
+        if code is not None and ctx.author.id in baroUserList:
+            if code.lower() == 'baro':
+                embed.add_field(name="Game", value='Barotrauma', inline=True)
+                embed.add_field(name="Port", value='-', inline=True)
+                embed.add_field(name="Remarks", value='Private', inline=True)
+                embed.add_field(name="Server name", value='`Pok guys`', inline=True)
+                embed.add_field(name="Password", value='||`pokisgay`||', inline=True)
+            else:
+                embed.add_field(name="Error", value='Code `{}` not found. Please check `$server`.'.format(code))
+        else:
+            embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
+
+        embed.set_footer(text="www.benwyw.com")
+
+        #Private Message:
+        await ctx.author.send(embed=embed)
+
+    @commands.command(name='server', aliases=['ser','serverlist'])
+    async def _server(self, ctx: commands.Context):
+        '''所有 play.benwyw.com 既 Server 列表'''
+
+        embed = discord.Embed(title="List of Servers Enabled | 已啟用的伺服器列表", color=0x00ff00)
+        embed.description = "IP: `play.benwyw.com`"
+        #embed.set_author(name='Test Name', icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+
+        embed.add_field(name="Game", value='Minecraft (Survival)\nMinecraft (Pixelmon)\nTerraria (Expert)\nBarotrauma', inline=True)
+        embed.add_field(name="Port", value='`25565`\n-\n`7777`\n-', inline=True)
+        embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock\nPublic | Pixelmon Reforged 8.3.0\nPublic | Vanilla\nPrivate | `$get baro`', inline=True)
+        embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
+
+        '''
+        embed.add_field(name="Minecraft", value='Survival', inline=True)
+        embed.add_field(name="Port", value='25565', inline=True)
+        embed.add_field(name="Remarks", value='Public | Java | Bedrock', inline=True)
+        embed.add_field(name="Password", value='-', inline=False)
+
+        embed.add_field(name="Minecraft", value='Pixelmon', inline=True)
+        embed.add_field(name="Port", value='-', inline=True)
+        embed.add_field(name="Remarks", value='Public | Pixelmon Reforged 8.3.0', inline=True)
+        embed.add_field(name="Password", value='-', inline=False)
+
+        embed.add_field(name="Terraria", value='Expert', inline=True)
+        embed.add_field(name="Port", value='`7777`', inline=True)
+        embed.add_field(name="Remarks", value='Public | Vanilla', inline=True)
+        embed.add_field(name="Password", value='-', inline=False)
+
+        embed.add_field(name="Barotrauma", value='-', inline=True)
+        embed.add_field(name="Port", value='-', inline=True)
+        embed.add_field(name="Remarks", value='`Pok guys`', inline=True)
+        embed.add_field(name="Password", value='||pokisgay||', inline=False)
+        '''
+
+        embed.set_footer(text="www.benwyw.com")
+
+        await ctx.send(embed=embed)
+
     @commands.command(name='bind')
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def _bind(self, ctx: commands.Context, message):
