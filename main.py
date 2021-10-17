@@ -1461,6 +1461,16 @@ class Special(commands.Cog):
     async def _server(self, ctx: commands.Context):
         '''所有 play.benwyw.com 既 Server 列表'''
 
+        embed1 = discord.Embed(title="List of Servers Enabled | 已啟用的伺服器列表", color=0x00ff00)
+        embed1.description = "IP: `play.benwyw.com`"
+        embed1.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+
+        embed1.add_field(name="Game", value='Minecraft (Survival)', inline=True)
+        embed1.add_field(name="Port", value='`25565`', inline=True)
+        embed1.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock', inline=True)
+
+        embed1.set_footer(text="www.benwyw.com")
+
         embed = discord.Embed(title="List of Servers Enabled | 已啟用的伺服器列表", color=0x00ff00)
         embed.description = "IP: `play.benwyw.com`"
         #embed.set_author(name='Test Name', icon_url=ctx.author.avatar_url)
@@ -1518,6 +1528,7 @@ class Special(commands.Cog):
 
         embed.set_footer(text="www.benwyw.com")
 
+        await ctx.send(embed=embed1)
         await ctx.send(embed=embed)
 
     @commands.command(name='bind')
