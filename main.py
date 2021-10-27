@@ -2533,6 +2533,7 @@ async def on_member_join(member):
         bot_channel_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         bot_channel_embed_to_member.add_field(name="IP (Survival)", value="mc.benwyw.com", inline=True)
         bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
+        bot_channel_embed_to_member.add_field(name="Java & Bedrock", value="Support both Java & Bedrock. Bedrock requires Port `19132`", inline=False)
         bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username", inline=False)
         bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
         bot_channel_embed_to_member.set_footer(text=timestamp)
