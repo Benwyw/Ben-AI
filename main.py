@@ -1290,6 +1290,46 @@ dmList = [254517813417476097,525298794653548751,562972196880777226,1998772050718
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        
+    @commands.command(name='testwelcome')
+    @commands.is_owner()
+    async def testwelcome(self, ctx: commands.Context):
+        '''Test welcome message'''
+        
+        
+        
+        bot_channel_embed_to_staff = discord.Embed()
+        bot_channel_embed_to_member = discord.Embed()
+
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+        bot_channel_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        bot_channel_embed_to_staff.title = "已加入Discord伺服器"
+        bot_channel_embed_to_staff.add_field(name="Discord", value=ctx.author, inline=True)
+        bot_channel_embed_to_staff.set_footer(text=timestamp)
+
+        bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
+        bot_channel_embed_to_member.title = "Welcome to Ben\'s Minecraft server"
+        bot_channel_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        bot_channel_embed_to_member.add_field(name="IP (Survival)", value="mc.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
+        bot_channel_embed_to_member.add_field(name="Java & Bedrock", value="Support both Java & Bedrock. Bedrock requires Port `19132`", inline=False)
+        bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username, please join the server at least once before requesting.", inline=False)
+        bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
+        bot_channel_embed_to_member.set_footer(text=timestamp)
+
+        #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
+        bot_channel = bot.get_channel(692466531447210105)
+        try:
+            await ctx.author.send(embed=bot_channel_embed_to_member)
+            bot_channel_embed_to_staff.description = "歡迎信息發送成功"
+            bot_channel_embed_to_staff.color = 0x00ff00
+        except Exception as e:
+            bot_channel_embed_to_staff.description = "無法發送歡迎信息"
+            bot_channel_embed_to_staff.color = 0xff0000
+            logs_channel = bot.get_channel(809527650955296848)
+            await logs_channel.send(str(e))
+        await bot_channel.send(embed=bot_channel_embed_to_staff)
 
     @commands.command(name='updateserverpw')
     @commands.is_owner()
