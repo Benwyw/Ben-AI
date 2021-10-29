@@ -1290,13 +1290,52 @@ dmList = [254517813417476097,525298794653548751,562972196880777226,1998772050718
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    @commands.command(name='log')
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
+    async def log(self, ctx: commands.Context, message):
+        '''Change log release'''
+
+        #timezone
+        tz = pytz.timezone('Asia/Hong_Kong')
+        hk_now = datetime.now(tz)
+        timestamp = str(hk_now)
+
+        #channels
+        changelog_channel = bot.get_channel(903541645411237889)
+        logs_channel = bot.get_channel(809527650955296848)
+
+        #changelog embed
+        embed_changelog = discord.Embed()
+        embed_changelog.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
+        embed_changelog.title = "Changelog"
+        embed_changelog.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_changelog.description = message
+        embed_changelog.set_footer(text=timestamp)
+
+        #send changelog
+        try:
+            await changelog_channel.send(message)
+        except Exception as e:
+            await ctx.send("Unable to send message to change-log channel")
+            await logs_channel.send(str(e))
+
+        #response embed
+        embed = discord.Embed()
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.title = "Released changelog"
+        embed.description = str(message)
+        embed.set_footer(text=timestamp)
+
+        #send reponse
+        await ctx.send(embed=embed)
+        await logs_channel.send("Changelog: {} --> {}".format(ctx.author,message))
+        await ctx.message.delete()
         
     @commands.command(name='testwelcome')
     @commands.is_owner()
     async def testwelcome(self, ctx: commands.Context):
         '''Test welcome message'''
-        
-        
         
         bot_channel_embed_to_staff = discord.Embed()
         bot_channel_embed_to_member = discord.Embed()
