@@ -1316,7 +1316,7 @@ class Special(commands.Cog):
 
             #send changelog
             try:
-                await changelog_channel.send(message)
+                await changelog_channel.send(embed=embed_changelog)
             except Exception as e:
                 await ctx.send("Unable to send message to change-log channel")
                 await logs_channel.send(str(e))
