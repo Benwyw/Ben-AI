@@ -1295,42 +1295,45 @@ class Special(commands.Cog):
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     async def log(self, ctx: commands.Context, message):
         '''Change log release'''
+        
+        if ctx.channel.id == 692466531447210105:
+            #timezone
+            tz = pytz.timezone('Asia/Hong_Kong')
+            hk_now = datetime.now(tz)
+            timestamp = str(hk_now)
 
-        #timezone
-        tz = pytz.timezone('Asia/Hong_Kong')
-        hk_now = datetime.now(tz)
-        timestamp = str(hk_now)
+            #channels
+            changelog_channel = bot.get_channel(903541645411237889)
+            logs_channel = bot.get_channel(809527650955296848)
 
-        #channels
-        changelog_channel = bot.get_channel(903541645411237889)
-        logs_channel = bot.get_channel(809527650955296848)
+            #changelog embed
+            embed_changelog = discord.Embed()
+            embed_changelog.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
+            embed_changelog.title = "Changelog"
+            embed_changelog.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+            embed_changelog.description = message
+            embed_changelog.set_footer(text=timestamp)
 
-        #changelog embed
-        embed_changelog = discord.Embed()
-        embed_changelog.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
-        embed_changelog.title = "Changelog"
-        embed_changelog.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
-        embed_changelog.description = message
-        embed_changelog.set_footer(text=timestamp)
+            #send changelog
+            try:
+                await changelog_channel.send(message)
+            except Exception as e:
+                await ctx.send("Unable to send message to change-log channel")
+                await logs_channel.send(str(e))
 
-        #send changelog
-        try:
-            await changelog_channel.send(message)
-        except Exception as e:
-            await ctx.send("Unable to send message to change-log channel")
-            await logs_channel.send(str(e))
+            #response embed
+            embed = discord.Embed()
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.title = "已發布變更日誌"
+            embed.description = str(message)
+            embed.set_footer(text=timestamp)
 
-        #response embed
-        embed = discord.Embed()
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-        embed.title = "Released changelog"
-        embed.description = str(message)
-        embed.set_footer(text=timestamp)
-
-        #send reponse
-        await ctx.send(embed=embed)
-        await logs_channel.send("Changelog: {} --> {}".format(ctx.author,message))
-        await ctx.message.delete()
+            #send reponse
+            await ctx.send(embed=embed)
+            await logs_channel.send("Changelog: {} --> {}".format(ctx.author,message))
+            await ctx.message.delete()
+        else:
+            await ctx.send("請去 <#692466531447210105>")
         
     @commands.command(name='testwelcome')
     @commands.is_owner()
