@@ -1357,7 +1357,10 @@ class Special(commands.Cog):
         bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
         bot_channel_embed_to_member.add_field(name="Java & Bedrock", value="Support both Java & Bedrock. Bedrock requires Port `19132`", inline=False)
         bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username, please join the server at least once before requesting.", inline=False)
+        bot_channel_embed_to_member.add_field(name="In-game guide", value="`/ibooks list` `/ibooks get (book)`", inline=False)
         bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Map", value="map.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Instagram", value="ig.benwyw.com", inline=True)
         bot_channel_embed_to_member.set_footer(text=timestamp)
 
         #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
@@ -2619,6 +2622,8 @@ async def on_member_join(member):
         bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username, please join the server at least once before requesting.", inline=False)
         bot_channel_embed_to_member.add_field(name="In-game guide", value="`/ibooks list` `/ibooks get (book)`", inline=False)
         bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Map", value="map.benwyw.com", inline=True)
+        bot_channel_embed_to_member.add_field(name="Instagram", value="ig.benwyw.com", inline=True)
         bot_channel_embed_to_member.set_footer(text=timestamp)
 
         #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
