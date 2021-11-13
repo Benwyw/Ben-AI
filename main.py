@@ -2471,6 +2471,10 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    if str(message.content).startswith("$") and len(str(message.content)) > 1:
+        if str(message.content).split("$", 1)[1].isnumeric():
+            return
+
     '''if str(message.author.id) in ['407481608560574464','794228652547375104','805046279377387521'] and message.content.startswith('$'):
         author_nick = message.author.display_name
 
