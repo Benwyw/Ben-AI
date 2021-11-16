@@ -2514,7 +2514,7 @@ async def on_message(message):
             else:
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    if message.guild.id == 763404947500564500 and message.channel == bot.get_channel(909996280737042432):
+    if message.guild.id == 671654280985313282 and message.channel == bot.get_channel(910017157675503637):
         logs_channel = bot.get_channel(809527650955296848)
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
@@ -2541,7 +2541,7 @@ async def on_message(message):
         embed_generated_public.set_footer(text=timestamp)
 
         await message.channel.send(embed=embed_generated_public)
-        await bot.get_channel(909998897248735263).send(embed=embed_generated)
+        await bot.get_channel(910016880029339688).send(embed=embed_generated)
         await message.author.send(embed=embed_generated_ind)
         await logs_channel.send("Suggestion: {} --> {}".format(message.author,message))
         await message.delete()
