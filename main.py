@@ -1832,6 +1832,7 @@ class Special(commands.Cog):
         '''特別指令。公告。'''
 
         #client.get_channel("182583972662")
+        '''
         logs_channel = bot.get_channel(809527650955296848)
 
         for guild in bot.guilds:
@@ -1859,6 +1860,48 @@ class Special(commands.Cog):
         await ctx.send(embed=embed)
         await logs_channel.send("Announced: {}".format(message))
         await ctx.message.delete()
+        '''
+        if ctx.channel.id == 810511993449742347:
+            #timezone
+            tz = pytz.timezone('Asia/Hong_Kong')
+            hk_now = datetime.now(tz)
+            timestamp = str(hk_now)
+
+            #channels
+            botupdates_channel = bot.get_channel(910000426240340009)
+            logs_channel = bot.get_channel(809527650955296848)
+
+            #images related
+            bot_member = ctx.guild.get_member(809526579389792338)
+
+            #botupdates embed
+            embed_botupdates = discord.Embed()
+            embed_botupdates.set_author(name="Ben AI", icon_url=bot_member.avatar_url)
+            embed_botupdates.title = "Bot Updates"
+            embed_botupdates.set_thumbnail(url=bot_member.avatar_url)
+            embed_botupdates.description = message
+            embed_botupdates.set_footer(text=timestamp)
+
+            #send botupdates
+            try:
+                await botupdates_channel.send(embed=embed_botupdates)
+            except Exception as e:
+                await ctx.send("Unable to send message to bot-updates channel")
+                await logs_channel.send(str(e))
+
+            #response embed
+            embed = discord.Embed()
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.title = "已發布Bot Updates"
+            embed.description = str(message)
+            embed.set_footer(text=timestamp)
+
+            #send reponse
+            await ctx.send(embed=embed)
+            await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author,message))
+            await ctx.message.delete()
+        else:
+            await ctx.send("請去 <#810511993449742347>")
 
     @commands.command(name='status')
     @commands.is_owner()
@@ -2425,7 +2468,10 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
+    if message.author == bot.user:
+        return
+
+    if message.guild is None:
         if not str(message.content).startswith("$") and message.author.id not in temp_blocked_list:
             req_ver_author = message.author
             req_ver_author_id = message.author.id
@@ -2468,8 +2514,8 @@ async def on_message(message):
             else:
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    if message.author == bot.user:
-        return
+    if message.guild.id == 763404947500564500 and message.channel == bot.get_channel(909996280737042432):
+        bot.get_channel(909998897248735263).send(message.content)
 
     if str(message.content).startswith("$") and len(str(message.content)) > 1:
         if str(message.content).split("$", 1)[1].isnumeric():
