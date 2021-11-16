@@ -2515,7 +2515,36 @@ async def on_message(message):
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
     if message.guild.id == 763404947500564500 and message.channel == bot.get_channel(909996280737042432):
-        await bot.get_channel(909998897248735263).send(message.content)
+        logs_channel = bot.get_channel(809527650955296848)
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+        embed_generated = discord.Embed()
+        embed_generated.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated.title = "Suggestion received"
+        embed_generated.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_generated.description = message.content
+        embed_generated.set_footer(text=timestamp)
+
+        embed_generated_ind = discord.Embed()
+        embed_generated_ind.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated_ind.title = "Suggested sent"
+        embed_generated_ind.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_generated_ind.description = message.content
+        embed_generated_ind.add_field(name="Acknowledgement", value="If your suggestion was adopted, it will be shown in #changelog channel.", inline=False)
+        embed_generated_ind.set_footer(text=timestamp)
+
+        embed_generated_public = discord.Embed()
+        embed_generated_public.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated_public.title = "Submitted a suggestion"
+        embed_generated_public.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_generated_public.description = "Content sent to staff team directly and privately"
+        embed_generated_public.set_footer(text=timestamp)
+
+        await message.channel.send(embed=embed_generated_public)
+        await bot.get_channel(909998897248735263).send(embed=embed_generated)
+        await message.author.send(embed=embed_generated_ind)
+        await logs_channel.send("Suggestion: {} --> {}".format(message.author,message))
+        await message.delete()
 
     if str(message.content).startswith("$") and len(str(message.content)) > 1:
         if str(message.content).split("$", 1)[1].isnumeric():
