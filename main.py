@@ -2515,7 +2515,7 @@ async def on_message(message):
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
     if message.guild.id == 763404947500564500 and message.channel == bot.get_channel(909996280737042432):
-        bot.get_channel(909998897248735263).send(message.content)
+        await bot.get_channel(909998897248735263).send(message.content)
 
     if str(message.content).startswith("$") and len(str(message.content)) > 1:
         if str(message.content).split("$", 1)[1].isnumeric():
