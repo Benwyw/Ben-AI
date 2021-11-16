@@ -2530,7 +2530,7 @@ async def on_message(message):
         embed_generated_ind.title = "Suggested sent"
         embed_generated_ind.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed_generated_ind.description = message.content
-        embed_generated_ind.add_field(name="Acknowledgement", value="If your suggestion was adopted, it will be shown in #changelog channel.", inline=False)
+        embed_generated_ind.add_field(name="Acknowledgement", value="If your suggestion was adopted, it will be shown in #changelog.", inline=False)
         embed_generated_ind.set_footer(text=timestamp)
 
         embed_generated_public = discord.Embed()
