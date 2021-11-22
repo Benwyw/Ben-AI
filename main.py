@@ -1422,7 +1422,7 @@ class Special(commands.Cog):
         '''Update server pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
 
         result = "No operations."
-        if (message is not None and ' ' in message):
+        if (message is not None and '$' in message):
             id = message.split('$')[0]
             pw = message.split('$')[1]
             game = message.split('$')[2]
