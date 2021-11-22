@@ -1832,6 +1832,7 @@ class Special(commands.Cog):
         '''特別指令。公告。'''
 
         #client.get_channel("182583972662")
+        '''
         logs_channel = bot.get_channel(809527650955296848)
 
         for guild in bot.guilds:
@@ -1859,6 +1860,48 @@ class Special(commands.Cog):
         await ctx.send(embed=embed)
         await logs_channel.send("Announced: {}".format(message))
         await ctx.message.delete()
+        '''
+        if ctx.channel.id == 810511993449742347:
+            #timezone
+            tz = pytz.timezone('Asia/Hong_Kong')
+            hk_now = datetime.now(tz)
+            timestamp = str(hk_now)
+
+            #channels
+            botupdates_channel = bot.get_channel(910000426240340009)
+            logs_channel = bot.get_channel(809527650955296848)
+
+            #images related
+            bot_member = ctx.guild.get_member(809526579389792338)
+
+            #botupdates embed
+            embed_botupdates = discord.Embed()
+            embed_botupdates.set_author(name="Ben AI", icon_url=bot_member.avatar_url)
+            embed_botupdates.title = "Bot Updates"
+            embed_botupdates.set_thumbnail(url=bot_member.avatar_url)
+            embed_botupdates.description = message
+            embed_botupdates.set_footer(text=timestamp)
+
+            #send botupdates
+            try:
+                await botupdates_channel.send(embed=embed_botupdates)
+            except Exception as e:
+                await ctx.send("Unable to send message to bot-updates channel")
+                await logs_channel.send(str(e))
+
+            #response embed
+            embed = discord.Embed()
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.title = "已發布Bot Updates"
+            embed.description = str(message)
+            embed.set_footer(text=timestamp)
+
+            #send reponse
+            await ctx.send(embed=embed)
+            await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author,message))
+            await ctx.message.delete()
+        else:
+            await ctx.send("請去 <#810511993449742347>")
 
     @commands.command(name='status')
     @commands.is_owner()
@@ -2425,7 +2468,10 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    if message.guild is None and message.author != bot.user and message.author != bot.get_user(254517813417476097):
+    if message.author == bot.user:
+        return
+
+    if message.guild is None:
         if not str(message.content).startswith("$") and message.author.id not in temp_blocked_list:
             req_ver_author = message.author
             req_ver_author_id = message.author.id
@@ -2468,8 +2514,37 @@ async def on_message(message):
             else:
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    if message.author == bot.user:
-        return
+    if message.guild.id == 671654280985313282 and message.channel == bot.get_channel(910017157675503637):
+        logs_channel = bot.get_channel(809527650955296848)
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+        embed_generated = discord.Embed()
+        embed_generated.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated.title = "Suggestion received"
+        embed_generated.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_generated.description = message.content
+        embed_generated.set_footer(text=timestamp)
+
+        embed_generated_ind = discord.Embed()
+        embed_generated_ind.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated_ind.title = "Suggested sent"
+        embed_generated_ind.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_generated_ind.description = message.content
+        embed_generated_ind.add_field(name="Acknowledgement", value="If your suggestion was adopted, it will be shown in #changelog.", inline=False)
+        embed_generated_ind.set_footer(text=timestamp)
+
+        embed_generated_public = discord.Embed()
+        embed_generated_public.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated_public.title = "Submitted a suggestion"
+        embed_generated_public.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
+        embed_generated_public.description = "Content sent to staff team directly and privately"
+        embed_generated_public.set_footer(text=timestamp)
+
+        await message.channel.send(embed=embed_generated_public)
+        await bot.get_channel(910016880029339688).send(embed=embed_generated)
+        await message.author.send(embed=embed_generated_ind)
+        await logs_channel.send("Suggestion: {} --> {}".format(message.author,message))
+        await message.delete()
 
     if str(message.content).startswith("$") and len(str(message.content)) > 1:
         if str(message.content).split("$", 1)[1].isnumeric():
