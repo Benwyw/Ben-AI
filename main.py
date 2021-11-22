@@ -1495,6 +1495,9 @@ class Special(commands.Cog):
         #372395366986940416 Nelson
         #363347146080256001 Kei
         #313613491816890369 keith   Pok's friend
+        terrariaUserList = [232833713648435200, 311425525732212736]
+        #232833713648435200 Sheep
+        #311425525732212736 Willy
 
 
         embed = discord.Embed(title="Private server info | 私人伺服器資訊", color=0x00ff00)
@@ -1503,6 +1506,7 @@ class Special(commands.Cog):
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         code = code.lower()
 
+        '''
         if code is not None and ctx.author.id in baroUserList:
             selectServer = DBConnection.selectServer(code)
             if  selectServer is not None:
@@ -1519,6 +1523,39 @@ class Special(commands.Cog):
         else:
             embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
             status = "No permission"
+        '''
+
+        if code is not None:
+            selectServer = DBConnection.selectServer(code)
+            if selectServer is not None:
+                if selectServer[1] != "-":
+                    if code == "baro":
+                        if ctx.author.id in baroUserList:
+                            game = selectServer[2]
+                            port = selectServer[3]
+                            remarks = selectServer[4]
+                            password = "||`{}`||".format(selectServer[1])
+                            status = "Success"
+                        else:
+                            embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
+                            status = "No permission"
+                    if code == "terraria":
+                        if discord.utils.get(ctx.guild.roles, id=720669342550720663) in ctx.author.roles or discord.utils.get(ctx.guild.roles, id=735956800750223430) in ctx.author.roles or ctx.author.id in terrariaUserList:
+                            game = selectServer[2]
+                            port = selectServer[3]
+                            remarks = selectServer[4]
+                            password = "||`{}`||".format(selectServer[1])
+                            status = "Success"
+                        else:
+                            embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
+                            status = "No permission"
+                else:
+                    status = "No password"
+            else:
+                status = "Code not found"
+            
+                            
+
 
         if status == "No password":
             await ctx.send("Requesting code is not a private server!")
