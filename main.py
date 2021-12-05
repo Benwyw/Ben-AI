@@ -1589,7 +1589,7 @@ class Special(commands.Cog):
 
         embed1.add_field(name="Game", value='Minecraft (Survival)', inline=True)
         embed1.add_field(name="Port", value='`25565`', inline=True)
-        embed1.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock', inline=True)
+        embed1.add_field(name="Remarks", value='Public | Latest | Java & Bedrock', inline=True)
 
         embed1.set_footer(text="www.benwyw.com")
 
