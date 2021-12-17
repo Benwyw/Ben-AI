@@ -2508,6 +2508,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    '''
     if message.guild is None:
         if not str(message.content).startswith("$") and message.author.id not in temp_blocked_list:
             req_ver_author = message.author
@@ -2550,7 +2551,9 @@ async def on_message(message):
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
             else:
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
+    '''
 
+    '''
     if message.guild.id == 671654280985313282 and message.channel == bot.get_channel(910017157675503637):
         logs_channel = bot.get_channel(809527650955296848)
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
@@ -2582,6 +2585,7 @@ async def on_message(message):
         await message.author.send(embed=embed_generated_ind)
         await logs_channel.send("Suggestion: {} --> {}".format(message.author,message))
         await message.delete()
+    '''
 
     if str(message.content).startswith("$") and len(str(message.content)) > 1:
         if str(message.content).split("$", 1)[1].isnumeric():
