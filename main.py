@@ -1584,7 +1584,10 @@ class Special(commands.Cog):
         '''所有 play.benwyw.com 既 Server 列表'''
 
         embed1 = discord.Embed(title="Main Server | 主要伺服器", color=0x00ff00)
-        embed1.description = "IP: `mc.benwyw.com`"
+        embed1.description = "End of service 17Dec2021"
+        '''
+        "IP: `mc.benwyw.com`"
+        '''
         embed1.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
 
         embed1.add_field(name="Game", value='Minecraft (Survival)', inline=True)
