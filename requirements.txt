@@ -1,5 +1,5 @@
 pip
-youtube-dl
+youtube_dl==2021.12.17
 discord.py[voice]
 python-dotenv
 ffmpeg
