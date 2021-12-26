@@ -787,12 +787,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'default_search': 'auto',
         'source_address': '0.0.0.0',
         'verbose': True,
-        'update': True,
-        'rm_cache_dir': True
+        'update': True
     }
 
     FFMPEG_OPTIONS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 4',
+        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         'options': '-vn',
     }
 
