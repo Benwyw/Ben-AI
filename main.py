@@ -787,7 +787,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'default_search': 'auto',
         'source_address': '0.0.0.0',
         'verbose': True,
-        'update': True
+        'update': True,
+        'rm_cache_dir': True
     }
 
     FFMPEG_OPTIONS = {
