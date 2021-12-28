@@ -2866,11 +2866,11 @@ async def on_presence_update(before, after):
     try:
         pok_channel = bot.get_channel(858022877450600458)
 
-        if str(before.status) == "offline":
+        if str(before.status) in ("offline", "idle"):
             if str(after.status) == "online":
                 await pok_channel.send("{} 已上線".format(before))
 
-        if str(before.status) == "online":
+        if str(before.status) in ("online", "idle") :
             if str(after.status) == "offline":
                 await pok_channel.send("{} 已離線".format(before))
 
