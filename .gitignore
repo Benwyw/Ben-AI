@@ -261,3 +261,6 @@ ffmpeg.exe
 
 # Intellji
 .idea/
+
+# pycord
+pycord/

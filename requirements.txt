@@ -1,6 +1,6 @@
 pip
 youtube_dl
-discord.py[voice]
+pycord[voice]
 python-dotenv
 ffmpeg
 PyNaCl

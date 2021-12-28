@@ -25,7 +25,9 @@ import youtube_dl
 import pandas as pd
 import MinecraftServer as mc
 
+from discord import slash_command
 from discord.ext import commands
+
 from dotenv import load_dotenv
 from random import randrange
 from datetime import datetime
@@ -42,6 +44,10 @@ from discord.ext import tasks
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 BOT_PREFIX = '$'
+
+#========================Slash========================
+global guild_ids
+guild_ids = [763404947500564500, 351742829254410250, 671654280985313282]
 
 #========================Minecraft========================
 global mc_ops, temp_blocked_list
@@ -1078,7 +1084,6 @@ class Music(commands.Cog):
 
     @commands.command(name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
-        """我要進來了。"""
 
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
@@ -2281,11 +2286,11 @@ class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(name='hello')
+    @slash_command(name='hello', guild_ids=guild_ids)
     async def _hello(self, ctx: commands.Context):
         '''Say Hello to the AI'''
 
-        await ctx.send("你好呀 "+str(ctx.author.display_name))
+        await ctx.respond("你好呀 "+str(ctx.author.display_name))
 
     @commands.command(name='ping')
     async def _ping(self, ctx: commands.Context):
@@ -2421,7 +2426,9 @@ bot.add_cog(Game(bot))
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | 冇野幫到你"))
+    #status = "$help | 冇野幫到你"
+    status = "Dev in-progress"
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     gameLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
