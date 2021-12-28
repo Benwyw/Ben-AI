@@ -404,7 +404,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def rc(self, ctx: commands.Context):
         embed = discord.Embed(title="隨機卡", description="", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         selectCard = random.choice(cardChoices)
         selectSuit = random.choice(suits)
 
@@ -443,7 +443,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def draw(self, ctx: commands.Context, cards: int = 1):
         embed = discord.Embed(title="抽卡", description=None, color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
         if cards > 52 or cards <= 0:
             embed.description = "您不能抽出此數量的卡。 提供一個介於1到52（含）之間的數字。"
@@ -488,7 +488,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def hand(self, ctx: commands.Context):
         embed = discord.Embed(title=ctx.author.name + "'s Hand", description=None, color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
 
         if checkInGame(ctx.author):
@@ -514,7 +514,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def setsort(self, ctx: commands.Context, sorttype: str = None):
         embed = discord.Embed(title="排序方式", description=None, color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
         embed.add_field(name="大統領-樣式 (p)", value="3 - K, A, 2", inline=False)
         embed.add_field(name="默認 (d)", value="A - K", inline=False)
@@ -558,7 +558,7 @@ class Game(commands.Cog):
         if channelGame is not None:
             embed = discord.Embed(title=None, description="該頻道已經有一個活躍的遊戲。", color=0x00ff00)
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.add_field(name="遊戲編號", value=str(channelGame.id))
             embed.set_footer(text="使用 $in <遊戲編號> 加入遊戲。")
             await ctx.send(embed=embed)
@@ -567,7 +567,7 @@ class Game(commands.Cog):
         if checkInGame(ctx.author):
             embed = discord.Embed(title=None, description="您已經在玩遊戲。", color=0x00ff00)
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             await ctx.send(embed=embed)
             return
 
@@ -624,7 +624,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def _in(self, ctx: commands.Context, id: int = None):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
 
         if checkInGame(ctx.author):
@@ -676,7 +676,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def out(self, ctx: commands.Context):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
@@ -705,7 +705,7 @@ class Game(commands.Cog):
                     pass_context=True)
     async def start(self, ctx: commands.Context):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
@@ -741,7 +741,7 @@ class Game(commands.Cog):
     async def setcolor(self, ctx: commands.Context, colour: str):
         embed = discord.Embed(title="自定義顏色", description=None, color=0x00ff00)
         embed.set_thumbnail(url="https://i.imgur.com/FCCMHHi.png")
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', colour)
         if not match:
             embed.description="無效的顏色十六進制代碼。"
@@ -1344,7 +1344,7 @@ class Special(commands.Cog):
 
             #response embed
             embed = discord.Embed()
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.title = "已發布變更日誌"
             embed.description = str(message)
             embed.set_footer(text=timestamp)
@@ -1366,7 +1366,7 @@ class Special(commands.Cog):
 
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
-        bot_channel_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        bot_channel_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         bot_channel_embed_to_staff.title = "已加入Discord伺服器"
         bot_channel_embed_to_staff.add_field(name="Discord", value=ctx.author, inline=True)
         bot_channel_embed_to_staff.set_footer(text=timestamp)
@@ -1532,7 +1532,7 @@ class Special(commands.Cog):
         embed = discord.Embed(title="Private server info | 私人伺服器資訊", color=0x00ff00)
         embed.description = "IP: `play.benwyw.com`"
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         code = code.lower()
 
         '''
@@ -1629,7 +1629,7 @@ class Special(commands.Cog):
 
         embed = discord.Embed(title="List of Servers Enabled | 已啟用的伺服器列表", color=0x00ff00)
         embed.description = "IP: `play.benwyw.com`"
-        #embed.set_author(name='Test Name', icon_url=ctx.author.avatar_url)
+        #embed.set_author(name='Test Name', icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
 
         #embed.add_field(name="Game", value='Minecraft (Survival)\nMinecraft (Pixelmon)\nTerraria (Expert)\nBarotrauma', inline=True)
@@ -1700,7 +1700,7 @@ class Special(commands.Cog):
 
         embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
         embed.description = "Minecraft名: {}".format(mc_Username)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed.set_footer(text="IP: mc.benwyw.com")
 
@@ -1718,7 +1718,7 @@ class Special(commands.Cog):
 
         embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
         embed.description = "Minecraft名: 已解除綁定"
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed.set_footer(text="IP: mc.benwyw.com")
 
@@ -1736,12 +1736,12 @@ class Special(commands.Cog):
 
         if mc_Username is None:
             embed.description = "Minecraft名: 尚未綁定伺服器，\n請使用 $bind (Minecraft名)"
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             embed.set_footer(text="IP: mc.benwyw.com")
         else:
             embed.description = "Minecraft名: {}".format(mc_Username)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             embed.set_footer(text="IP: mc.benwyw.com")
 
@@ -1922,7 +1922,7 @@ class Special(commands.Cog):
                 await guild.text_channels[0].send(message)
 
         embed = discord.Embed()
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
 
         tz = pytz.timezone('Asia/Hong_Kong')
         hk_now = datetime.now(tz)
@@ -1967,7 +1967,7 @@ class Special(commands.Cog):
 
             #response embed
             embed = discord.Embed()
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.title = "已發布Bot Updates"
             embed.description = str(message)
             embed.set_footer(text=timestamp)
@@ -2175,7 +2175,7 @@ class Special(commands.Cog):
             req_ver_embed_to_staff = discord.Embed()
 
             req_ver_embed_to_staff.title = "已處理Minecraft驗證請求"
-            req_ver_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            req_ver_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             req_ver_embed_to_staff.add_field(name="Minecraft", value=player_name, inline=True)
             req_ver_embed_to_staff.set_footer(text=timestamp)
@@ -2220,14 +2220,14 @@ class Special(commands.Cog):
             req_ver_embed_to_member = discord.Embed()
 
             req_ver_embed_to_staff.title = "已處理Discord驗證請求"
-            req_ver_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            req_ver_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             req_ver_embed_to_staff.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             req_ver_embed_to_staff.add_field(name="Discord", value=user, inline=True)
             req_ver_embed_to_staff.set_footer(text=timestamp)
 
             req_ver_embed_to_member.title = "Verification"
             req_ver_embed_to_member.description = "Your Discord verification request was approved"
-            req_ver_embed_to_member.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            req_ver_embed_to_member.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             req_ver_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             req_ver_embed_to_member.add_field(name="Discord", value=user, inline=True)
             req_ver_embed_to_member.add_field(name="Lands Guide", value="https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/", inline=False)
