@@ -1,6 +1,6 @@
 pip
-youtube_dl==2021.12.17
-discord.py[voice]
+youtube_dl
+pycord[voice]
 python-dotenv
 ffmpeg
 PyNaCl
