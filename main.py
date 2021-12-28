@@ -321,7 +321,7 @@ class Game(commands.Cog):
             embed = discord.Embed(title="新世界 指令表",
                                   description="要查看幫助頁面，只需在$cmd命令後添加頁面編號。 例如：$cmd 3",
                                   color=0x00ff00)
-            embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+            embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             embed.add_field(name="第1頁：賭注",
                             value="德州撲克類遊戲中的博彩相關的指令。", inline=False)
             embed.add_field(name="第2頁：經濟", value="經濟系統相關的指令。",
@@ -334,7 +334,7 @@ class Game(commands.Cog):
 
         if param.isdecimal():
             embed = discord.Embed(title=None, description=None, color=0x00ff00)
-            embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+            embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             if int(param) == 1:
                 commands = bot.get_cog('Betting').get_commands()
                 embed.title = "賭注 指令"
@@ -394,7 +394,7 @@ class Game(commands.Cog):
 
             embed = discord.Embed(title=BOT_PREFIX + command.name, description=command.help, color=0x00ff00)
             embed.set_author(name="指令幫助")
-            embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+            embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             await ctx.send(embed=embed)
 
     @slash_command(guild_ids=guild_ids, description="生成隨機卡。 可能會出現重複項。",
@@ -444,7 +444,7 @@ class Game(commands.Cog):
     async def draw(self, ctx: commands.Context, cards: int = 1):
         embed = discord.Embed(title="抽卡", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         if cards > 52 or cards <= 0:
             embed.description = "您不能抽出此數量的卡。 提供一個介於1到52（含）之間的數字。"
             await ctx.send(embed=embed)
@@ -489,7 +489,7 @@ class Game(commands.Cog):
     async def hand(self, ctx: commands.Context):
         embed = discord.Embed(title=ctx.author.name + "'s Hand", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if checkInGame(ctx.author):
             GAME = getGame(ctx.author)
@@ -515,7 +515,7 @@ class Game(commands.Cog):
     async def setsort(self, ctx: commands.Context, sorttype: str = None):
         embed = discord.Embed(title="排序方式", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         embed.add_field(name="大統領-樣式 (p)", value="3 - K, A, 2", inline=False)
         embed.add_field(name="默認 (d)", value="A - K", inline=False)
         embed.add_field(name="Suits (s)", value="Ace of Diamonds - King of Spades", inline=False)
@@ -557,7 +557,7 @@ class Game(commands.Cog):
         channelGame = getGameByChannel(ctx.channel)
         if channelGame is not None:
             embed = discord.Embed(title=None, description="該頻道已經有一個活躍的遊戲。", color=0x00ff00)
-            embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+            embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.add_field(name="遊戲編號", value=str(channelGame.id))
             embed.set_footer(text="使用 $in <遊戲編號> 加入遊戲。")
@@ -566,7 +566,7 @@ class Game(commands.Cog):
 
         if checkInGame(ctx.author):
             embed = discord.Embed(title=None, description="您已經在玩遊戲。", color=0x00ff00)
-            embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+            embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             await ctx.send(embed=embed)
             return
@@ -574,7 +574,7 @@ class Game(commands.Cog):
         emoji1 = '1️⃣'
         #emoji2 = '2️⃣'
         embed = discord.Embed(title="遊戲選擇", description="通過使用給定的表情符號對此消息做出反應來選擇遊戲類型。", color=0x00ff00)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         embed.add_field(name="德州撲克", value=emoji1)
         #embed.add_field(name="大統領", value=emoji2)
         msg = await ctx.send(embed=embed)
@@ -625,7 +625,7 @@ class Game(commands.Cog):
     async def _in(self, ctx: commands.Context, id: int = None):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if checkInGame(ctx.author):
             embed.description = "您已經在玩遊戲。"
@@ -677,7 +677,7 @@ class Game(commands.Cog):
     async def out(self, ctx: commands.Context):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
@@ -706,7 +706,7 @@ class Game(commands.Cog):
     async def start(self, ctx: commands.Context):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
