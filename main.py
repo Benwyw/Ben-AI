@@ -80,7 +80,7 @@ cardHeight = 210
 
 gameList = []
 
-uncategorized = ['game', 'hand',  'in', 'rc', 'setColor', 'setSort', 'start']
+uncategorized = ['game', 'hand',  'in', 'rc', 'setcolor', 'setsort', 'start']
 
 # Card generator
 cardChoices = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -223,16 +223,16 @@ def checkInGame(user: discord.Member):
             return True
     return False
 
-# Get a Game object by its 6-digit ID
-def getGameByID(ID):
+# Get a Game object by its 6-digit id
+def getGameByid(id):
     for GAME in gameList:
-        if GAME.ID == ID:
+        if GAME.id == id:
             return GAME
 
-# Check if a Game object exists given a 6-digit ID
-def hasGame(ID):
+# Check if a Game object exists given a 6-digit id
+def hasGame(id):
     for GAME in gameList:
-        if GAME.ID == ID:
+        if GAME.id == id:
             return True
     return False
 
@@ -288,10 +288,10 @@ def showHand(user, userHand):
 def sortHand(user: discord.Member, HAND):
     global ORDER, presOrder, suitOrder, order
     h = []
-    sortType = DBConnection.fetchUserData("sortPref", str(user.id))
-    if sortType== 'p':
+    sorttype = DBConnection.fetchUserData("sortPref", str(user.id))
+    if sorttype== 'p':
         ORDER = presOrder
-    elif sortType == 's':
+    elif sorttype == 's':
         ORDER = suitOrder
     else:
         ORDER = order
@@ -312,7 +312,7 @@ def sortHand(user: discord.Member, HAND):
 Commands Start Here
 """
 class Game(commands.Cog):
-    @commands.command(description="遊戲幫助指令。",
+    @slash_command(guild_ids=guild_ids, description="遊戲幫助指令。",
                       name="cmd",
                       help="顯示遊戲指令表",
                       pass_context=True)
@@ -397,7 +397,7 @@ class Game(commands.Cog):
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
             await ctx.send(embed=embed)
 
-    @commands.command(description="生成隨機卡。 可能會出現重複項。",
+    @slash_command(guild_ids=guild_ids, description="生成隨機卡。 可能會出現重複項。",
                       name="rc",
                     brief="生成隨機卡",
                     help="該命令從52張卡組中生成一張隨機卡。 格式為 $rc。 不需要任何參數。",
@@ -435,7 +435,7 @@ class Game(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    '''@commands.command(description="從卡組中拉出許多隨機卡。",
+    '''@slash_command(guild_ids=guild_ids, description="從卡組中拉出許多隨機卡。",
                       name="draw",
                     brief="從牌組中抽出若干張牌",
                     help="從卡組中拉出一些指定的隨機卡。\n"
@@ -481,7 +481,7 @@ class Game(commands.Cog):
         await ctx.send(file=file, embed=embed)'''
 
 
-    @commands.command(description="查看您的手。",
+    @slash_command(guild_ids=guild_ids, description="查看您的手。",
                       name="hand",
                     brief="查看你的手",
                     help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 $hand，不帶任何參數。",
@@ -506,14 +506,13 @@ class Game(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    @commands.command(description="Set sorting type. Use 'p' for president-style sorting (3 low, 2 high), 'd' for default sorting (A low, K high), 's' for suit sorting (diamonds - spades).",
-                      name="setSort",
+    @slash_command(guild_ids=guild_ids, description="Set sorting type. 'p' for (3 low, 2 high), 'd' for (A low, K high), 's' for (diamonds - spades).",
+                      name="setsort",
                     brief="Set sorting type",
                     aliases=['ss'],
-                    help="Set your preferred hand sorting style. Format for this command is $setSort <sortType>.\nUse 'p' for president-style 3 lowest, 2 highest sorting.\n "
-                         "Use 'd' for default ace low, king high sorting.\n Use 's' for sorting by suit.\n",
+                    help="$setsort <sorttype>. 'p' for 3 lowest, 2 highest, 'd' for default, 's' for by suit.",
                     pass_context=True)
-    async def setSort(self, ctx: commands.Context, sortType: str = None):
+    async def setsort(self, ctx: commands.Context, sorttype: str = None):
         embed = discord.Embed(title="排序方式", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
@@ -523,30 +522,30 @@ class Game(commands.Cog):
 
         global order, presOrder, ORDER
 
-        if sortType is None:
+        if sorttype is None:
             embed.description = "沒有提供排序類型。"
             await ctx.send(embed=embed)
             return
 
-        if sortType == "d":
+        if sorttype == "d":
             embed.description = "排序類型設置為默認(d)。"
             ORDER = order
-            DBConnection.updateUserSortPref(str(ctx.author.id), sortType)
-        elif sortType == "p":
+            DBConnection.updateUserSortPref(str(ctx.author.id), sorttype)
+        elif sorttype == "p":
             embed.description = "排序類型設置為“大統領-樣式(p)”。"
             ORDER = presOrder
-            DBConnection.updateUserSortPref(str(ctx.author.id), sortType)
-        elif sortType == "s":
+            DBConnection.updateUserSortPref(str(ctx.author.id), sorttype)
+        elif sorttype == "s":
             embed.description = "排序類型設置為 Suits-Style."
             ORDER = suitOrder
-            DBConnection.updateUserSortPref(str(ctx.author.id), sortType)
+            DBConnection.updateUserSortPref(str(ctx.author.id), sorttype)
         else:
             embed.description = "Try 'd', 'p', or 's'."
 
         await ctx.send(embed=embed)
 
 
-    @commands.command(description="開始遊戲。",
+    @slash_command(guild_ids=guild_ids, description="開始遊戲。",
                       name="game",
                     brief="開始遊戲",
                     aliases=['5card'],
@@ -560,7 +559,7 @@ class Game(commands.Cog):
             embed = discord.Embed(title=None, description="該頻道已經有一個活躍的遊戲。", color=0x00ff00)
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-            embed.add_field(name="遊戲編號", value=str(channelGame.ID))
+            embed.add_field(name="遊戲編號", value=str(channelGame.id))
             embed.set_footer(text="使用 $in <遊戲編號> 加入遊戲。")
             await ctx.send(embed=embed)
             return
@@ -595,35 +594,35 @@ class Game(commands.Cog):
             return
         else:
             if str(rxn[0].emoji) == emoji1:
-                ID = randrange(100000, 1000000)
-                while hasGame(ID):
-                    ID = randrange(100000, 1000000)
-                GAME = TexasHoldEm(ctx.channel, ID)
+                id = randrange(100000, 1000000)
+                while hasGame(id):
+                    id = randrange(100000, 1000000)
+                GAME = TexasHoldEm(ctx.channel, id)
                 gameList.append(GAME)
                 embed = discord.Embed(title="創建遊戲", description="創建了德州撲克遊戲。", color=0x00ff00)
-                embed.add_field(name="遊戲編號", value=str(ID))
-                embed.add_field(name="加入", value="$in " + str(ID))
+                embed.add_field(name="遊戲編號", value=str(id))
+                embed.add_field(name="加入", value="$in " + str(id))
                 embed.set_thumbnail(url=GAME.imageUrl)
                 await ctx.send(embed=embed)
             '''elif str(rxn[0].emoji) == emoji2:
-                ID = randrange(100000, 1000000)
-                while hasGame(ID):
-                    ID = randrange(100000, 1000000)
-                GAME = President(ctx.channel, ID)
+                id = randrange(100000, 1000000)
+                while hasGame(id):
+                    id = randrange(100000, 1000000)
+                GAME = President(ctx.channel, id)
                 gameList.append(GAME)
                 embed = discord.Embed(title="創建遊戲", description="創建了大統領遊戲。", color=0x00ff00)
-                embed.add_field(name="遊戲編號", value=str(ID))
-                embed.add_field(name="加入", value="$in " + str(ID))
+                embed.add_field(name="遊戲編號", value=str(id))
+                embed.add_field(name="加入", value="$in " + str(id))
                 embed.set_thumbnail(url=GAME.imageUrl)
                 await ctx.send(embed=embed)'''
 
 
-    @commands.command(description="使用6位數字ID參加遊戲。",
+    @slash_command(guild_ids=guild_ids, description="使用6位數字id參加遊戲。",
                       name="in",
                     brief="加入遊戲。",
-                    help="使用其6位數字ID加入現有遊戲。 此命令的格式為 $in <6位數ID>。",
+                    help="使用其6位數字id加入現有遊戲。 此命令的格式為 $in <6位數id>。",
                     pass_context=True)
-    async def _in(self, ctx: commands.Context, ID: int = None):
+    async def _in(self, ctx: commands.Context, id: int = None):
         embed = discord.Embed(title=None, description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
@@ -633,26 +632,26 @@ class Game(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if ID is None:
-            embed.description = "您未提供6位數字的遊戲ID。"
+        if id is None:
+            embed.description = "您未提供6位數字的遊戲id。"
             await ctx.send(embed=embed)
             return
 
-        if not hasGame(ID):
-            embed.description = "無效的遊戲ID。"
+        if not hasGame(id):
+            embed.description = "無效的遊戲id。"
             await ctx.send(embed=embed)
             return
 
-        if not channelCheck(getGameByID(ID), ctx.channel):
+        if not channelCheck(getGameByid(id), ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
             await ctx.send(embed=embed)
             return
 
-        GAME = getGameByID(ID)
+        GAME = getGameByid(id)
 
         if GAME.gameUnderway:
             embed.description = "這場比賽已經在進行中。 您現在不能加入。"
-            embed.add_field(name="遊戲編號", value=GAME.ID)
+            embed.add_field(name="遊戲編號", value=GAME.id)
             await ctx.send(embed=embed)
             return
 
@@ -660,17 +659,17 @@ class Game(commands.Cog):
         embed.description = "您加入了遊戲。"
 
         playerList = ""
-        for playerID in GAME.players:
-            user = bot.get_user(int(playerID))
+        for playerid in GAME.players:
+            user = bot.get_user(int(playerid))
             playerList += user.name + "\n"
 
         embed.add_field(name="玩家們", value=playerList)
-        embed.add_field(name="遊戲編號", value=GAME.ID)
+        embed.add_field(name="遊戲編號", value=GAME.id)
         embed.set_thumbnail(url=GAME.imageUrl)
         await ctx.send(embed=embed)
 
 
-    @commands.command(description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
+    @slash_command(guild_ids=guild_ids, description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
                       name="out",
                     brief="離開您加入的遊戲，如果該遊戲已經在進行中，則放棄任何下注",
                     help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 $out，不帶任何參數。",
@@ -694,12 +693,12 @@ class Game(commands.Cog):
         GAME.players.remove(str(ctx.author.id))
 
         embed.description = "您離開了遊戲。"
-        embed.add_field(name="遊戲編號", value=str(GAME.ID))
+        embed.add_field(name="遊戲編號", value=str(GAME.id))
         embed.set_thumbnail(url=GAME.imageUrl)
         await ctx.send(embed=embed)
 
 
-    @commands.command(description="開始遊戲。",
+    @slash_command(guild_ids=guild_ids, description="開始遊戲。",
                       name="start",
                     brief="開始遊戲",
                     help="如果您還沒有開始遊戲，請先開始。 格式為 $start，不帶任何參數。",
@@ -721,7 +720,7 @@ class Game(commands.Cog):
 
         if GAME.gameUnderway:
             embed.description = "您的遊戲已經開始。"
-            embed.add_field(name="遊戲編號", value=str(GAME.ID))
+            embed.add_field(name="遊戲編號", value=str(GAME.id))
             embed.set_thumbnail(url=GAME.imageUrl)
             await ctx.send(embed=embed)
             return
@@ -733,13 +732,13 @@ class Game(commands.Cog):
         await GAME.startGame()
 
 
-    @commands.command(description="使用十六進制代碼為您的手設置自定義顏色。",
-                      name="setColor",
+    @slash_command(guild_ids=guild_ids, description="使用十六進制代碼為您的手設置自定義顏色。",
+                      name="setcolor",
                     brief="為您的手設置自定義顏色",
                     aliases=['sc', 'setColour'],
-                    help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 $setColor <十六進制代碼>。",
+                    help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 $setcolor <十六進制代碼>。",
                     pass_context=True)
-    async def setColor(self, ctx: commands.Context, colour: str):
+    async def setcolor(self, ctx: commands.Context, colour: str):
         embed = discord.Embed(title="自定義顏色", description=None, color=0x00ff00)
         embed.set_thumbnail(url="https://i.imgur.com/FCCMHHi.png")
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
@@ -1082,7 +1081,7 @@ class Music(commands.Cog):
         else:
             return
 
-    @commands.command(name='join', aliases=['j'], invoke_without_subcommand=True)
+    @slash_command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
 
         destination = ctx.author.voice.channel
@@ -1093,7 +1092,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
         self.prevmsg = None
 
-    @commands.command(name='summon')
+    @slash_command(guild_ids=guild_ids, name='summon')
     @commands.has_permissions(manage_guild=True)
     async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
         """召喚我去某個語音頻道。
@@ -1110,7 +1109,7 @@ class Music(commands.Cog):
 
         ctx.voice_state.voice = await destination.connect()
 
-    @commands.command(name='leave', aliases=['disconnect'])
+    @slash_command(guild_ids=guild_ids, name='leave', aliases=['disconnect'])
     @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
         """清除曲列、解除循環播放，離開語音頻道。"""
@@ -1121,7 +1120,7 @@ class Music(commands.Cog):
         await ctx.voice_state.stop()
         del self.voice_states[ctx.guild.id]
 
-    @commands.command(name='volume', aliases=['v'])
+    @slash_command(guild_ids=guild_ids, name='volume', aliases=['v'])
     async def _volume(self, ctx: commands.Context, *, volume: int):
         """較大細聲。"""
 
@@ -1134,13 +1133,13 @@ class Music(commands.Cog):
         ctx.voice_state.volume = volume / 100
         await ctx.send('播放器音量設置為 {}%'.format(volume))
 
-    @commands.command(name='now', aliases=['current', 'playing'])
+    @slash_command(guild_ids=guild_ids, name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
         """顯示目前播緊嘅歌。"""
 
         await ctx.send(embed=ctx.voice_state.current.create_embed())
 
-    @commands.command(name='pause')
+    @slash_command(guild_ids=guild_ids, name='pause')
     @commands.has_permissions(manage_guild=True)
     async def _pause(self, ctx: commands.Context):
         """暫停目前播緊嘅歌。"""
@@ -1149,7 +1148,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
-    @commands.command(name='resume', aliases=['r'])
+    @slash_command(guild_ids=guild_ids, name='resume', aliases=['r'])
     @commands.has_permissions(manage_guild=True)
     async def _resume(self, ctx: commands.Context):
         """恢復目前播緊嘅歌。"""
@@ -1158,7 +1157,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
-    @commands.command(name='stop', aliases=['st'])
+    @slash_command(guild_ids=guild_ids, name='stop', aliases=['st'])
     @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
         """停止播放並清除曲列。"""
@@ -1169,7 +1168,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
-    @commands.command(name='skip', aliases=['s'])
+    @slash_command(guild_ids=guild_ids, name='skip', aliases=['s'])
     async def _skip(self, ctx: commands.Context):
         """跳過一首歌。 請求者可以自動跳過。
         要跳過該歌曲，需要3個跳過票。
@@ -1198,7 +1197,7 @@ class Music(commands.Cog):
         '''
         await ctx.message.add_reaction('⏭')
         ctx.voice_state.skip()
-    @commands.command(name='queue', aliases=['q'])
+    @slash_command(guild_ids=guild_ids, name='queue', aliases=['q'])
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
         """顯示曲列。
         您可以選擇指定要顯示的頁面。 每頁包含10個曲目。
@@ -1221,7 +1220,7 @@ class Music(commands.Cog):
                  .set_footer(text='頁數 {}/{}'.format(page, pages)))
         await ctx.send(embed=embed)
 
-    @commands.command(name='shuffle')
+    @slash_command(guild_ids=guild_ids, name='shuffle')
     async def _shuffle(self, ctx: commands.Context):
         """洗牌曲列。"""
 
@@ -1231,7 +1230,7 @@ class Music(commands.Cog):
         ctx.voice_state.songs.shuffle()
         await ctx.message.add_reaction('✅')
 
-    @commands.command(name='remove', aliases=['rm'])
+    @slash_command(guild_ids=guild_ids, name='remove', aliases=['rm'])
     async def _remove(self, ctx: commands.Context, index: int):
         """從曲列中刪除指定索引嘅歌曲。"""
 
@@ -1241,7 +1240,7 @@ class Music(commands.Cog):
         ctx.voice_state.songs.remove(index - 1)
         await ctx.message.add_reaction('✅')
 
-    @commands.command(name='loop', aliases=['l'])
+    @slash_command(guild_ids=guild_ids, name='loop', aliases=['l'])
     async def _loop(self, ctx: commands.Context):
         """循環播放目前播放的歌曲。
         再次使用此指令以解除循環播放。
@@ -1257,7 +1256,7 @@ class Music(commands.Cog):
         elif not ctx.voice_state.loop:
             await ctx.message.add_reaction('❎')
 
-    @commands.command(name='play', aliases=['p'])
+    @slash_command(guild_ids=guild_ids, name='play', aliases=['p'])
     async def _play(self, ctx: commands.Context, *, search: str):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
@@ -1298,12 +1297,14 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(name='log')
+    @slash_command(guild_ids=guild_ids, name='log')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     async def log(self, ctx: commands.Context, message):
         '''Change log release'''
         
         if ctx.channel.id == 692466531447210105:
+            await ctx.respond('Processed.')
+
             #timezone
             tz = pytz.timezone('Asia/Hong_Kong')
             hk_now = datetime.now(tz)
@@ -1325,7 +1326,7 @@ class Special(commands.Cog):
             try:
                 await changelog_channel.send(embed=embed_changelog)
             except Exception as e:
-                await ctx.send("Unable to send message to change-log channel")
+                await ctx.send_followup("Unable to send message to change-log channel")
                 await logs_channel.send(str(e))
 
             #response embed
@@ -1336,13 +1337,13 @@ class Special(commands.Cog):
             embed.set_footer(text=timestamp)
 
             #send reponse
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             await logs_channel.send("Changelog: {} --> {}".format(ctx.author,message))
             await ctx.message.delete()
         else:
-            await ctx.send("請去 <#692466531447210105>")
+            await ctx.send_followup("請去 <#692466531447210105>")
         
-    @commands.command(name='testwelcome')
+    @slash_command(guild_ids=guild_ids, name='testwelcome')
     @commands.is_owner()
     async def testwelcome(self, ctx: commands.Context):
         '''Test welcome message'''
@@ -1383,10 +1384,12 @@ class Special(commands.Cog):
             await logs_channel.send(str(e))
         await bot_channel.send(embed=bot_channel_embed_to_staff)
 
-    @commands.command(name='updateserverpw')
+    @slash_command(guild_ids=guild_ids, name='updateserverpw')
     @commands.is_owner()
     async def updateserverpw(self, ctx: commands.Context, message):
         '''Update server pw by (id pw)'''
+
+        await ctx.defer()
 
         result = "No operations."
         id = ""
@@ -1403,15 +1406,17 @@ class Special(commands.Cog):
             result = "You cannot update NULL!"
             status = "Failed"
         
-        await ctx.send(result)
+        await ctx.send_followup(result)
         if status == "Success":
             await bot.get_channel(356782441777725440).send("私人伺服器已更新密碼 | `$getserver {}`".format(id))
             await bot.get_channel(772038210057535488).send("私人伺服器已更新密碼 | `$getserver {}`".format(id))
 
-    @commands.command(name='deleteserver')
+    @slash_command(guild_ids=guild_ids, name='deleteserver')
     @commands.is_owner()
     async def deleteserver(self, ctx: commands.Context, message):
         '''Delete server by (id)'''
+
+        await ctx.defer()
 
         result = "No operations."
         if (message is not None):
@@ -1421,12 +1426,14 @@ class Special(commands.Cog):
         else:
             result = "You cannot delete NULL!"
         
-        await ctx.send(result)
+        await ctx.send_followup(result)
 
-    @commands.command(name='updateserver')
+    @slash_command(guild_ids=guild_ids, name='updateserver')
     @commands.is_owner()
     async def updateserver(self, ctx: commands.Context, message):
         '''Update server pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
+
+        await ctx.defer()
 
         result = "No operations."
         if (message is not None and '$' in message):
@@ -1452,9 +1459,9 @@ class Special(commands.Cog):
         else:
             result = "You cannot update NULL! Template: `$createserver \"id$pw$Game$Port$Remarks\"`"
         
-        await ctx.send(result)
+        await ctx.send_followup(result)
 
-    @commands.command(name='createserver')
+    @slash_command(guild_ids=guild_ids, name='createserver')
     @commands.is_owner()
     async def createserver(self, ctx: commands.Context, message):
         '''Create server id pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
@@ -1485,9 +1492,11 @@ class Special(commands.Cog):
         
         await ctx.send(result)
 
-    @commands.command(name='getserver')
+    @slash_command(guild_ids=guild_ids, name='getserver')
     async def _getserver(self, ctx: commands.Context, code):
         '''在__私訊__收到 play.benwyw.com 既 Private Server 資訊'''
+        
+        await ctx.defer()
 
         game = ""
         port = ""
@@ -1565,9 +1574,9 @@ class Special(commands.Cog):
 
 
         if status == "No password":
-            await ctx.send("Requesting code is not a private server!")
+            await ctx.send_followup("Requesting code is not a private server!")
         elif status == "Code not found":
-            await ctx.send("Requesting code does not exist.")
+            await ctx.send_followup("Requesting code does not exist.")
         else:
             if status == "Success":
                 embed.add_field(name="Game", value=game, inline=True)
@@ -1581,14 +1590,16 @@ class Special(commands.Cog):
             await ctx.author.send(embed=embed)
 
             #Channel Message:
-            await ctx.send("請查閱私人訊息。")
+            await ctx.send_followup("請查閱私人訊息。")
 
             #log Message:
             await bot.get_channel(809527650955296848).send("{} 已查詢私人伺服器資訊 (Code = {}, Status = {})".format(ctx.author,code, status))
 
-    @commands.command(name='server', aliases=['ser','serverlist'])
+    @slash_command(guild_ids=guild_ids, name='server', aliases=['ser','serverlist'])
     async def _server(self, ctx: commands.Context):
         '''所有 play.benwyw.com 既 Server 列表'''
+
+        await ctx.defer()
 
         embed1 = discord.Embed(title="Main Server | 主要伺服器", color=0x00ff00)
         embed1.description = "End of service 17Dec2021"
@@ -1660,18 +1671,19 @@ class Special(commands.Cog):
 
         embed.set_footer(text="www.benwyw.com")
 
-        await ctx.send(embed=embed1)
-        await ctx.send(embed=embed)
+        await ctx.send_followup(embed=embed1)
+        await ctx.send_followup(embed=embed)
 
-    @commands.command(name='bind')
+    @slash_command(guild_ids=guild_ids, name='bind')
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def _bind(self, ctx: commands.Context, message):
         '''與Minecraft伺服器綁定 $bind (username)'''
 
-        ID = ctx.author.id
-        mc_Username = message
+        await ctx.defer()
 
-        DBConnection.updateUserMcName(ID, mc_Username)
+        id = ctx.author.id
+        mc_Username = message
+        DBConnection.updateUserMcName(id, mc_Username)
 
         embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
         embed.description = "Minecraft名: {}".format(mc_Username)
@@ -1679,16 +1691,17 @@ class Special(commands.Cog):
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed.set_footer(text="IP: mc.benwyw.com")
 
-        await ctx.send(embed=embed)
+        await ctx.send_followup(embed=embed)
 
-    @commands.command(name='unbind')
+    @slash_command(guild_ids=guild_ids, name='unbind')
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def _unbind(self, ctx: commands.Context):
         '''與Minecraft伺服器解除綁定'''
 
-        ID = ctx.author.id
+        await ctx.defer()
 
-        DBConnection.updateUserMcName(ID, None)
+        id = ctx.author.id
+        DBConnection.updateUserMcName(id, None)
 
         embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
         embed.description = "Minecraft名: 已解除綁定"
@@ -1696,16 +1709,16 @@ class Special(commands.Cog):
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed.set_footer(text="IP: mc.benwyw.com")
 
-        await ctx.send(embed=embed)
+        await ctx.send_followup(embed=embed)
 
-    @commands.command(name='bound')
+    @slash_command(guild_ids=guild_ids, name='bound')
     async def _bound(self, ctx: commands.Context):
         '''檢閱Minecraft伺服器綁定狀態'''
+        
+        await ctx.defer()
 
-        ID = ctx.author.id
-
-        mc_Username = DBConnection.fetchUserMcName(ID)[0]
-
+        id = ctx.author.id
+        mc_Username = DBConnection.fetchUserMcName(id)[0]
         embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
 
         if mc_Username is None:
@@ -1719,11 +1732,12 @@ class Special(commands.Cog):
             embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             embed.set_footer(text="IP: mc.benwyw.com")
 
-        await ctx.send(embed=embed)
+        await ctx.send_followup(embed=embed)
 
-    @commands.command(name='rank')
+    @slash_command(guild_ids=guild_ids, name='rank')
     async def _rank(self, ctx: commands.Context):
         '''查閱全宇宙排行榜 及 你的排名'''
+        await ctx.defer()
 
         embed = discord.Embed(title="全宇宙首十名 排行榜",
                               description="根據德州撲克勝場已定。",
@@ -1731,7 +1745,7 @@ class Special(commands.Cog):
         embed.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
 
         embed2 = discord.Embed(title="你的排名", color=0x00ff00)
-        embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed2.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
 
         embed3 = discord.Embed(title="全宇宙首十名 排行榜",
@@ -1744,17 +1758,17 @@ class Special(commands.Cog):
 
         count = 1
         for user in rankData:
-            tempID = user[0]
+            tempid = user[0]
             tempWIN = user[1]
 
             if count <= 10:
-                user = await bot.fetch_user(tempID)
+                user = await bot.fetch_user(tempid)
 
                 embed.add_field(name="{}. {}".format(count,user.display_name),
                                 value="勝場: {}".format(tempWIN), inline=False)
 
-            if int(ctx.author.id) == int(tempID):
-                userWin = DBConnection.fetchUserData("userWin", tempID)
+            if int(ctx.author.id) == int(tempid):
+                userWin = DBConnection.fetchUserData("userWin", tempid)
 
                 embed2.description = "勝場: {}".format(userWin)
                 embed2.add_field(name="全宇宙排行(勝場)", value="No.{} | 勝場: {}".format(count,tempWIN))
@@ -1763,32 +1777,33 @@ class Special(commands.Cog):
 
         count = 1
         for user in moneyData:
-            tempID = user[0]
+            tempid = user[0]
             tempMONEY = user[1]
 
             if count <= 10:
-                user = await bot.fetch_user(tempID)
+                user = await bot.fetch_user(tempid)
 
                 embed3.add_field(name="{}. {}".format(count,user.display_name),
                                  value="金錢: {}".format(tempMONEY), inline=False)
 
-            if int(ctx.author.id) == int(tempID):
-                userBalance = DBConnection.fetchUserData("userBalance", tempID)
+            if int(ctx.author.id) == int(tempid):
+                userBalance = DBConnection.fetchUserData("userBalance", tempid)
 
                 embed2.description += " | 金錢: {}".format(userBalance)
                 embed2.add_field(name="全宇宙排行(金錢)", value="No.{} | 金錢: {}".format(count,tempMONEY))
 
             count += 1
 
-        await ctx.send(embed=embed)
-        await ctx.send(embed=embed3)
-        await ctx.send(embed=embed2)
+        await ctx.send_followup(embed=embed)
+        await ctx.send_followup(embed=embed3)
+        await ctx.send_followup(embed=embed2)
 
 
-    @commands.command(name='reward', aliases=['bonus','prize','b','draw'], pass_context=True)
+    @slash_command(guild_ids=guild_ids, name='reward', aliases=['bonus','prize','b','draw'], pass_context=True)
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def _reward(self, ctx: commands.Context):
         '''隨機獎金 $bonus $b'''
+        await ctx.defer()
 
         chanceList = [0,1,2,3,4]
 
@@ -1797,7 +1812,7 @@ class Special(commands.Cog):
 
         e = discord.Embed()
 
-        ID = ctx.author.id
+        id = ctx.author.id
         console_channel = bot.get_channel(686911996309930006)
         serverchat_channel = bot.get_channel(684024056944787489)
         console_seasonal_channel = bot.get_channel(888429949873172570)
@@ -1826,14 +1841,14 @@ class Special(commands.Cog):
             end = "壞蛋 -$500~1500區間"
             money = randrange(-1500,-500+1,1)
 
-        oldTotal = DBConnection.fetchUserData("userBalance", ID)
+        oldTotal = DBConnection.fetchUserData("userBalance", id)
 
         newTotal = oldTotal + money
         if newTotal <= 0:
             newTotal = 0
 
-        DBConnection.updateUserBalance(ID, newTotal)
-        newTotal = DBConnection.fetchUserData("userBalance", ID)
+        DBConnection.updateUserBalance(id, newTotal)
+        newTotal = DBConnection.fetchUserData("userBalance", id)
 
         msg = first+" "+middle+end
 
@@ -1845,7 +1860,7 @@ class Special(commands.Cog):
         # if user binded with MC name:
         binded = False
 
-        mc_Username = DBConnection.fetchUserMcName(ID)[0]
+        mc_Username = DBConnection.fetchUserMcName(id)[0]
 
         if mc_Username is None:
             binded = False
@@ -1871,9 +1886,9 @@ class Special(commands.Cog):
 
         e.set_footer(text=final_content)
 
-        await ctx.send(embed=e)
+        await ctx.send_followup(embed=e)
 
-    @commands.command(name='announce')
+    @slash_command(guild_ids=guild_ids, name='announce')
     @commands.is_owner()
     async def _announce(self, ctx: commands.Context, message):
         '''特別指令。公告。'''
@@ -1933,8 +1948,9 @@ class Special(commands.Cog):
             try:
                 await botupdates_channel.send(embed=embed_botupdates)
             except Exception as e:
-                await ctx.send("Unable to send message to bot-updates channel")
+                await ctx.respond("Unable to send message to bot-updates channel")
                 await logs_channel.send(str(e))
+                return
 
             #response embed
             embed = discord.Embed()
@@ -1944,13 +1960,13 @@ class Special(commands.Cog):
             embed.set_footer(text=timestamp)
 
             #send reponse
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author,message))
             await ctx.message.delete()
         else:
-            await ctx.send("請去 <#810511993449742347>")
+            await ctx.respond("請去 <#810511993449742347>")
 
-    @commands.command(name='status')
+    @slash_command(guild_ids=guild_ids, name='status')
     @commands.is_owner()
     async def _status(self, ctx: commands.Context, status):
         '''特別指令。更改狀態。'''
@@ -1959,13 +1975,17 @@ class Special(commands.Cog):
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | {}".format(status)))
         else:
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | 冇野幫到你"))
+        
+        await ctx.respond('Request processed.')
 
-    @commands.command(name='block')
+    @slash_command(guild_ids=guild_ids, name='block')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _tempblk(self, ctx: commands.Context, message):
         '''特別指令。Temp block verification request。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            await ctx.respond('Request processed.')
+
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
             req_ver_channel = bot.get_channel(878538264762527744)
             req_ver_embed_to_staff = discord.Embed()
@@ -2001,12 +2021,14 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    @commands.command(name='unblock')
+    @slash_command(guild_ids=guild_ids, name='unblock')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _unblk(self, ctx: commands.Context, message):
         '''特別指令。Unblock verification request。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            await ctx.respond('Request processed.')
+
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
             req_ver_channel = bot.get_channel(878538264762527744)
             req_ver_embed_to_staff = discord.Embed()
@@ -2044,12 +2066,14 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    @commands.command(name='blocklist')
+    @slash_command(guild_ids=guild_ids, name='blocklist')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _blklist(self, ctx: commands.Context):
         '''特別指令。Unblock verification request。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            await ctx.respond('Request processed.')
+
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
             req_ver_channel = bot.get_channel(878538264762527744)
             req_ver_embed_to_staff = discord.Embed()
@@ -2069,49 +2093,50 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    @commands.command(name='dm')
+    @slash_command(guild_ids=guild_ids, name='dm')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _dm(self, ctx: commands.Context, target, content):
         """特別指令。Bot DM for Minecraft Staff usage。"""
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
-            req_ver_channel = bot.get_channel(878538264762527744)
+            await ctx.respond('Request processed.')
 
+            req_ver_channel = bot.get_channel(878538264762527744)
             target = target.lower()
 
             if 'ben' in target:
-                memberID = 254517813417476097
+                memberid = 254517813417476097
             #elif 'ronald' in target:
-                #memberID = 525298794653548751
+                #memberid = 525298794653548751
             #elif 'chris' in target:
-                #memberID = 562972196880777226
+                #memberid = 562972196880777226
             #elif 'anson' in target:
-                #memberID = 199877205071888384
+                #memberid = 199877205071888384
             #elif 'andy' in target:
-                #memberID = 407481608560574464
+                #memberid = 407481608560574464
 
             elif 'pok' in target:
-                memberID = 346518519015407626
+                memberid = 346518519015407626
             elif 'chester' in target:
-                memberID = 349924747686969344
+                memberid = 349924747686969344
             elif 'daniel' in target:
-                memberID = 270781455678832641
+                memberid = 270781455678832641
             elif 'kei' in target:
-                memberID = 363347146080256001
+                memberid = 363347146080256001
             #elif 'olaf' in target:
-                #memberID = 272977239014899713
+                #memberid = 272977239014899713
             elif 'brian' in target:
-                memberID = 262267347379683329
+                memberid = 262267347379683329
             #elif 'blue' in target:
-                #memberID = 394354007650336769
+                #memberid = 394354007650336769
             elif 'nelson' in target:
-                memberID = 372395366986940416
+                memberid = 372395366986940416
             elif 'ivan' in target:
-                memberID = 269394999890673664
+                memberid = 269394999890673664
             else:
-                memberID = int(target)
+                memberid = int(target)
 
-            person = bot.get_user(memberID)
+            person = bot.get_user(memberid)
             try:
                 await person.send(content)
             except Exception as e:
@@ -2120,12 +2145,14 @@ class Special(commands.Cog):
             else:
                 await ctx.send("成功傳訊至: "+str(person))
 
-    @commands.command(name='ver')
+    @slash_command(guild_ids=guild_ids, name='ver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _ver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Minecraft。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            await ctx.respond('Request processed.')
+
             channel_console = bot.get_channel(686911996309930006)
             req_ver_channel = bot.get_channel(878538264762527744)
 
@@ -2156,12 +2183,14 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    @commands.command(name='discver')
+    @slash_command(guild_ids=guild_ids, name='discver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _discver(self, ctx: commands.Context, message):
         '''特別指令。驗證玩家Discord。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
+            await ctx.respond('Request processed.')
+
             req_ver_channel = bot.get_channel(878538264762527744)
             log_channel = bot.get_channel(809527650955296848)
             #vmsg = "Hi,\n\nYou've been moved to __Verified__ group in our Discord server due to successful verification.\nLands Guide: https://www.benwyw.com/forums/news-and-announcements/lands-protected-areas-regions/\n\nStaff Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
@@ -2207,7 +2236,7 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    @commands.command(name='menu')
+    @slash_command(guild_ids=guild_ids, name='menu')
     async def _menu(self, ctx: commands.Context):
         """Menu測試"""
         page1 = discord.Embed (
@@ -2228,7 +2257,7 @@ class Special(commands.Cog):
 
         pages = [page1, page2, page3]
 
-        message = await ctx.send(embed = page1)
+        message = await ctx.respond(embed = page1)
 
         await message.add_reaction('⏮')
         await message.add_reaction('◀')
@@ -2267,10 +2296,11 @@ class Special(commands.Cog):
         except:
             await message.clear_reactions()
 
-    @commands.command(name='chest')
+    @slash_command(guild_ids=guild_ids, name='chest')
     async def _chest(self, ctx: commands.Context, code, key):
         """$chest CivilCodeMenu網址 關鍵字"""
 
+        await ctx.defer()
         response = requests.get(code)
         if response.status_code == 200:
             for line in response.content.decode('utf-8').splitlines():
@@ -2280,37 +2310,41 @@ class Special(commands.Cog):
                     pdfFile = parser.from_file(pdf_url)
 
                     if key.lower() in str(pdfFile["content"]).lower():
-                        await ctx.send("在 {} 找到 {}".format(pdf_url,key))
+                        await ctx.send_followup("在 {} 找到 {}".format(pdf_url,key))
+        else:
+            await ctx.send_followup('Response.status_code != 200. <@{}>'.format(bot.owner_id))
 
 class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(name='hello', guild_ids=guild_ids)
+    @slash_command(guild_ids=guild_ids, name='hello')
     async def _hello(self, ctx: commands.Context):
         '''Say Hello to the AI'''
 
         await ctx.respond("你好呀 "+str(ctx.author.display_name))
+        await ctx.send_followup("你好你好")
 
-    @commands.command(name='ping')
-    async def _ping(self, ctx: commands.Context):
+    @slash_command(guild_ids=guild_ids, name='ping')
+    async def _ping(self, ctx: commands.Context, target):
         '''Ping爆佢!!!'''
 
-        if len(ctx.message.mentions) == 0:
-            await ctx.send("我唔會Ping: 空氣 / 其他Bot")
+        if '<@' not in target and '>' not in target:
+            await ctx.respond("我唔會Ping: 空氣 / 其他Bot")
         else:
             embed = discord.Embed()
             embed.set_author(name="{} 揾你".format(ctx.author.display_name))
+            await ctx.respond("Ping爆佢!!!")
             for count in range(10):
-                await ctx.send("<@{}>".format(ctx.message.mentions[0].id))
-                await ctx.send(embed=embed)
+                await ctx.send_followup("{}".format(target))
+                await ctx.send_followup(embed=embed)
 
-    @commands.command(name='stock')
+    @slash_command(guild_ids=guild_ids, name='stock')
     async def _stock(self, ctx:commands.Context, stock_name):
         """股市圖表"""
-        tempmsg = await ctx.send("處理資料中...")
+        await ctx.defer()
 
-        response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteID=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
+        response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteid=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
         if response.status_code == 200:
             for line in response.content.decode('utf-8').splitlines():
                 if '<td class="bottomborder">' in line:
@@ -2321,7 +2355,8 @@ class General(commands.Cog):
                     break
 
         else:
-            ctx.send("marketwatch連線失敗！？")
+            await ctx.send_followup("marketwatch連線失敗！？")
+            return
 
         response.close()
         e = discord.Embed()
@@ -2333,10 +2368,11 @@ class General(commands.Cog):
         if str(data.head(2)) is not None:
             pass
         else:
-            ctx.send("symbol搜尋失敗！？")
+            await ctx.send_followup("symbol搜尋失敗！？")
+            return
         #ctx.send(str(data.head(2)))
 
-        data = data.drop('5. volume',1)
+        data = data.drop(columns='5. volume',axis=1)
         data.plot()
         plt.title('Intraday Times Series for the {} stock (1 min)'.format(stock_name))
         plt.grid()
@@ -2353,13 +2389,12 @@ class General(commands.Cog):
             url="attachment://stock_chart.png"
         )
 
-        await tempmsg.delete()
-        await ctx.send(embed=e, file=chart)
+        await ctx.send_followup(embed=e, file=chart)
 
-    @commands.command(name='cov', aliases=['covid','cov19','covid-19'])
+    @slash_command(guild_ids=guild_ids, name='cov', aliases=['covid','cov19','covid-19'])
     async def _cov(self, ctx:commands.Context):
         """本港冠狀病毒病的最新情況"""
-        tempmsg = await ctx.send("從data.gov.hk獲取資料中...")
+        await ctx.defer()
 
         csv_url="http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_covid_19_chi.csv"
         response = requests.get(csv_url)
@@ -2378,10 +2413,11 @@ class General(commands.Cog):
         data = data.tail(60)
 
         try:
-            data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
+            data[' 更新日期'] = data[' 更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
         except:
-            pass
-        x = data['更新日期']
+            await ctx.send_followup('Data process failed. <@{}>'.format(bot.owner_id))
+            return
+        x = data[' 更新日期']
         y = data['確診個案']
         y2 = data['死亡']
         y3 = data['出院']
@@ -2393,7 +2429,7 @@ class General(commands.Cog):
         plt.plot(x, y3, label="discharge")
         plt.plot(x, y4, label="probable")
         plt.plot(x, y5, label="hospitalised and critical")
-        plt.title("Latest situation of reported cases of COVID-19 in Hong Kong")
+        plt.title("Latest situation of reported cases of COVid-19 in Hong Kong")
         plt.xlabel('past 60 days')
         plt.ylabel('amount')
         plt.gcf().autofmt_xdate()
@@ -2413,8 +2449,7 @@ class General(commands.Cog):
             url="attachment://cov_latest.png"
         )
 
-        await tempmsg.delete()
-        await ctx.send(embed=e, file=chart)
+        await ctx.send_followup(embed=e, file=chart)
 
 
 bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
@@ -2627,7 +2662,7 @@ async def on_message(message):
                           '$stock','$cov','$covid','$cov19','$covid-19']
     casino_command_List = ['$call','$fold','$highest','$pot','$raise',
                            '$bal','$pay','$setbal',
-                           '$game','$hand','$in','$out','$rc','$setColor','$setSort','$start',
+                           '$game','$hand','$in','$out','$rc','$setcolor','$setsort','$start',
                            '$cards','$next',
                            '$ctb','$enter','$pass',
                            '$reward','$bonus','$b','$prize','$rank','$draw']
