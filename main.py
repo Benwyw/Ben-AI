@@ -1985,9 +1985,9 @@ class Special(commands.Cog):
         '''特別指令。更改狀態。'''
 
         if status != "reset":
-            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | {}".format(status)))
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/ | {}".format(status)))
         else:
-            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="$help | 冇野幫到你"))
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/ | 冇野幫到你"))
         
         await ctx.respond('Request processed.')
 
@@ -2474,8 +2474,7 @@ bot.add_cog(Game(bot))
 
 @bot.event
 async def on_ready():
-    #status = "$help | 冇野幫到你"
-    status = "Dev in-progress"
+    status = "/help | 冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     gameLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
@@ -2486,21 +2485,21 @@ async def on_command_error(ctx, error):
         seed = randrange(8)
         if seed == 0:
             img = "https://i.imgur.com/UPSOyNB.jpg"
-            msg = "**無效的令咒。 請使用** `$help` **來找出強制命令！**"
+            msg = "**無效的令咒。 請使用** `/` **來找出強制命令！**"
         elif seed == 1:
-            msg = "**NANI！？** `$help`"
+            msg = "**NANI！？** `/`"
         elif seed == 2:
-            msg = "**What 7 command is this ah, use** `$help` **la 7 head**"
+            msg = "**What 7 command is this ah, use** `/` **la 7 head**"
         elif seed == 3:
-            msg = "**JM9? 試下睇下個** `$help`"
+            msg = "**JM9? 試下睇下個** `/`"
         elif seed == 4:
-            msg = "**Kys, u need some** `$help`"
+            msg = "**Kys, u need some** `/`"
         elif seed == 5:
-            msg = "**打咩！！** `$help` **！！**"
+            msg = "**打咩！！** `/` **！！**"
         elif seed == 6:
-            msg = "**Trash... use** `$help` **la**"
+            msg = "**Trash... use** `/` **la**"
         elif seed == 7:
-            msg = "**都冇呢個指令！！！！！！！ 用** `$help` **啦！！！！！！！**"
+            msg = "**都冇呢個指令！！！！！！！ 用** `/` **啦！！！！！！！**"
 
         if seed == 0:
             e = discord.Embed()
