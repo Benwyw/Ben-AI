@@ -1,6 +1,6 @@
 pip
 youtube_dl
-pycord[voice]
+py-cord==2.0.0a0
 python-dotenv
 ffmpeg
 PyNaCl
