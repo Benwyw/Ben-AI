@@ -1083,14 +1083,22 @@ class Music(commands.Cog):
 
     @slash_command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
+        """我要進來了。"""
 
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
             await ctx.voice_state.voice.move_to(destination)
+            try:
+                await ctx.respond(':thumbsup:')
+            except:
+                await ctx.send_followup(':thumbsup:')
             return
 
         ctx.voice_state.voice = await destination.connect()
-        self.prevmsg = None
+        try:
+            await ctx.respond(':thumbsup:')
+        except:
+            await ctx.send_followup(':thumbsup:')
 
     @slash_command(guild_ids=guild_ids, name='summon')
     @commands.has_permissions(manage_guild=True)
@@ -1105,9 +1113,11 @@ class Music(commands.Cog):
         destination = channel or ctx.author.voice.channel
         if ctx.voice_state.voice:
             await ctx.voice_state.voice.move_to(destination)
+            await ctx.respond(':thumbsup:')
             return
 
         ctx.voice_state.voice = await destination.connect()
+        await ctx.respond(':thumbsup:')
 
     @slash_command(guild_ids=guild_ids, name='leave', aliases=['disconnect'])
     @commands.has_permissions(manage_guild=True)
@@ -1115,29 +1125,30 @@ class Music(commands.Cog):
         """清除曲列、解除循環播放，離開語音頻道。"""
 
         if not ctx.voice_state.voice:
-            return await ctx.send('未連接到任何語音通道。')
+            return await ctx.respond('未連接到任何語音通道。')
 
         await ctx.voice_state.stop()
         del self.voice_states[ctx.guild.id]
+        await ctx.respond(':middle_finger:')
 
     @slash_command(guild_ids=guild_ids, name='volume', aliases=['v'])
     async def _volume(self, ctx: commands.Context, *, volume: int):
         """較大細聲。"""
 
         if not ctx.voice_state.is_playing:
-            return await ctx.send('目前沒有任何播放。')
+            return await ctx.respond('目前沒有任何播放。')
 
         if 0 > volume > 100:
-            return await ctx.send('音量必須在0到100之間')
+            return await ctx.respond('音量必須在0到100之間')
 
         ctx.voice_state.volume = volume / 100
-        await ctx.send('播放器音量設置為 {}%'.format(volume))
+        await ctx.respond('播放器音量設置為 {}%'.format(volume))
 
     @slash_command(guild_ids=guild_ids, name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
         """顯示目前播緊嘅歌。"""
 
-        await ctx.send(embed=ctx.voice_state.current.create_embed())
+        await ctx.respond(embed=ctx.voice_state.current.create_embed())
 
     @slash_command(guild_ids=guild_ids, name='pause')
     @commands.has_permissions(manage_guild=True)
@@ -1146,7 +1157,7 @@ class Music(commands.Cog):
 
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
-            await ctx.message.add_reaction('⏯')
+            await ctx.respond('⏯')
 
     @slash_command(guild_ids=guild_ids, name='resume', aliases=['r'])
     @commands.has_permissions(manage_guild=True)
@@ -1155,7 +1166,7 @@ class Music(commands.Cog):
 
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
-            await ctx.message.add_reaction('⏯')
+            await ctx.respond('⏯')
 
     @slash_command(guild_ids=guild_ids, name='stop', aliases=['st'])
     @commands.has_permissions(manage_guild=True)
@@ -1166,7 +1177,7 @@ class Music(commands.Cog):
 
         if ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
-            await ctx.message.add_reaction('⏹')
+            await ctx.respond('⏹')
 
     @slash_command(guild_ids=guild_ids, name='skip', aliases=['s'])
     async def _skip(self, ctx: commands.Context):
@@ -1195,7 +1206,7 @@ class Music(commands.Cog):
         else:
             await ctx.send('您已經投票跳過這首歌。')
         '''
-        await ctx.message.add_reaction('⏭')
+        await ctx.respond('⏭')
         ctx.voice_state.skip()
     @slash_command(guild_ids=guild_ids, name='queue', aliases=['q'])
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
@@ -1204,7 +1215,7 @@ class Music(commands.Cog):
         """
 
         if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('曲列有堆空氣。')
+            return await ctx.respond('曲列有堆空氣。')
 
         items_per_page = 10
         pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
@@ -1218,27 +1229,27 @@ class Music(commands.Cog):
 
         embed = (discord.Embed(description='**{} 首曲目:**\n\n{}'.format(len(ctx.voice_state.songs), queue))
                  .set_footer(text='頁數 {}/{}'.format(page, pages)))
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='shuffle')
     async def _shuffle(self, ctx: commands.Context):
         """洗牌曲列。"""
 
         if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('曲列有堆空氣。')
+            return await ctx.respond('曲列有堆空氣。')
 
         ctx.voice_state.songs.shuffle()
-        await ctx.message.add_reaction('✅')
+        await ctx.respond('✅')
 
     @slash_command(guild_ids=guild_ids, name='remove', aliases=['rm'])
     async def _remove(self, ctx: commands.Context, index: int):
         """從曲列中刪除指定索引嘅歌曲。"""
 
         if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('曲列有堆空氣。')
+            return await ctx.respond('曲列有堆空氣。')
 
         ctx.voice_state.songs.remove(index - 1)
-        await ctx.message.add_reaction('✅')
+        await ctx.respond('✅')
 
     @slash_command(guild_ids=guild_ids, name='loop', aliases=['l'])
     async def _loop(self, ctx: commands.Context):
@@ -1247,14 +1258,14 @@ class Music(commands.Cog):
         """
 
         if not ctx.voice_state.is_playing:
-            return await ctx.send('空白一片。')
+            return await ctx.respond('空白一片。')
 
         # Inverse boolean value to loop and unloop.
         ctx.voice_state.loop = not ctx.voice_state.loop
         if ctx.voice_state.loop:
-            await ctx.message.add_reaction('✅')
+            await ctx.respond('✅')
         elif not ctx.voice_state.loop:
-            await ctx.message.add_reaction('❎')
+            await ctx.respond('❎')
 
     @slash_command(guild_ids=guild_ids, name='play', aliases=['p'])
     async def _play(self, ctx: commands.Context, *, search: str):
@@ -1264,21 +1275,23 @@ class Music(commands.Cog):
         個站點的列表可以喺呢到揾到：https://rg3.github.io/youtube-dl/supportedsites.html
         """
 
-        if not ctx.voice_state.voice:
-            await ctx.invoke(self._join)
+        #ctx.voice_stats.voice --> ctx.voice_client
+        #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
+
+        if not ctx.voice_client:
+            await commands.Context.invoke('join', self._join, ctx)
 
         async with ctx.typing():
             try:
+                await ctx.defer()
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
             except YTDLError as e:
-                await ctx.send('處理此請求時發生錯誤: {}'.format(str(e)))
+                await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
             else:
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
-                if self.prevmsg is not None:
-                    await self.prevmsg.delete()
-                self.prevmsg = await ctx.send('加咗首 {}'.format(str(source)))
+                await ctx.send_followup('加咗首 {}'.format(str(source)))
 
     @_join.before_invoke
     @_play.before_invoke
@@ -2838,6 +2851,22 @@ async def on_member_update(before, after):
     try:
         pok_channel = bot.get_channel(858022877450600458)
 
+        if str(before.nick) != str(after.nick):
+            await pok_channel.send("{} 已由 __{}__ 改名至 __{}__".format(before,before.nick,after.nick))
+
+    except:
+        pass
+
+@bot.event
+async def on_presence_update(before, after):
+    if before == bot.user:
+        return
+    if before.guild.id != 351742829254410250:
+        return
+
+    try:
+        pok_channel = bot.get_channel(858022877450600458)
+
         if str(before.status) == "offline":
             if str(after.status) == "online":
                 await pok_channel.send("{} 已上線".format(before))
@@ -2845,9 +2874,6 @@ async def on_member_update(before, after):
         if str(before.status) == "online":
             if str(after.status) == "offline":
                 await pok_channel.send("{} 已離線".format(before))
-
-        if str(before.nick) != str(after.nick):
-            await pok_channel.send("{} 已由 __{}__ 改名至 __{}__".format(before,before.nick,after.nick))
 
     except:
         pass
