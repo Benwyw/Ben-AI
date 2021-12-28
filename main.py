@@ -2474,7 +2474,7 @@ bot.add_cog(Game(bot))
 
 @bot.event
 async def on_ready():
-    status = "/help | 冇野幫到你"
+    status = "/ | 冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     gameLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
