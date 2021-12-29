@@ -226,13 +226,13 @@ def checkInGame(user: discord.Member):
 # Get a Game object by its 6-digit id
 def getGameByid(id):
     for GAME in gameList:
-        if GAME.id == id:
+        if GAME.ID == id:
             return GAME
 
 # Check if a Game object exists given a 6-digit id
 def hasGame(id):
     for GAME in gameList:
-        if GAME.id == id:
+        if GAME.ID == id:
             return True
     return False
 
@@ -319,7 +319,7 @@ class Game(commands.Cog):
     async def _cmd(self, ctx: commands.Context, param: str = None):
         if param is None:
             embed = discord.Embed(title="新世界 指令表",
-                                  description="要查看幫助頁面，只需在$cmd命令後添加頁面編號。 例如：$cmd 3",
+                                  description="要查看幫助頁面，只需在/cmd命令後添加頁面編號。 例如：/cmd 3",
                                   color=0x00ff00)
             embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             embed.add_field(name="第1頁：賭注",
@@ -338,7 +338,7 @@ class Game(commands.Cog):
             if int(param) == 1:
                 commands = bot.get_cog('Betting').get_commands()
                 embed.title = "賭注 指令"
-                embed.description = "要查看特定指令，請在$cmd命令之後輸入指令名稱。 例如：$cmd raise。"
+                embed.description = "要查看特定指令，請在/cmd命令之後輸入指令名稱。 例如：/cmd raise。"
 
                 for command in commands:
                     embed.add_field(name=BOT_PREFIX + command.name, value=command.description, inline=False)
@@ -347,7 +347,7 @@ class Game(commands.Cog):
             elif int(param) == 2:
                 commands = bot.get_cog('Economy').get_commands()
                 embed.title = "經濟 指令"
-                embed.description = "要查看特定指令，請在$cmd命令之後輸入指令名稱。 例如：$cmd bal。"
+                embed.description = "要查看特定指令，請在/cmd命令之後輸入指令名稱。 例如：/cmd bal。"
 
                 for command in commands:
                     embed.add_field(name=BOT_PREFIX + command.name, value=command.description, inline=False)
@@ -355,13 +355,13 @@ class Game(commands.Cog):
                 await ctx.send(embed=embed)
             elif int(param) == 3:
                 embed.title = "遊戲 指令"
-                embed.description = "要查看幫助頁面，只需在$cmd命令後添加頁面編號。 例如：$cmd 3"
+                embed.description = "要查看幫助頁面，只需在/cmd命令後添加頁面編號。 例如：/cmd 3"
                 embed.add_field(name="第5頁：德州撲克", value="德州撲克的指令。", inline=False)
                 embed.add_field(name="Page 6: 大統領", value="大統領的指令。", inline=False)
                 await ctx.send(embed=embed)
             elif int(param) == 4:
                 embed.title = "未分類的指令"
-                embed.description = "要查看特定指令，請在$cmd命令之後輸入指令名稱。 例如：$cmd raise。"
+                embed.description = "要查看特定指令，請在/cmd命令之後輸入指令名稱。 例如：/cmd raise。"
 
                 for name in uncategorized:
                     command = hasCommandByName(name)
@@ -370,7 +370,7 @@ class Game(commands.Cog):
                 await ctx.send(embed=embed)
             elif int(param) == 5:
                 embed.title = "德州撲克指令"
-                embed.description = "要查看特定指令，請在 $cmd 命令之後輸入命令名稱。 例如：$cmd rc。"
+                embed.description = "要查看特定指令，請在 /cmd 命令之後輸入命令名稱。 例如：/cmd rc。"
                 commands = bot.get_cog('Poker').get_commands()
 
                 for command in commands:
@@ -379,7 +379,7 @@ class Game(commands.Cog):
                 await ctx.send(embed=embed)
             elif int(param) == 6:
                 embed.title = "大統領指令"
-                embed.description = "要查看特定指令，請在 $cmd 命令之後輸入命令名稱。 例如：$cmd rc。"
+                embed.description = "要查看特定指令，請在 /cmd 命令之後輸入命令名稱。 例如：/cmd rc。"
                 commands = bot.get_cog('Pres').get_commands()
 
                 for command in commands:
@@ -400,7 +400,7 @@ class Game(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="生成隨機卡。 可能會出現重複項。",
                       name="rc",
                     brief="生成隨機卡",
-                    help="該命令從52張卡組中生成一張隨機卡。 格式為 $rc。 不需要任何參數。",
+                    help="該命令從52張卡組中生成一張隨機卡。 格式為 /rc。 不需要任何參數。",
                     pass_context=True)
     async def rc(self, ctx: commands.Context):
         embed = discord.Embed(title="隨機卡", description="", color=0x00ff00)
@@ -484,7 +484,7 @@ class Game(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="查看您的手。",
                       name="hand",
                     brief="查看你的手",
-                    help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 $hand，不帶任何參數。",
+                    help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 /hand，不帶任何參數。",
                     pass_context=True)
     async def hand(self, ctx: commands.Context):
         embed = discord.Embed(title=ctx.author.name + "'s Hand", description=None, color=0x00ff00)
@@ -510,7 +510,7 @@ class Game(commands.Cog):
                       name="setsort",
                     brief="Set sorting type",
                     aliases=['ss'],
-                    help="$setsort <sorttype>. 'p' for 3 lowest, 2 highest, 'd' for default, 's' for by suit.",
+                    help="/setsort <sorttype>. 'p' for 3 lowest, 2 highest, 'd' for default, 's' for by suit.",
                     pass_context=True)
     async def setsort(self, ctx: commands.Context, sorttype: str = None):
         embed = discord.Embed(title="排序方式", description=None, color=0x00ff00)
@@ -549,27 +549,29 @@ class Game(commands.Cog):
                       name="game",
                     brief="開始遊戲",
                     aliases=['5card'],
-                    help="使用此命令開始新遊戲。 您只能在遊戲之外使用此命令。 格式為 $game，不帶參數。",
+                    help="使用此命令開始新遊戲。 您只能在遊戲之外使用此命令。 格式為 /game，不帶參數。",
                     pass_context=True)
     async def game(self, ctx: commands.Context):
         global gameList
 
         channelGame = getGameByChannel(ctx.channel)
         if channelGame is not None:
-            embed = discord.Embed(title=None, description="該頻道已經有一個活躍的遊戲。", color=0x00ff00)
+            embed = discord.Embed(title='德州撲克', description="該頻道已經有一個活躍的遊戲。", color=0x00ff00)
             embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.add_field(name="遊戲編號", value=str(channelGame.id))
-            embed.set_footer(text="使用 $in <遊戲編號> 加入遊戲。")
-            await ctx.send(embed=embed)
+            embed.set_footer(text="使用 /in <遊戲編號> 加入遊戲。")
+            await ctx.respond(embed=embed)
             return
 
         if checkInGame(ctx.author):
-            embed = discord.Embed(title=None, description="您已經在玩遊戲。", color=0x00ff00)
+            embed = discord.Embed(title='德州撲克', description="您已經在玩遊戲。", color=0x00ff00)
             embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
+
+        await ctx.defer()
 
         emoji1 = '1️⃣'
         #emoji2 = '2️⃣'
@@ -590,7 +592,7 @@ class Game(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=50.0, check=check)
         except asyncio.TimeoutError:
-            await ctx.send(embed=discord.Embed(title="遊戲選擇", description="沒有人及時選擇...", color=0x00ff00))
+            await ctx.respond(embed=discord.Embed(title="遊戲選擇", description="沒有人及時選擇...", color=0x00ff00))
             return
         else:
             if str(rxn[0].emoji) == emoji1:
@@ -601,9 +603,10 @@ class Game(commands.Cog):
                 gameList.append(GAME)
                 embed = discord.Embed(title="創建遊戲", description="創建了德州撲克遊戲。", color=0x00ff00)
                 embed.add_field(name="遊戲編號", value=str(id))
-                embed.add_field(name="加入", value="$in " + str(id))
+                embed.add_field(name="加入", value="/in " + str(id))
                 embed.set_thumbnail(url=GAME.imageUrl)
-                await ctx.send(embed=embed)
+                await msg.delete()
+                await ctx.send_followup(embed=embed)
             '''elif str(rxn[0].emoji) == emoji2:
                 id = randrange(100000, 1000000)
                 while hasGame(id):
@@ -612,7 +615,7 @@ class Game(commands.Cog):
                 gameList.append(GAME)
                 embed = discord.Embed(title="創建遊戲", description="創建了大統領遊戲。", color=0x00ff00)
                 embed.add_field(name="遊戲編號", value=str(id))
-                embed.add_field(name="加入", value="$in " + str(id))
+                embed.add_field(name="加入", value="/in " + str(id))
                 embed.set_thumbnail(url=GAME.imageUrl)
                 await ctx.send(embed=embed)'''
 
@@ -620,39 +623,39 @@ class Game(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="使用6位數字id參加遊戲。",
                       name="in",
                     brief="加入遊戲。",
-                    help="使用其6位數字id加入現有遊戲。 此命令的格式為 $in <6位數id>。",
+                    help="使用其6位數字id加入現有遊戲。 此命令的格式為 /in <6位數id>。",
                     pass_context=True)
     async def _in(self, ctx: commands.Context, id: int = None):
-        embed = discord.Embed(title=None, description=None, color=0x00ff00)
+        embed = discord.Embed(title='德州撲克', description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if checkInGame(ctx.author):
             embed.description = "您已經在玩遊戲。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         if id is None:
             embed.description = "您未提供6位數字的遊戲id。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         if not hasGame(id):
             embed.description = "無效的遊戲id。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         if not channelCheck(getGameByid(id), ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME = getGameByid(id)
 
         if GAME.gameUnderway:
             embed.description = "這場比賽已經在進行中。 您現在不能加入。"
-            embed.add_field(name="遊戲編號", value=GAME.id)
-            await ctx.send(embed=embed)
+            embed.add_field(name="遊戲編號", value=GAME.ID)
+            await ctx.respond(embed=embed)
             return
 
         GAME.players.append(str(ctx.author.id))
@@ -664,71 +667,72 @@ class Game(commands.Cog):
             playerList += user.name + "\n"
 
         embed.add_field(name="玩家們", value=playerList)
-        embed.add_field(name="遊戲編號", value=GAME.id)
+        embed.add_field(name="遊戲編號", value=GAME.ID)
         embed.set_thumbnail(url=GAME.imageUrl)
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 
     @slash_command(guild_ids=guild_ids, description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
                       name="out",
                     brief="離開您加入的遊戲，如果該遊戲已經在進行中，則放棄任何下注",
-                    help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 $out，不帶任何參數。",
+                    help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 /out，不帶任何參數。",
                     pass_context=True)
     async def out(self, ctx: commands.Context):
-        embed = discord.Embed(title=None, description=None, color=0x00ff00)
+        embed = discord.Embed(title='德州撲克', description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME = getGame(ctx.author)
         if not channelCheck(GAME, ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME.playerStatus[str(ctx.author.id)] = "Fold"
         GAME.players.remove(str(ctx.author.id))
 
         embed.description = "您離開了遊戲。"
-        embed.add_field(name="遊戲編號", value=str(GAME.id))
+        embed.add_field(name="遊戲編號", value=str(GAME.ID))
         embed.set_thumbnail(url=GAME.imageUrl)
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 
     @slash_command(guild_ids=guild_ids, description="開始遊戲。",
                       name="start",
                     brief="開始遊戲",
-                    help="如果您還沒有開始遊戲，請先開始。 格式為 $start，不帶任何參數。",
+                    help="如果您還沒有開始遊戲，請先開始。 格式為 /start，不帶任何參數。",
                     pass_context=True)
     async def start(self, ctx: commands.Context):
-        embed = discord.Embed(title=None, description=None, color=0x00ff00)
+        embed = discord.Embed(title='德州撲克', description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME = getGame(ctx.author)
         if not channelCheck(GAME, ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         if GAME.gameUnderway:
             embed.description = "您的遊戲已經開始。"
-            embed.add_field(name="遊戲編號", value=str(GAME.id))
+            embed.add_field(name="遊戲編號", value=str(GAME.ID))
             embed.set_thumbnail(url=GAME.imageUrl)
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         if len(GAME.players) == 1:
             embed.description = "你不能一個人玩！"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
+        await ctx.respond('開始中...')
         await GAME.startGame()
 
 
@@ -736,7 +740,7 @@ class Game(commands.Cog):
                       name="setcolor",
                     brief="為您的手設置自定義顏色",
                     aliases=['sc', 'setColour'],
-                    help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 $setcolor <十六進制代碼>。",
+                    help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 /setcolor <十六進制代碼>。",
                     pass_context=True)
     async def setcolor(self, ctx: commands.Context, colour: str):
         embed = discord.Embed(title="自定義顏色", description=None, color=0x00ff00)
@@ -1324,7 +1328,6 @@ class Special(commands.Cog):
         '''Change log release'''
         
         if ctx.channel.id == 692466531447210105:
-            await ctx.respond('Processed.')
 
             #timezone
             tz = pytz.timezone('Asia/Hong_Kong')
@@ -1347,8 +1350,9 @@ class Special(commands.Cog):
             try:
                 await changelog_channel.send(embed=embed_changelog)
             except Exception as e:
-                await ctx.send_followup("Unable to send message to change-log channel")
+                await ctx.respond("Unable to send message to change-log channel")
                 await logs_channel.send(str(e))
+                return
 
             #response embed
             embed = discord.Embed()
@@ -1358,11 +1362,10 @@ class Special(commands.Cog):
             embed.set_footer(text=timestamp)
 
             #send reponse
-            await ctx.send_followup(embed=embed)
+            await ctx.respond(embed=embed)
             await logs_channel.send("Changelog: {} --> {}".format(ctx.author,message))
-            await ctx.message.delete()
         else:
-            await ctx.send_followup("請去 <#692466531447210105>")
+            await ctx.respond("請去 <#692466531447210105>")
         
     @slash_command(guild_ids=guild_ids, name='testwelcome')
     @commands.is_owner()
@@ -1404,6 +1407,7 @@ class Special(commands.Cog):
             logs_channel = bot.get_channel(809527650955296848)
             await logs_channel.send(str(e))
         await bot_channel.send(embed=bot_channel_embed_to_staff)
+        await ctx.respond('Completed')
 
     @slash_command(guild_ids=guild_ids, name='updateserverpw')
     @commands.is_owner()
@@ -1429,8 +1433,8 @@ class Special(commands.Cog):
         
         await ctx.send_followup(result)
         if status == "Success":
-            await bot.get_channel(356782441777725440).send("私人伺服器已更新密碼 | `$getserver {}`".format(id))
-            await bot.get_channel(772038210057535488).send("私人伺服器已更新密碼 | `$getserver {}`".format(id))
+            await bot.get_channel(356782441777725440).send("私人伺服器已更新密碼 | `/getserver {}`".format(id))
+            await bot.get_channel(772038210057535488).send("私人伺服器已更新密碼 | `/getserver {}`".format(id))
 
     @slash_command(guild_ids=guild_ids, name='deleteserver')
     @commands.is_owner()
@@ -1466,9 +1470,9 @@ class Special(commands.Cog):
 
             if pw != "-":
                 if remarks != "-":
-                    remarks = "Private | " + remarks + " | `$getserver {}`".format(id)
+                    remarks = "Private | " + remarks + " | `/getserver {}`".format(id)
                 else:
-                    remarks = "Private | `$getserver {}`".format(id)
+                    remarks = "Private | `/getserver {}`".format(id)
             else:
                 if remarks != "-":
                     remarks = "Public | " + remarks
@@ -1478,7 +1482,7 @@ class Special(commands.Cog):
             DBConnection.updateServer(id, pw, game, port, remarks)
             result = "Successfully updated {} {} {} {} {} in serverlist".format(id, pw, game, port, remarks)
         else:
-            result = "You cannot update NULL! Template: `$createserver \"id$pw$Game$Port$Remarks\"`"
+            result = "You cannot update NULL! Template: `/createserver \"id$pw$Game$Port$Remarks\"`"
         
         await ctx.send_followup(result)
 
@@ -1489,6 +1493,7 @@ class Special(commands.Cog):
 
         result = "No operations."
         if (message is not None and '$' in message):
+            await ctx.defer()
             id = message.split('$')[0]
             pw = message.split('$')[1]
             game = message.split('$')[2]
@@ -1497,9 +1502,9 @@ class Special(commands.Cog):
 
             if pw != "-":
                 if remarks != "-":
-                    remarks = "Private | " + remarks + " | `$getserver {}`".format(id)
+                    remarks = "Private | " + remarks + " | `/getserver {}`".format(id)
                 else:
-                    remarks = "Private | `$getserver {}`".format(id)
+                    remarks = "Private | `/getserver {}`".format(id)
             else:
                 if remarks != "-":
                     remarks = "Public | " + remarks
@@ -1508,10 +1513,10 @@ class Special(commands.Cog):
 
             DBConnection.createServer(id, pw, game, port, remarks)
             result = "Successfully created {} {} {} {} {} in serverlist".format(id, pw, game, port, remarks)
+            await ctx.send_followup(result)
         else:
-            result = "You cannot create NULL! Template: `$createserver \"id$pw$Game$Port$Remarks\"`"
-        
-        await ctx.send(result)
+            result = "You cannot create NULL! Template: `/createserver \"id$pw$Game$Port$Remarks\"`"
+            await ctx.respond(result)
 
     @slash_command(guild_ids=guild_ids, name='getserver')
     async def _getserver(self, ctx: commands.Context, code):
@@ -1685,7 +1690,7 @@ class Special(commands.Cog):
         if DBConnection.selectServer("baro") is not None:
             embed.add_field(name="\u200b", value='Barotrauma', inline=True)
             embed.add_field(name="\u200b", value='-', inline=True)
-            embed.add_field(name="\u200b", value='Private | `$get baro`', inline=True)
+            embed.add_field(name="\u200b", value='Private | `/get baro`', inline=True)
         '''
 
         embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊。', inline=False)
@@ -1696,9 +1701,9 @@ class Special(commands.Cog):
         await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='bind')
-    @commands.cooldown(1, 60, commands.BucketType.user)
+    #@commands.cooldown(1, 60, commands.BucketType.user)
     async def _bind(self, ctx: commands.Context, message):
-        '''與Minecraft伺服器綁定 $bind (username)'''
+        '''與Minecraft伺服器綁定 /bind (username)'''
 
         await ctx.defer()
 
@@ -1715,7 +1720,7 @@ class Special(commands.Cog):
         await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='unbind')
-    @commands.cooldown(1, 60, commands.BucketType.user)
+    #@commands.cooldown(1, 60, commands.BucketType.user)
     async def _unbind(self, ctx: commands.Context):
         '''與Minecraft伺服器解除綁定'''
 
@@ -1743,7 +1748,7 @@ class Special(commands.Cog):
         embed = discord.Embed(title="伺服器綁定", color=0x00ff00)
 
         if mc_Username is None:
-            embed.description = "Minecraft名: 尚未綁定伺服器，\n請使用 $bind (Minecraft名)"
+            embed.description = "Minecraft名: 尚未綁定伺服器，\n請使用 /bind (Minecraft名)"
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             embed.set_footer(text="IP: mc.benwyw.com")
@@ -1820,10 +1825,10 @@ class Special(commands.Cog):
         await ctx.send_followup(embed=embed2)
 
 
-    @slash_command(guild_ids=guild_ids, name='reward', aliases=['bonus','prize','b','draw'], pass_context=True)
-    @commands.cooldown(1, 600, commands.BucketType.user)
+    @slash_command(guild_ids=guild_ids, name='draw', aliases=['bonus','prize','b','reward'], pass_context=True)
+    #@commands.cooldown(1, 600, commands.BucketType.user)
     async def _reward(self, ctx: commands.Context):
-        '''隨機獎金 $bonus $b'''
+        '''隨機獎金'''
         await ctx.defer()
 
         chanceList = [0,1,2,3,4]
@@ -1891,14 +1896,14 @@ class Special(commands.Cog):
         if binded is True:
             if mc.status() == 'online':
                 await console_channel.send("eco give {} {}".format(mc_Username, money))
-                await serverchat_channel.send("{} received ${} from per-10 mins lucky draw '$draw'!".format(mc_Username, money))
+                await serverchat_channel.send("{} received ${} from per-10 mins lucky draw '/draw'!".format(mc_Username, money))
                 mc_content_1 = "\n{}得到了 ${}".format(mc_Username,money)
                 if mc.status_seasonal() == 'online':
-                    await console_seasonal_channel.send("!cmd say {} received ${} from per-10 mins lucky draw '$draw'!".format(mc_Username, money))
+                    await console_seasonal_channel.send("!cmd say {} received ${} from per-10 mins lucky draw '/draw'!".format(mc_Username, money))
             else:
                 mc_content_1 = "\nServer is offline"
         else:
-            mc_content_1 = "\n尚未綁定伺服器 $bind"
+            mc_content_1 = "\n尚未綁定伺服器 /bind"
 
         mc_content_2 = "\nmc.benwyw.com | play.benwyw.com"
         mc_content = mc_content_1 + mc_content_2
@@ -1953,25 +1958,43 @@ class Special(commands.Cog):
             #channels
             botupdates_channel = bot.get_channel(910000426240340009)
             logs_channel = bot.get_channel(809527650955296848)
+            main_channel = bot.get_channel(356782441777725440) #BrianLee Game Discord
+            crows_channel = bot.get_channel(925673962283884584) #Ben Discord Bot
 
             #images related
             bot_member = ctx.guild.get_member(809526579389792338)
 
             #botupdates embed
             embed_botupdates = discord.Embed()
-            embed_botupdates.set_author(name="Ben AI", icon_url=bot_member.avatar_url)
+            embed_botupdates.set_author(name="Ben AI", icon_url=bot_member.display_avatar.url)
             embed_botupdates.title = "Bot Updates"
-            embed_botupdates.set_thumbnail(url=bot_member.avatar_url)
+            embed_botupdates.set_thumbnail(url=bot_member.display_avatar.url)
             embed_botupdates.description = message
             embed_botupdates.set_footer(text=timestamp)
+
+            #preview
+            await ctx.respond(embed=embed_botupdates)
 
             #send botupdates
             try:
                 await botupdates_channel.send(embed=embed_botupdates)
             except Exception as e:
-                await ctx.respond("Unable to send message to bot-updates channel")
+                await ctx.send_followup("Unable to send message to bot-updates channel")
                 await logs_channel.send(str(e))
-                return
+
+            #send main
+            try:
+                await main_channel.send(embed=embed_botupdates)
+            except Exception as e:
+                await ctx.send_followup("Unable to send message to 主頻道")
+                await logs_channel.send(str(e))
+
+            #send crows
+            try:
+                await crows_channel.send(embed=embed_botupdates)
+            except Exception as e:
+                await ctx.send_followup("Unable to send message to 鎹鴉")
+                await logs_channel.send(str(e))
 
             #response embed
             embed = discord.Embed()
@@ -1981,7 +2004,7 @@ class Special(commands.Cog):
             embed.set_footer(text=timestamp)
 
             #send reponse
-            await ctx.respond(embed=embed)
+            await ctx.send_followup(embed=embed)
             await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author,message))
             await ctx.message.delete()
         else:
@@ -2036,7 +2059,7 @@ class Special(commands.Cog):
             else:
                 temp_blocked_list_names = "(empty)"
 
-            req_ver_embed_to_staff.set_author(name=member.display_name, icon_url=member.avatar_url)
+            req_ver_embed_to_staff.set_author(name=member.display_name, icon_url=member.display_avatar.url)
             req_ver_embed_to_staff.add_field(name="臨時封鎖驗證名單", value=str(temp_blocked_list_names), inline=True)
             req_ver_embed_to_staff.add_field(name="執行者", value=ctx.author.display_name, inline=True)
 
@@ -2081,7 +2104,7 @@ class Special(commands.Cog):
             else:
                 temp_blocked_list_names = "(empty)"
 
-            req_ver_embed_to_staff.set_author(name=member.display_name, icon_url=member.avatar_url)
+            req_ver_embed_to_staff.set_author(name=member.display_name, icon_url=member.display_avatar.url)
             req_ver_embed_to_staff.add_field(name="臨時封鎖驗證名單", value=str(temp_blocked_list_names), inline=True)
             req_ver_embed_to_staff.add_field(name="執行者", value=ctx.author.display_name, inline=True)
 
@@ -2319,7 +2342,7 @@ class Special(commands.Cog):
 
     @slash_command(guild_ids=guild_ids, name='chest')
     async def _chest(self, ctx: commands.Context, code, key):
-        """$chest CivilCodeMenu網址 關鍵字"""
+        """/chest CivilCodeMenu網址 關鍵字"""
 
         await ctx.defer()
         response = requests.get(code)
@@ -2588,7 +2611,7 @@ async def on_message(message):
 
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
-            req_ver_embed_to_staff.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.avatar_url)
+            req_ver_embed_to_staff.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.display_avatar.url)
             req_ver_embed_to_staff.title = "請求驗證 | Request Verify"
             req_ver_embed_to_staff.color = 0x00ff00
             req_ver_embed_to_staff.add_field(name="Minecraft", value=req_ver_mc_name, inline=True)
@@ -2597,7 +2620,7 @@ async def on_message(message):
             req_ver_embed_to_staff.add_field(name="其他指令", value="發送提醒: `$dm {} \"請輸入提醒\"`\n臨時封鎖: `$block @{}`\n移除封鎖: `$unblock @{}`".format(req_ver_author_id,req_ver_author,req_ver_author), inline=True)
             req_ver_embed_to_staff.set_footer(text=timestamp)
 
-            req_ver_embed_to_member.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.avatar_url)
+            req_ver_embed_to_member.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.display_avatar.url)
             req_ver_embed_to_member.title = "Verification"
             req_ver_embed_to_member.description = "You will be moved to Verified once review completed"
             req_ver_embed_to_member.color = 0x00ff00
@@ -2626,14 +2649,14 @@ async def on_message(message):
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
         embed_generated = discord.Embed()
-        embed_generated.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated.set_author(name=message.author.display_name, icon_url=message.author.display_avatar.url)
         embed_generated.title = "Suggestion received"
         embed_generated.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed_generated.description = message.content
         embed_generated.set_footer(text=timestamp)
 
         embed_generated_ind = discord.Embed()
-        embed_generated_ind.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated_ind.set_author(name=message.author.display_name, icon_url=message.author.display_avatar.url)
         embed_generated_ind.title = "Suggested sent"
         embed_generated_ind.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed_generated_ind.description = message.content
@@ -2641,7 +2664,7 @@ async def on_message(message):
         embed_generated_ind.set_footer(text=timestamp)
 
         embed_generated_public = discord.Embed()
-        embed_generated_public.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+        embed_generated_public.set_author(name=message.author.display_name, icon_url=message.author.display_avatar.url)
         embed_generated_public.title = "Submitted a suggestion"
         embed_generated_public.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         embed_generated_public.description = "Content sent to staff team directly and privately"
@@ -2677,16 +2700,16 @@ async def on_message(message):
         return'''
 
     #Delete after execute
-    music_command_List = ['$join','$leave','$loop','$now','$pause','$play','$queue','$remove','$resume','$shuffle','$skip','$stop','$summon','$volume',
-                          '$j','$disconnect','$v','$current','$playing','$r','$st','$s','$q','$rm','$l','$p',
-                          '$stock','$cov','$covid','$cov19','$covid-19']
-    casino_command_List = ['$call','$fold','$highest','$pot','$raise',
-                           '$bal','$pay','$setbal',
-                           '$game','$hand','$in','$out','$rc','$setcolor','$setsort','$start',
-                           '$cards','$next',
-                           '$ctb','$enter','$pass',
-                           '$reward','$bonus','$b','$prize','$rank','$draw']
-    minecraft_command_List = ['$bind', '$bound', '$unbind', '$ver', '$discver' '$dm', '$block', '$unblock', '$blocklist']
+    music_command_List = ['/join','/leave','/loop','/now','/pause','/play','/queue','/remove','/resume','/shuffle','/skip','/stop','/summon','/volume',
+                          '/j','/disconnect','/v','/current','/playing','/r','/st','/s','/q','/rm','/l','/p',
+                          '/stock','/cov','/covid','/cov19','/covid-19']
+    casino_command_List = ['/call','/fold','/highest','/pot','/raise',
+                           '/bal','/pay','/setbal',
+                           '/game','/hand','/in','/out','/rc','/setcolor','/setsort','/start',
+                           '/cards','/next',
+                           '/ctb','/enter','/pass',
+                           '/reward','/bonus','/b','/prize','/rank','/draw']
+    minecraft_command_List = ['/bind', '/bound', '/unbind', '/ver', '/discver' '/dm', '/block', '/unblock', '/blocklist']
 
     if message.content.split(' ')[0] in casino_command_List:
         if not DBConnection.checkUserInDB(str(message.author.id)):
@@ -2795,7 +2818,7 @@ async def on_member_join(member):
 
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
-        bot_channel_embed_to_staff.set_author(name=member.display_name, icon_url=member.avatar_url)
+        bot_channel_embed_to_staff.set_author(name=member.display_name, icon_url=member.display_avatar.url)
         bot_channel_embed_to_staff.title = "已加入Discord伺服器"
         bot_channel_embed_to_staff.add_field(name="Discord", value=member, inline=True)
         bot_channel_embed_to_staff.set_footer(text=timestamp)
