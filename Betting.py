@@ -8,7 +8,9 @@ import main
 from main import checkInGame, getGame, channelCheck
 
 class Betting(commands.Cog):
-    @slash_command(guild_ids=main.guild_ids, description="提高您的賭注。",
+    global guild_ids
+    guild_ids = main.guild_ids
+    @slash_command(guild_ids=guild_ids, description="提高您的賭注。",
                       brief="提高您的賭注",
                       name='raise',
                       help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
