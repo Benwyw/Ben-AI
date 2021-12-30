@@ -25,14 +25,14 @@ def betCheck(GAME):
 
 
 class Poker(commands.Cog):
-    @commands.command(description="在德州撲克中抽下一張卡片。",
+    @slash_command(guild_ids=guild_ids, name="next", description="在德州撲克中抽下一張卡片。",
                       brief="在德州撲克中抽下一張卡片",
                       help="在德州撲克遊戲中分發下一張檯上卡片。 您必須參與德州撲克才能使用此指令。",
                       pass_context=True)
     async def next(self, ctx):
         embed = discord.Embed(colour=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if not checkInGame(ctx.author):
             embed.description = "您沒有參加任何遊戲。"
@@ -121,14 +121,14 @@ class Poker(commands.Cog):
 
         await ctx.send(file=file, embed=embed)
 
-    @commands.command(description="出示檯上卡片。",
+    @slash_command(guild_ids=guild_ids, name="cards", description="出示檯上卡片。",
                       brief="出示檯上卡片",
                       help="顯示德州撲克遊戲的當前已發的檯上卡片。 您必須在德州撲克遊戲中才能使用此指令。",
                       pass_context=True)
     async def cards(self, ctx):
         embed = discord.Embed(colour=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if not checkInGame(ctx.author):
             embed.description = "您沒有參加任何遊戲。"

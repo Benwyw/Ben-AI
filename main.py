@@ -1092,17 +1092,23 @@ class Music(commands.Cog):
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
             await ctx.voice_state.voice.move_to(destination)
-            try:
-                await ctx.respond(':thumbsup:')
-            except:
-                await ctx.send_followup(':thumbsup:')
+            await ctx.respond(':thumbsup:')
             return
 
         ctx.voice_state.voice = await destination.connect()
-        try:
-            await ctx.respond(':thumbsup:')
-        except:
-            await ctx.send_followup(':thumbsup:')
+        await ctx.respond(':thumbsup:')
+
+    @slash_command(guild_ids=guild_ids, name='join2', aliases=['j2'], invoke_without_subcommand=True)
+    @commands.has_any_role('Ben AI')
+    async def _join2(self, ctx: commands.Context):
+        """我要進來了。"""
+
+        destination = ctx.author.voice.channel
+        if ctx.voice_state.voice:
+            await ctx.voice_state.voice.move_to(destination)
+            return
+
+        ctx.voice_state.voice = await destination.connect()
 
     @slash_command(guild_ids=guild_ids, name='summon')
     @commands.has_permissions(manage_guild=True)
@@ -1281,13 +1287,13 @@ class Music(commands.Cog):
 
         #ctx.voice_stats.voice --> ctx.voice_client
         #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
+        await ctx.defer()
 
         if not ctx.voice_client:
-            await commands.Context.invoke('join', self._join, ctx)
+            await commands.Context.invoke('join2', self._join2, ctx)
 
         async with ctx.typing():
-            try:
-                await ctx.defer()
+            try:   
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
             except YTDLError as e:
                 try:
@@ -1298,12 +1304,8 @@ class Music(commands.Cog):
                 
             else:
                 song = Song(source)
-
                 await ctx.voice_state.songs.put(song)
-                try:
-                    await ctx.respond('加咗首 {}'.format(str(source)))
-                except:
-                    await ctx.send_followup('加咗首 {}'.format(str(source)))
+                await ctx.send_followup('加咗首 {}'.format(str(source)))
 
     @_join.before_invoke
     @_play.before_invoke
@@ -2497,6 +2499,10 @@ class General(commands.Cog):
 
 
 bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
+bot.load_extension('Poker')
+bot.load_extension('Economy')
+bot.load_extension('Betting')
+bot.load_extension('Pres')
 bot.add_cog(Music(bot))
 bot.add_cog(Special(bot))
 bot.add_cog(General(bot))
@@ -2970,10 +2976,7 @@ async def my_background_task():
 my_background_task.start()'''
 
 try:
-    bot.load_extension('Poker')
-    bot.load_extension('Economy')
-    bot.load_extension('Betting')
-    bot.load_extension('Pres')
+    
     load_dotenv()
     bot.owner_id = 254517813417476097
     bot.run(os.getenv('TOKEN'))

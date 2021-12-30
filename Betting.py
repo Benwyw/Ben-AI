@@ -4,20 +4,24 @@ from DBConnection import DBConnection
 
 import discord
 import main
-from main import checkInGame, getGame, channelCheck
+from main import checkInGame, getGame, channelCheck, slash_command
+
+#========================Slash========================
+global guild_ids
+guild_ids = main.guild_ids
 
 class Betting(commands.Cog):
-    @commands.command(description="提高您的賭注。",
+    @slash_command(guild_ids=guild_ids, description="提高您的賭注。",
                       brief="提高您的賭注",
                       name='raise',
                       help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
                       pass_context=True)
-    async def __raise(self, ctx, raiseBy: float = None):
+    async def __raise(self, ctx, raiseby: float = None):
         ID = str(ctx.author.id)
         embed = discord.Embed(title="Bet Raise", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         from main import bot
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         authorMoney = DBConnection.fetchUserData("userBalance", ID)
 
@@ -57,28 +61,28 @@ class Betting(commands.Cog):
         else:
             GAME.playerStatus[ID] = "Raise"'''
 
-        if authorMoney < raiseBy:
-            embed.description = "您沒有足夠資金來加注 $" + str(raiseBy) + "。"
+        if authorMoney < raiseby:
+            embed.description = "您沒有足夠資金來加注 $" + str(raiseby) + "。"
             await ctx.send(embed=embed)
             return
 
-        if raiseBy + GAME.bets[ID] <= GAME.maxBet:
+        if raiseby + GAME.bets[ID] <= GAME.maxBet:
             embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
             embed.description = "沒有擊敗當前最高的賭注。"
             await ctx.send(embed=embed)
             return
 
-        if raiseBy + GAME.bets[ID] > 5050:
+        if raiseby + GAME.bets[ID] > 5050:
             embed.add_field(name="您的總下注", value="$" + str(GAME.bets[ID]), inline=False)
             embed.add_field(name="最高加注限額", value="$5000", inline=False)
-            embed.description = "無法加注 ${}。".format(raiseBy)
+            embed.description = "無法加注 ${}。".format(raiseby)
             await ctx.send(embed=embed)
             return
 
-        GAME.bets[ID] += raiseBy
-        authorMoney -= raiseBy
+        GAME.bets[ID] += raiseby
+        authorMoney -= raiseby
         GAME.maxBet = GAME.bets[ID]
-        GAME.pot += raiseBy
+        GAME.pot += raiseby
         DBConnection.updateUserBalance(ID, authorMoney)
 
         embed.remove_field(1)
@@ -93,12 +97,12 @@ class Betting(commands.Cog):
     async def raise_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title="Command Error", description="Invalid arguments detected for command 'raise'. Check $help raise for more details.", color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             from main import bot
-            embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+            embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             await ctx.send(embed=embed)
 
-    @commands.command(description="跟注最高賭注。",
+    @slash_command(guild_ids=guild_ids, description="跟注最高賭注。",
                       brief="跟注最高賭注",
                       name='call',
                       help="匹配當前最高賭注。 格式為 $call。 不需要任何參數。 需要足夠的資金才能使用。",
@@ -107,9 +111,9 @@ class Betting(commands.Cog):
         ID = str(ctx.author.id)
         authorMoney = DBConnection.fetchUserData("userBalance", ID)
         embed = discord.Embed(title="賭注", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         from main import bot
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
@@ -169,7 +173,7 @@ class Betting(commands.Cog):
         embed.description = "您與最高下注 $" + str(GAME.maxBet) + "跟注了。"
         await ctx.send(embed=embed)
 
-    @commands.command(description="放棄您的賭注，放下您的手。",
+    @slash_command(guild_ids=guild_ids, description="放棄您的賭注，放下您的手。",
                       brief="放棄您的賭注",
                       name='fold',
                       help="棄牌棄牌，不再參與。 您將輸掉任何您已經下注的金額。 格式為 $fold。 不需要任何參數。",
@@ -178,8 +182,8 @@ class Betting(commands.Cog):
         ID = str(ctx.author.id)
         embed = discord.Embed(title="Fold", color=0x00ff00)
         from main import bot
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
@@ -206,16 +210,16 @@ class Betting(commands.Cog):
         embed.description = "你已經蓋牌了。"
         await ctx.send(embed=embed)
 
-    @commands.command(description="View the money in the pot.",
+    @slash_command(guild_ids=guild_ids, description="View the money in the pot.",
                       brief="View the money in the pot",
                       name='pot',
                       help="看看目前有多少錢可以贏得彩池。 格式為 $pot。 不需要任何參數。",
                       pass_context=True)
     async def __pot(self, ctx):
         embed = discord.Embed(title="Pot", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         from main import bot
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
@@ -241,16 +245,16 @@ class Betting(commands.Cog):
         embed.description = "彩池當前總值 $" + str(GAME.pot) + "."
         await ctx.send(embed=embed)
 
-    @commands.command(description="檢查當前最高賭注。",
+    @slash_command(guild_ids=guild_ids, description="檢查當前最高賭注。",
                       brief="查看當前最高賭注",
                       name='highest',
                       help="檢查當前最高賭注是多少。 格式為 $highest。 不需要任何參數。",
                       pass_context=True)
     async def __highest(self, ctx):
         embed = discord.Embed(title="Highest Bet", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         from main import bot
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
