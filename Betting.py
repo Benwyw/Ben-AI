@@ -1,5 +1,4 @@
 # CARDS BOT
-from discord import slash_command
 from discord.ext import commands
 from DBConnection import DBConnection
 
@@ -8,7 +7,7 @@ import main
 from main import checkInGame, getGame, channelCheck
 
 class Betting(commands.Cog):
-    @slash_command(guild_ids=main.guild_ids, description="提高您的賭注。",
+    @commands.command(description="提高您的賭注。",
                       brief="提高您的賭注",
                       name='raise',
                       help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
@@ -99,7 +98,7 @@ class Betting(commands.Cog):
             embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
             await ctx.send(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, description="跟注最高賭注。",
+    @commands.command(description="跟注最高賭注。",
                       brief="跟注最高賭注",
                       name='call',
                       help="匹配當前最高賭注。 格式為 $call。 不需要任何參數。 需要足夠的資金才能使用。",
@@ -170,7 +169,7 @@ class Betting(commands.Cog):
         embed.description = "您與最高下注 $" + str(GAME.maxBet) + "跟注了。"
         await ctx.send(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, description="放棄您的賭注，放下您的手。",
+    @commands.command(description="放棄您的賭注，放下您的手。",
                       brief="放棄您的賭注",
                       name='fold',
                       help="棄牌棄牌，不再參與。 您將輸掉任何您已經下注的金額。 格式為 $fold。 不需要任何參數。",
@@ -207,7 +206,7 @@ class Betting(commands.Cog):
         embed.description = "你已經蓋牌了。"
         await ctx.send(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, description="View the money in the pot.",
+    @commands.command(description="View the money in the pot.",
                       brief="View the money in the pot",
                       name='pot',
                       help="看看目前有多少錢可以贏得彩池。 格式為 $pot。 不需要任何參數。",
@@ -242,7 +241,7 @@ class Betting(commands.Cog):
         embed.description = "彩池當前總值 $" + str(GAME.pot) + "."
         await ctx.send(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, description="檢查當前最高賭注。",
+    @commands.command(description="檢查當前最高賭注。",
                       brief="查看當前最高賭注",
                       name='highest',
                       help="檢查當前最高賭注是多少。 格式為 $highest。 不需要任何參數。",
