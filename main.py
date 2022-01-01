@@ -1323,6 +1323,62 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @slash_command(guild_ids=guild_ids, name='meme')
+    async def _meme(self, ctx: commands.Context, url, text, txtsize, pos, color):
+        '''圖片網址(.jpg .png .gif) 文字(自己唸啦屌) 文字大小(數字) 位置(up center down) 顏色(red)'''
+
+        await ctx.defer()
+
+        try:
+            image = Image.open(BytesIO(requests.get(url).content))
+            draw = ImageDraw.Draw(image)
+            txt = text
+            fontsize = int(txtsize)
+            ttf = 'https://www.dropbox.com/s/cq2bainz70cpbu4/ArialUnicodeMS.ttf?dl=1'
+
+            W, H = image.size
+
+            font = ImageFont.truetype(requests.get(ttf, stream=True).raw, fontsize)
+
+            w, h = draw.textsize(txt, font=font)
+
+            if pos == 'up':
+                draw.text(((W-w)/2,(H-h)/50), txt, font=font, fill=color)
+            elif pos == 'center' or pos == 'middle':
+                draw.text(((W-w)/2,(H-h)/2), txt, font=font, fill=color)
+            elif pos == 'down':
+                draw.text(((W-w)/2,(H-h)-((H-h)/50)), txt, font=font, fill=color)
+        except Exception as e:
+            image = Image.open(BytesIO(requests.get('https://i.imgur.com/fYe7MrH.jpg').content))
+            draw = ImageDraw.Draw(image)
+            txt = "屌屌屌屌屌屌屌你呀"
+            fontsize = 80
+            ttf = 'https://www.dropbox.com/s/cq2bainz70cpbu4/ArialUnicodeMS.ttf?dl=1'
+            color = 'red' #default
+
+            W, H = image.size
+
+            font = ImageFont.truetype(requests.get(ttf, stream=True).raw, fontsize)
+
+            w, h = draw.textsize(txt, font=font)
+
+            print('{} {} {} {}'.format((H-h), (H-h)/10, (H-h)/5, (H-h)/2))
+
+            draw.text(((W-w)/2,(H-h)/50), txt, font=font, fill=color) #up
+
+            await ctx.send_followup('{}\n出現了以上問題所以用了預設梗圖'.format(e))
+        with BytesIO() as img:
+            image.save(img, 'PNG')
+            img.seek(0)
+            file = discord.File(fp=img, filename='memeup.png')
+        await ctx.send_followup(file=file)
+    
+    @slash_command(guild_ids=guild_ids, name='testparam')
+    async def _testparam(self, ctx: commands.Context, url, position, color):
+        '''Test command for /meme'''
+        await ctx.respond('{} {} {}'.format(url, position, color))
+
+
     @slash_command(guild_ids=guild_ids, name='log')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     async def log(self, ctx: commands.Context, message):
