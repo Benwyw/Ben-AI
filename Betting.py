@@ -187,14 +187,14 @@ class Betting(commands.Cog):
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
@@ -203,12 +203,12 @@ class Betting(commands.Cog):
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
             embed.set_footer(text="使用 $start 啟動此遊戲。")
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME.playerStatus[ID] = "Fold"
         embed.description = "你已經蓋牌了。"
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @slash_command(guild_ids=guild_ids, description="View the money in the pot.",
                       brief="View the money in the pot",
