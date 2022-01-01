@@ -2458,11 +2458,11 @@ class General(commands.Cog):
         data = data.tail(60)
 
         try:
-            data[' 更新日期'] = data[' 更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
+            data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
         except:
             await ctx.send_followup('Data process failed. <@{}>'.format(bot.owner_id))
             return
-        x = data[' 更新日期']
+        x = data['更新日期']
         y = data['確診個案']
         y2 = data['死亡']
         y3 = data['出院']
