@@ -257,7 +257,7 @@ class TexasHoldEm(Game):
 
                 embed.title = "德州撲克"
                 embed.description = "獲勝者是 " + winner.name + "，贏得底池 $" + str(self.pot) + "。\n勝場: {} --> {}\n\n開始下一個手？豎起大拇指表示同意，豎下大拇指表示否。".format(olduserWin,newuserWin)
-                embed.set_thumbnail(url=winner.avatar_url)
+                embed.set_thumbnail(url=winner.display_avatar.url)
                 embed.set_footer(text="使用 $out 退出此遊戲。")
 
                 userMoney = DBConnection.fetchUserData("userBalance", score[overallMax])
@@ -380,8 +380,8 @@ class President(Game):
         self.currentPlayer = bot.get_user(int(self.activePlayers[self.turnIndex]))
 
         embed = discord.Embed(title=self.currentPlayer.name + "'s Hand", description=None, color=0x00ff00)
-        embed.set_author(name=self.currentPlayer.display_name, icon_url=self.currentPlayer.avatar_url)
-        embed.set_thumbnail(url=bot.get_user(814558209859518555).avatar_url)
+        embed.set_author(name=self.currentPlayer.display_name, icon_url=self.currentPlayer.display_avatar.url)
+        embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         file = showHand(self.currentPlayer, self.playerHands[str(self.currentPlayer.id)])
         embed.set_image(url="attachment://hand.png")
         embed.add_field(name="Number of Cards", value=str(len(self.playerHands[str(self.currentPlayer.id)])))
@@ -389,7 +389,7 @@ class President(Game):
 
         embed = discord.Embed(title="President", description="It is your turn.", color=0x0ff00)
         embed.set_thumbnail(url=President.imageUrl)
-        embed.set_author(name=self.currentPlayer.name, icon_url=self.currentPlayer.avatar_url)
+        embed.set_author(name=self.currentPlayer.name, icon_url=self.currentPlayer.display_avatar.url)
 
         if self.numPasses == len(self.activePlayers) - 1:
             embed.description = "Everyone passed on your cards. You have a free turn!"

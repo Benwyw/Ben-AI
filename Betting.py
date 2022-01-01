@@ -117,14 +117,14 @@ class Betting(commands.Cog):
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
@@ -133,7 +133,7 @@ class Betting(commands.Cog):
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
             embed.set_footer(text="使用 $start 啟動此遊戲。")
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         embed.set_footer(text="格式為 $raise <加注金額>。")
@@ -141,19 +141,19 @@ class Betting(commands.Cog):
 
         if GAME.playerStatus[ID] == "Fold":
             embed.description = "您不參與當前的一手牌。 等待下一個開始。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
         if str(ID) in GAME.bets:
             if GAME.bets[ID] == GAME.maxBet:
                 embed.description = "您的下注已經與最高下注匹配。"
-                await ctx.send(embed=embed)
+                await ctx.respond(embed=embed)
                 return
 
         if authorMoney < GAME.maxBet - GAME.bets[ID]:
             embed.description = "您沒有足夠的資金來匹配最高的賭注。"
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         if ID in GAME.bets:
@@ -171,7 +171,7 @@ class Betting(commands.Cog):
         embed.set_field_at(1, name="Your New Balance", value ="$" + str(authorMoney), inline=False)
         embed.add_field(name="Pot", value="$" + str(GAME.pot))
         embed.description = "您與最高下注 $" + str(GAME.maxBet) + "跟注了。"
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @slash_command(guild_ids=guild_ids, description="放棄您的賭注，放下您的手。",
                       brief="放棄您的賭注",
