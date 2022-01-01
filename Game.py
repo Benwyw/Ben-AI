@@ -127,7 +127,7 @@ class TexasHoldEm(Game):
 
         embed = discord.Embed(title="德州撲克", description="開始新手。 底注是 $50", colour=0x00ff00)
         embed.set_thumbnail(url=TexasHoldEm.imageUrl)
-        embed.set_footer(text="使用 $out 退出此遊戲。")
+        embed.set_footer(text="使用 /out 退出此遊戲。")
         #file = showHand(bot.get_user(int(bot.user.id)), self.communityCards)
         embed.set_image(url="attachment://hand.png")
 
@@ -258,7 +258,7 @@ class TexasHoldEm(Game):
                 embed.title = "德州撲克"
                 embed.description = "獲勝者是 " + winner.name + "，贏得底池 $" + str(self.pot) + "。\n勝場: {} --> {}\n\n開始下一個手？豎起大拇指表示同意，豎下大拇指表示否。".format(olduserWin,newuserWin)
                 embed.set_thumbnail(url=winner.display_avatar.url)
-                embed.set_footer(text="使用 $out 退出此遊戲。")
+                embed.set_footer(text="使用 /out 退出此遊戲。")
 
                 userMoney = DBConnection.fetchUserData("userBalance", score[overallMax])
                 userMoney += self.pot
@@ -282,7 +282,7 @@ class TexasHoldEm(Game):
                 desc += ", 拆分的底池 $" + str(self.pot) + "。\n勝場: {} --> {}\n\n開始下一個手？ 豎起大拇指表示同意，豎起大拇指表示否。".format(olduserWin,newuserWin)
                 embed.description = desc
                 embed.set_thumbnail(url=TexasHoldEm.imageUrl)
-                embed.set_footer(text="使用 $out 退出此遊戲。")
+                embed.set_footer(text="使用 /out 退出此遊戲。")
 
             confirmEmoji = '👍'
             quitEmoji = '👎'

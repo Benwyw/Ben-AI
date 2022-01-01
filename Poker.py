@@ -39,7 +39,7 @@ class Poker(commands.Cog):
 
         if not checkInGame(ctx.author):
             embed.description = "您沒有參加任何遊戲。"
-            embed.set_footer(text="使用 $in <遊戲ID> 來加入現有遊戲。")
+            embed.set_footer(text="使用 /in <遊戲ID> 來加入現有遊戲。")
             await ctx.send_followup(embed=embed)
             return
 
@@ -62,7 +62,7 @@ class Poker(commands.Cog):
         if not GAME.gameUnderway:
             embed.add_field(name="遊戲編號", value=str(GAME.ID))
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.send_followup(embed=embed)
             return
 
@@ -76,7 +76,7 @@ class Poker(commands.Cog):
             return
 
         embed.set_author(name="", icon_url="")
-        embed.set_footer(text="使用 $out 退出此遊戲。")
+        embed.set_footer(text="使用 /out 退出此遊戲。")
         needToMatch = betCheck(GAME)
         me = bot.get_user(814558209859518555)
         file = showHand(ctx.author, GAME.communityCards)
@@ -135,7 +135,7 @@ class Poker(commands.Cog):
 
         if not checkInGame(ctx.author):
             embed.description = "您沒有參加任何遊戲。"
-            embed.set_footer(text="使用 $in <遊戲ID> 來加入現有遊戲。")
+            embed.set_footer(text="使用 /in <遊戲ID> 來加入現有遊戲。")
             await ctx.send(embed=embed)
             return
 
@@ -158,7 +158,7 @@ class Poker(commands.Cog):
         if not GAME.gameUnderway:
             embed.add_field(name="遊戲編號", value=str(GAME.ID))
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 

@@ -42,7 +42,7 @@ class Betting(commands.Cog):
 
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
@@ -132,7 +132,7 @@ class Betting(commands.Cog):
 
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.respond(embed=embed)
             return
 
@@ -202,7 +202,7 @@ class Betting(commands.Cog):
 
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.respond(embed=embed)
             return
 
@@ -238,7 +238,7 @@ class Betting(commands.Cog):
 
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
@@ -273,7 +273,7 @@ class Betting(commands.Cog):
 
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
-            embed.set_footer(text="使用 $start 啟動此遊戲。")
+            embed.set_footer(text="使用 /start 啟動此遊戲。")
             await ctx.send(embed=embed)
             return
 
