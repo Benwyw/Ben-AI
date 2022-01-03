@@ -2074,7 +2074,6 @@ class Special(commands.Cog):
             #send reponse
             await ctx.send_followup(embed=embed)
             await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author,message))
-            await ctx.message.delete()
         else:
             await ctx.respond("請去 <#810511993449742347>")
 
