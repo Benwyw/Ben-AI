@@ -2976,7 +2976,7 @@ async def on_presence_update(before, after):
         return
 
     try:
-        if str(before.status) in ("online", "offline", "idle"):
+        if str(before.status) in ("online", "offline", "idle", "dnd", "streaming"):
             pok_channel = bot.get_channel(858022877450600458)
 
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
@@ -2986,13 +2986,13 @@ async def on_presence_update(before, after):
             embed.set_footer(text=timestamp)
 
             if str(before.status) == "offline":
-                if str(after.status) in ("online", "idle"):
+                if str(after.status) in ("online", "idle", "dnd", "streaming"):
                     embed.title = "已上線"
                     embed.color = 0x00ff00
                     embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
                     await pok_channel.send(embed=embed)
 
-            if str(before.status) in ("online", "idle"):
+            if str(before.status) in ("online", "idle", "dnd", "streaming"):
                 if str(after.status) == "offline":
                     embed.title = "已離線"
                     embed.color = 0xff0000
