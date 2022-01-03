@@ -2981,22 +2981,24 @@ async def on_presence_update(before, after):
 
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
             embed = discord.Embed()
-            embed.set_author(name=str(before.display_name), icon_url=before.display_avatar.url)
-            embed.description = '<@{}>'.format(before.id)
+            #embed.set_author(name=str(before.display_name), icon_url=before.display_avatar.url)
+            #embed.description = '<@{}>'.format(before.id)
             embed.set_footer(text=timestamp)
 
             if str(before.status) == "offline":
                 if str(after.status) in ("online", "idle", "dnd", "streaming"):
-                    embed.title = "已上線"
+                    #embed.title = "已上線"
                     embed.color = 0x00ff00
-                    embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
+                    embed.description = '<@{}>已上線'.format(before.id)
+                    #embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
                     await pok_channel.send(embed=embed)
 
             if str(before.status) in ("online", "idle", "dnd", "streaming"):
                 if str(after.status) == "offline":
-                    embed.title = "已離線"
+                    #embed.title = "已離線"
                     embed.color = 0xff0000
-                    embed.set_thumbnail(url="https://i.imgur.com/8tG00SB.png")
+                    embed.description = '<@{}>已離線'.format(before.id)
+                    #embed.set_thumbnail(url="https://i.imgur.com/8tG00SB.png")
                     await pok_channel.send(embed=embed)
     except:
         pass
