@@ -2989,12 +2989,14 @@ async def on_presence_update(before, after):
             if str(before.status) in ("offline", "idle"):
                 if str(after.status) == "online":
                     embed.title = "已上線"
+                    embed.color = 0x00ff00
                     embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
                     await pok_channel.send(embed=embed)
 
             if str(before.status) in ("online", "idle"):
                 if str(after.status) == "offline":
                     embed.title = "已離線"
+                    embed.color = 0xff0000
                     embed.set_thumbnail(url="https://i.imgur.com/8tG00SB.png")
                     await pok_channel.send(embed=embed)
     except:
