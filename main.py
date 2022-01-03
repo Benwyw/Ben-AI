@@ -1320,9 +1320,24 @@ class Music(commands.Cog):
 #========================General========================
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
+'''
+@loop(seconds=1)
+async def stockLoop():
+    testLoopChannel = bot.get_channel(927530287049629716)
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    await testLoopChannel.send(timestamp)
+'''
+
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    '''
+    @slash_command(guild_ids=guild_ids, name='testloop')
+    async def _testloop(self, ctx:commands.Context):
+        await stockLoop.start()
+        await ctx.respond('Test loop started.')
+    '''
 
     @slash_command(guild_ids=guild_ids, name='meme')
     async def _meme(self, ctx: commands.Context, url, text, txtsize, pos, color):
