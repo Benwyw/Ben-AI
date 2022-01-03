@@ -1381,8 +1381,8 @@ class Special(commands.Cog):
         embed = discord.Embed()
         embed.set_author(name=str(ctx.author.display_name), icon_url=ctx.author.display_avatar.url)
         embed.title = "已上線"
-        embed.set_thumbnail(url="https://i.imgur.com/SNgfeVB.png")
-        embed.description = str(ctx.author)
+        embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
+        embed.description = '<@{}>'.format(ctx.author.id)
         embed.set_footer(text=timestamp)
         await ctx.respond(embed=embed)
 
@@ -2038,7 +2038,10 @@ class Special(commands.Cog):
             embed_botupdates.set_footer(text=timestamp)
 
             #preview
-            await ctx.respond(embed=embed_botupdates)
+            #await ctx.respond(embed=embed_botupdates)
+
+            #loading
+            await ctx.defer()
 
             #send botupdates
             try:
@@ -2974,16 +2977,26 @@ async def on_presence_update(before, after):
         return
 
     try:
-        pok_channel = bot.get_channel(858022877450600458)
+        if str(before.status) in ("online", "offline", "idle"):
+            pok_channel = bot.get_channel(858022877450600458)
 
-        if str(before.status) in ("offline", "idle"):
-            if str(after.status) == "online":
-                await pok_channel.send("{} 已上線".format(before))
+            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+            embed = discord.Embed()
+            embed.set_author(name=str(before.display_name), icon_url=before.display_avatar.url)
+            embed.description = '<@{}>'.format(before.id)
+            embed.set_footer(text=timestamp)
 
-        if str(before.status) in ("online", "idle") :
-            if str(after.status) == "offline":
-                await pok_channel.send("{} 已離線".format(before))
+            if str(before.status) in ("offline", "idle"):
+                if str(after.status) == "online":
+                    embed.title = "已上線"
+                    embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
+                    await pok_channel.send(embed=embed)
 
+            if str(before.status) in ("online", "idle"):
+                if str(after.status) == "offline":
+                    embed.title = "已離線"
+                    embed.set_thumbnail(url="https://i.imgur.com/8tG00SB.png")
+                    await pok_channel.send(embed=embed)
     except:
         pass
 
