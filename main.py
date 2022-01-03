@@ -2985,7 +2985,7 @@ async def on_presence_update(before, after):
             embed.description = '<@{}>'.format(before.id)
             embed.set_footer(text=timestamp)
 
-            if str(before.status) in ("offline", "idle"):
+            if str(before.status) in ("offline"):
                 if str(after.status) == "online":
                     embed.title = "已上線"
                     embed.color = 0x00ff00
