@@ -1374,10 +1374,17 @@ class Special(commands.Cog):
             file = discord.File(fp=img, filename='memeup.png')
         await ctx.send_followup(file=file)
     
-    @slash_command(guild_ids=guild_ids, name='testparam')
-    async def _testparam(self, ctx: commands.Context, url, position, color):
-        '''Test command for /meme'''
-        await ctx.respond('{} {} {}'.format(url, position, color))
+    @slash_command(guild_ids=guild_ids, name='testavatar')
+    async def _testparam(self, ctx: commands.Context):
+        '''Test command for avatar embed'''
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+        embed = discord.Embed()
+        embed.set_author(name=str(ctx.author.display_name), icon_url=ctx.author.display_avatar.url)
+        embed.title = "已上線"
+        embed.set_thumbnail(url="https://i.imgur.com/SNgfeVB.png")
+        embed.description = str(ctx.author)
+        embed.set_footer(text=timestamp)
+        await ctx.respond(embed=embed)
 
 
     @slash_command(guild_ids=guild_ids, name='log')
@@ -2515,9 +2522,13 @@ class General(commands.Cog):
         data = data.tail(60)
 
         try:
-            data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
+            #data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
+            #data['更新日期'] = pd.to_date(data['更新日期'])
+            pass
+            #df['date'] = pd.to_datetime(df['date'])  
+            #print(data['更新日期'])
         except Exception as e:
-            await ctx.send_followup('<@{}>\n{}'.format(bot.owner_id,e))
+            await ctx.send_followup('<@{}>\n{}\n{}'.format(bot.owner_id,e,data['更新日期']))
             return
         x = data['更新日期']
         y = data['確診個案']
@@ -2525,12 +2536,14 @@ class General(commands.Cog):
         y3 = data['出院']
         y4 = data['疑似個案']
         y5 = data['住院危殆個案']
+        y6 = data['嚴重急性呼吸綜合症冠狀病毒2的陽性檢測個案']
 
         plt.plot(x, y, label="confirmed")
         plt.plot(x, y2, label="death")
         plt.plot(x, y3, label="discharge")
         plt.plot(x, y4, label="probable")
         plt.plot(x, y5, label="hospitalised and critical")
+        plt.plot(x, y6, label="positive for SARS-CoV-2")
         plt.title("Latest situation of reported cases of COVid-19 in Hong Kong")
         plt.xlabel('past 60 days')
         plt.ylabel('amount')
@@ -2551,7 +2564,11 @@ class General(commands.Cog):
             url="attachment://cov_latest.png"
         )
 
-        await ctx.send_followup(embed=e, file=chart)
+        latest = data['確診個案'].iloc[-1]
+        if latest is None or str(latest) == 'nan':
+            latest = data['嚴重急性呼吸綜合症冠狀病毒2的陽性檢測個案'].iloc[-1]
+
+        await ctx.send_followup(content='__確診個案__\n最高: {}\n最低: {}\n平均: {}\n中位: {}\n現時: {}'.format(data['確診個案'].max(), data['確診個案'].min(), data['確診個案'].mean(), data['確診個案'].median(), latest), embed=e, file=chart)
 
 
 bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
