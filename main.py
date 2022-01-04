@@ -1459,7 +1459,7 @@ class Special(commands.Cog):
 
         bot_channel_embed_to_staff.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         bot_channel_embed_to_staff.title = "已加入Discord伺服器"
-        bot_channel_embed_to_staff.add_field(name="Discord", value=ctx.author, inline=True)
+        bot_channel_embed_to_staff.add_field(name="Discord", value='<@{}>'.format(ctx.author.id), inline=True)
         bot_channel_embed_to_staff.set_footer(text=timestamp)
 
         bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
@@ -2916,7 +2916,7 @@ async def on_member_join(member):
 
         bot_channel_embed_to_staff.set_author(name=member.display_name, icon_url=member.display_avatar.url)
         bot_channel_embed_to_staff.title = "已加入Discord伺服器"
-        bot_channel_embed_to_staff.add_field(name="Discord", value=member, inline=True)
+        bot_channel_embed_to_staff.add_field(name="Discord", value='<@{}>'.format(member.id), inline=True)
         bot_channel_embed_to_staff.set_footer(text=timestamp)
 
         bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
