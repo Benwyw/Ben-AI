@@ -15,4 +15,4 @@ sanic
 apscheduler
 pytz
 typing-extensions
-git+https://github.com/Pycord-Development/pycord#egg=py-cord[voice]
+git+https://github.com/Pycord-Development/pycord#egg=py-cord[voice]==2.0.0a0
