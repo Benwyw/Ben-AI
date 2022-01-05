@@ -1,6 +1,6 @@
 pip
 youtube_dl
-git+https://github.com/Pycord-Development/pycord#egg=py-cord[voice]
+-e git+https://github.com/Pycord-Development/pycord.git#egg=py-cord[voice]
 python-dotenv
 ffmpeg
 PyNaCl
