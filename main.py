@@ -832,6 +832,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
     @classmethod
     async def create_source(cls, ctx: commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None):
+        try:
+            cls.ytdl.cache.remove()
+        except:
+            pass
+        
         loop = loop or asyncio.get_event_loop()
 
         partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
@@ -1294,7 +1299,6 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                ctx.ytdl.cache.remove()
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
                 song = Song(source)
                 await ctx.voice_state.songs.put(song)
