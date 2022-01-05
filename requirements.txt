@@ -1,5 +1,7 @@
 pip
 youtube_dl
+libffi-dev
+python-dev
 git+https://github.com/Pycord-Development/pycord#egg=py-cord[voice]
 python-dotenv
 ffmpeg
