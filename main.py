@@ -795,8 +795,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'no_warnings': True,
         'default_search': 'auto',
         'source_address': '0.0.0.0',
-        'verbose': True,
-        'cachedir': False
+        'verbose': True
     }
 
     FFMPEG_OPTIONS = {
@@ -1294,7 +1293,8 @@ class Music(commands.Cog):
             await commands.Context.invoke('join2', self._join2, ctx)
 
         async with ctx.typing():
-            try:   
+            try:
+                ctx.ytdl.cache.remove()
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
                 song = Song(source)
                 await ctx.voice_state.songs.put(song)
