@@ -795,7 +795,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'no_warnings': True,
         'default_search': 'auto',
         'source_address': '0.0.0.0',
-        'verbose': True
+        'verbose': True,
+        'cachedir': False
     }
 
     FFMPEG_OPTIONS = {
@@ -1295,16 +1296,12 @@ class Music(commands.Cog):
         async with ctx.typing():
             try:   
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
-            except YTDLError as e:
-                try:
-                    await ctx.respond('處理此請求時發生錯誤: {}'.format(str(e)))
-                except:
-                    await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
-                return
-                
-            else:
                 song = Song(source)
                 await ctx.voice_state.songs.put(song)
+            except YTDLError as e:
+                await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
+                return        
+            else:
                 await ctx.send_followup('加咗首 {}'.format(str(source)))
 
     @_join.before_invoke
