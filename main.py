@@ -2741,7 +2741,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    '''
     if message.guild is None:
         if not str(message.content).startswith("$") and message.author.id not in temp_blocked_list:
             req_ver_author = message.author
@@ -2755,18 +2754,23 @@ async def on_message(message):
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
             req_ver_embed_to_staff.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.display_avatar.url)
-            req_ver_embed_to_staff.title = "請求驗證 | Request Verify"
-            req_ver_embed_to_staff.color = 0x00ff00
+            #req_ver_embed_to_staff.title = "請求驗證 | Request Verify"
+            req_ver_embed_to_staff.title = "已拒絕驗證請求 | Refused Verify"
+            #req_ver_embed_to_staff.color = 0x00ff00
+            req_ver_embed_to_staff.color = 0xff0000
             req_ver_embed_to_staff.add_field(name="Minecraft", value=req_ver_mc_name, inline=True)
             req_ver_embed_to_staff.add_field(name="Discord", value=req_ver_author, inline=True)
-            req_ver_embed_to_staff.add_field(name="驗證指令", value="Minecraft: `$ver {}`\nDiscord: `$discver @{}`".format(req_ver_mc_name,req_ver_author), inline=False)
+            #req_ver_embed_to_staff.add_field(name="驗證指令", value="Minecraft: `$ver {}`\nDiscord: `$discver @{}`".format(req_ver_mc_name,req_ver_author), inline=False)
             req_ver_embed_to_staff.add_field(name="其他指令", value="發送提醒: `$dm {} \"請輸入提醒\"`\n臨時封鎖: `$block @{}`\n移除封鎖: `$unblock @{}`".format(req_ver_author_id,req_ver_author,req_ver_author), inline=True)
             req_ver_embed_to_staff.set_footer(text=timestamp)
 
             req_ver_embed_to_member.set_author(name=req_ver_author.display_name, icon_url=req_ver_author.display_avatar.url)
-            req_ver_embed_to_member.title = "Verification"
-            req_ver_embed_to_member.description = "You will be moved to Verified once review completed"
-            req_ver_embed_to_member.color = 0x00ff00
+            #req_ver_embed_to_member.title = "Verification"
+            req_ver_embed_to_member.title = "Verification (Disabled)"
+            #req_ver_embed_to_member.description = "You will be moved to Verified once review completed"
+            req_ver_embed_to_member.description = "2019~2021 | End of service: 17Dec2021"
+            #req_ver_embed_to_member.color = 0x00ff00
+            req_ver_embed_to_member.color = 0xff0000
             req_ver_embed_to_member.add_field(name="Minecraft", value=req_ver_mc_name, inline=True)
             req_ver_embed_to_member.add_field(name="Discord", value=req_ver_author, inline=True)
             req_ver_embed_to_member.set_footer(text=timestamp)
@@ -2778,13 +2782,13 @@ async def on_message(message):
                 req_ver_embed_to_staff.description = "無法回覆 {} 請求提交正在處理".format(str(req_ver_author))
                 await log_channel.send(str(e))
             else:
-                req_ver_embed_to_staff.description = "已回覆 {} 請求提交正在處理".format(str(req_ver_author))
+                #req_ver_embed_to_staff.description = "已回覆 {} 請求提交正在處理".format(str(req_ver_author))
+                req_ver_embed_to_staff.description = "2019~2021 | End of service: 17Dec2021"
 
             if message.author.id not in dmList:
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
             else:
                 await req_ver_channel.send(embed=req_ver_embed_to_staff)
-    '''
 
     '''
     if message.guild.id == 671654280985313282 and message.channel == bot.get_channel(910017157675503637):
@@ -2982,7 +2986,7 @@ async def on_member_join(member):
         #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
         bot_channel = bot.get_channel(692466531447210105)
         try:
-            await member.send(embed=bot_channel_embed_to_member)
+            await member.send(content='2019~2021 | End of service: 17Dec2021', embed=bot_channel_embed_to_member)
             bot_channel_embed_to_staff.description = "歡迎信息發送成功"
             bot_channel_embed_to_staff.color = 0x00ff00
         except Exception as e:
