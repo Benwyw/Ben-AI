@@ -2486,7 +2486,7 @@ class General(commands.Cog):
                                                 country='hk')
         else:
             # /v2/everything
-            results = newsapi.get_everything(q='bitcoin',
+            results = newsapi.get_everything(q=search,
                                             #sources='bbc-news,the-verge',
                                             #domains='bbc.co.uk,techcrunch.com',
                                             language='zh',
