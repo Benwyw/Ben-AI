@@ -61,6 +61,7 @@ import matplotlib.pyplot as plt
 
 #========================News API========================
 from newsapi import NewsApiClient
+import validators
 
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
@@ -2499,9 +2500,11 @@ class General(commands.Cog):
                                             sort_by='publishedAt',
                                             page=1)
         for result in results['articles']:
-            embed = discord.Embed(title=result['title'], url=result['url'])
+            embed = discord.Embed(title=result['title'])
+            if result['url'] is not None and validators.url(result['url']) :
+                embed.url = result['url']
             embed.set_author(name=result['source']['name'], icon_url='https://i.imgur.com/UdkSDcb.png')
-            if result['urlToImage'] is not None:
+            if result['urlToImage'] is not None and validators.url(result['urlToImage']):
                 embed.set_thumbnail(url=result['urlToImage'])
             else:
                 embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
