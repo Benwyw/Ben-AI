@@ -59,12 +59,16 @@ from alpha_vantage.timeseries import TimeSeries
 import matplotlib
 import matplotlib.pyplot as plt
 
+#========================News API========================
+from newsapi import NewsApiClient
+
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
 
 #API Key
 load_dotenv()
 ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
+newsapi = NewsApiClient(api_key=os.getenv('NEWS_API_KEY'))
 
 #========================Checks========================
 def is_in_guild(guild_id):
@@ -2461,6 +2465,43 @@ class General(commands.Cog):
             for count in range(10):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
+
+    @slash_command(guild_ids=guild_ids, name='news')
+    async def _news(self, ctx:commands.Context, search=None):
+        """新聞"""
+
+        if ctx.guild.id == 351742829254410250 and ctx.channel.id == 356782441777725440 or ctx.guild.id == 671654280985313282 and ctx.channel.id in [684024056944787489, 903247995682824242, 717424039387201536, 684024142135296059]:
+            await ctx.respond('由於指令結果會洗版，已在主頻道禁用，請在其他頻道執行。')
+            return
+            
+        await ctx.defer()
+        results = None
+
+        if search is None:
+            # /v2/top-headlines
+            results = newsapi.get_top_headlines(#q='bitcoin',
+                                                #sources='bbc-news,the-verge',
+                                                #category='business',
+                                                language='zh',
+                                                country='hk')
+        else:
+            # /v2/everything
+            results = newsapi.get_everything(q='bitcoin',
+                                            #sources='bbc-news,the-verge',
+                                            #domains='bbc.co.uk,techcrunch.com',
+                                            language='zh',
+                                            sort_by='publishedAt',
+                                            page=1)
+        for result in results['articles']:
+            embed = discord.Embed(title=result['title'], url=result['url'])
+            embed.set_author(name=result['source']['name'], icon_url='https://i.imgur.com/UdkSDcb.png')
+            embed.set_thumbnail(url=result['urlToImage'])
+            embed.description = result['description']
+            if result['author'] is not None:
+                embed.set_footer(text='{}\n{}'.format(result['author'], result['publishedAt']))
+            else:
+                embed.set_footer(text='{}'.format(result['publishedAt']))
+            await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='stock')
     async def _stock(self, ctx:commands.Context, stock_name):
