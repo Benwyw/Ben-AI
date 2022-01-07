@@ -1328,48 +1328,52 @@ dmList = [254517813417476097,525298794653548751,562972196880777226,1998772050718
 
 @loop(minutes=1)
 async def covLoop():
-    BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-    BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
-    BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+        BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+        BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+        BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-    #api / json
-    hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'en-US,en;q=0.8',
-       'Connection': 'keep-alive'}
-    api = "https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Fbuilding_list_chi.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%2C%22sorts%22%3A%5B%5B4%2C%22desc%22%5D%5D%7D"
-    url = Request(api, headers=hdr)
-    data_json = json.loads(urlopen(url).read())
-    data = max(data_json, key=lambda ev: ev['相關個案編號'])
-    district = data['地區']
-    building = data['大廈名單']
-    lastVisitedDate = data['個案最後到訪日期']
-    caseNo = data['相關個案編號']
+        #api / json
+        hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+        'Accept-Encoding': 'none',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Connection': 'keep-alive'}
+        api = "https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Fbuilding_list_chi.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%2C%22sorts%22%3A%5B%5B4%2C%22desc%22%5D%5D%7D"
+        url = Request(api, headers=hdr)
+        data_json = json.loads(urlopen(url).read())
+        data = max(data_json, key=lambda ev: ev['相關個案編號'])
+        district = data['地區']
+        building = data['大廈名單']
+        lastVisitedDate = data['個案最後到訪日期']
+        caseNo = data['相關個案編號']
 
-    #db
-    db_case_no = DBConnection.getCaseNo()[0][0]
+        #db
+        db_case_no = DBConnection.getCaseNo()[0][0]
 
-    if int(caseNo) == int(db_case_no):
-        return
-    else:
-        DBConnection.updateCaseNo(caseNo)
+        if int(caseNo) == int(db_case_no):
+            return
+        else:
+            DBConnection.updateCaseNo(caseNo)
 
-        embed = discord.Embed(title='最新SARS-CoV-2曾到訪的大廈', url='https://data.gov.hk/tc-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent/resource/4ff8e5fa-9c94-4490-9b13-764e520ecb5b')
-        embed.set_author(name='data.gov.hk', icon_url='https://i.imgur.com/64ivaYA.png')
-        embed.set_thumbnail(url='https://i.imgur.com/CrepYT5.png')
-        if lastVisitedDate is not None and lastVisitedDate != "":
-            embed.description = '個案最後到訪日期: {}'.format(lastVisitedDate)
-        embed.add_field(name="地區", value=district, inline=True)
-        embed.add_field(name="大廈名單", value=building, inline=True)
-        embed.add_field(name="相關個案編號", value=caseNo, inline=True)
-        embed.set_footer(text='{}'.format(timestamp))
+            embed = discord.Embed(title='最新SARS-CoV-2曾到訪的大廈', url='https://data.gov.hk/tc-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent/resource/4ff8e5fa-9c94-4490-9b13-764e520ecb5b')
+            embed.set_author(name='data.gov.hk', icon_url='https://i.imgur.com/64ivaYA.png')
+            embed.set_thumbnail(url='https://i.imgur.com/CrepYT5.png')
+            if lastVisitedDate is not None and lastVisitedDate != "":
+                embed.description = '個案最後到訪日期: {}'.format(lastVisitedDate)
+            embed.add_field(name="地區", value=district, inline=True)
+            embed.add_field(name="大廈名單", value=building, inline=True)
+            embed.add_field(name="相關個案編號", value=caseNo, inline=True)
+            embed.set_footer(text='{}'.format(timestamp))
 
-        await BDS_PD_Channel.send(embed=embed)
-        await BLG_MC_Channel.send(embed=embed)
-        await BMS_OT_Channel.send(embed=embed)
+            await BDS_PD_Channel.send(embed=embed)
+            await BLG_MC_Channel.send(embed=embed)
+            await BMS_OT_Channel.send(embed=embed)
+    except Exception as e:
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))
 
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
