@@ -1326,13 +1326,80 @@ class Music(commands.Cog):
 #========================General========================
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
+@loop(hours=1)
+async def newsLoop():
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+        print('newsLoop triggered on {}'.format(timestamp))
+        # /v2/top-headlines
+        top_headlines = newsapi.get_top_headlines(category='business', language='zh', country='hk')
+        selected_top_headline = ''
+        for top_headline in top_headlines['articles']:
+            if (top_headline['author'] == '香港經濟日報HKET'):
+                selected_top_headline = top_headline
+                break
+        if selected_top_headline == '' or selected_top_headline is None:
+            print('newsLoop HKET not found')
+            return
+        publishedAt = selected_top_headline['publishedAt']
+
+        #db
+        db_published_at = DBConnection.getPublishedAt()[0][0]
+
+        if str(publishedAt) == str(db_published_at):
+            print('newsLoop unchanged')
+            return
+        else:
+            print('newsLoop detected changes')
+            DBConnection.updatePublishedAt(publishedAt)
+
+            title = selected_top_headline['title']
+            url = selected_top_headline['url']
+            urlToImage = selected_top_headline['urlToImage']
+            authorName = selected_top_headline['source']['name']
+
+            url2 = url.split('/',1)[1]
+            url1 = url.split('/',1)[0]
+            if url is not None and validators.url(url) and url2 is not None and url2 != '':
+                url = url1 + url2
+
+            urlToImage2 = urlToImage.split('/',1)[1]
+            urlToImage1 = urlToImage.split('/',1)[0]
+            if urlToImage is not None and validators.url(urlToImage) and urlToImage2 is not None and urlToImage2 != '':
+                urlToImage = urlToImage1 + urlToImage2
+
+            embed = discord.Embed(title=title)
+            if url is not None and validators.url(url) and ' ' not in url:
+                embed.url = url
+            embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
+            if urlToImage is not None and validators.url(urlToImage) and ' ' not in urlToImage:
+                embed.set_thumbnail(url=urlToImage)
+            else:
+                embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
+            embed.description = selected_top_headline['description']
+            if selected_top_headline['author'] is not None:
+                embed.set_footer(text='{}\n{}'.format(selected_top_headline['author'], selected_top_headline['publishedAt']))
+            else:
+                embed.set_footer(text='{}'.format(selected_top_headline['publishedAt']))
+
+            BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+            BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+            await BDS_PD_Channel.send(embed=embed)
+            await BLG_MC_Channel.send(embed=embed)
+            await BMS_OT_Channel.send(embed=embed)
+            print('newsLoop successfully sent')
+    except Exception as e:
+        print('newsLoop exception occured')
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
+
 @loop(minutes=1)
 async def covLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
-        BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-        BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
-        BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+        print('covLoop triggered on {}'.format(timestamp))
 
         #api / json
         hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
@@ -1354,8 +1421,10 @@ async def covLoop():
         db_case_no = DBConnection.getCaseNo()[0][0]
 
         if int(caseNo) == int(db_case_no):
+            print('covLoop unchanged')
             return
         else:
+            print('covLoop detected changes')
             DBConnection.updateCaseNo(caseNo)
 
             embed = discord.Embed(title='最新SARS-CoV-2曾到訪的大廈', url='https://data.gov.hk/tc-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent/resource/4ff8e5fa-9c94-4490-9b13-764e520ecb5b')
@@ -1368,10 +1437,16 @@ async def covLoop():
             embed.add_field(name="相關個案編號", value=caseNo, inline=True)
             embed.set_footer(text='{}'.format(timestamp))
 
+            BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+            BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
             await BDS_PD_Channel.send(embed=embed)
             await BLG_MC_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
+            print('covLoop successfully sent')
     except Exception as e:
+        print('covLoop exception occured')
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))
 
@@ -2693,6 +2768,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     gameLoop.start()
     covLoop.start()
+    newsLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event

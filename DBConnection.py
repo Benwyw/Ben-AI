@@ -212,3 +212,20 @@ class DBConnection:
         data = (case_no,)
         DBCursor.execute(query, data)
         botDB.commit()
+
+    @classmethod
+    def getPublishedAt(cls):
+        botDB, DBCursor = cls.connection()
+        sqlQuery = 'select publishedAt from News limit 1'
+        DBCursor.execute(sqlQuery)
+        result = DBCursor.fetchall()
+        return result
+
+    @classmethod
+    def updatePublishedAt(cls, publishedAt: str):
+        botDB, DBCursor = cls.connection()
+        query = """UPDATE News
+                SET publishedAt=%s"""
+        data = (publishedAt,)
+        DBCursor.execute(query, data)
+        botDB.commit()
