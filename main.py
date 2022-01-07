@@ -1369,10 +1369,10 @@ async def newsLoop():
                 urlToImage = urlToImage1 + urlToImage2
 
             embed = discord.Embed(title=title)
-            if url is not None and validators.url(url) and ' ' not in url:
+            if url is not None and validators.url(url):
                 embed.url = url
             embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-            if urlToImage is not None and validators.url(urlToImage) and ' ' not in urlToImage:
+            if urlToImage is not None and validators.url(urlToImage):
                 embed.set_thumbnail(url=urlToImage)
             else:
                 embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
