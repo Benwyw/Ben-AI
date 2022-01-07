@@ -1385,7 +1385,7 @@ async def newsLoop():
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
 
-@loop(minutes=1)
+@loop(minutes=15)
 async def covLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
