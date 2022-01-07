@@ -1331,17 +1331,17 @@ dmList = [254517813417476097,525298794653548751,562972196880777226,1998772050718
 async def newsLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
-        print('newsLoop triggered on {}'.format(timestamp))
         # /v2/top-headlines
-        top_headlines = newsapi.get_top_headlines(category='business', language='zh', country='hk')
+        top_headlines = newsapi.get_top_headlines(category='technology', language='zh', country='hk')
+        #top_headlines = newsapi.get_top_headlines(category='business', language='en')
+        #top_headlines = newsapi.get_top_headlines(q='stock', sources='bloomberg', language='en')
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
-            if (top_headline['author'] == '香港經濟日報HKET'):
+            if top_headline['author'] == '香港經濟日報HKET':
                 selected_top_headline = top_headline
                 break
 
         if selected_top_headline == '' or selected_top_headline is None:
-            print('newsLoop HKET not found')
             return
 
         publishedAt = selected_top_headline['publishedAt']
@@ -1350,10 +1350,8 @@ async def newsLoop():
         db_published_at = DBConnection.getPublishedAt()[0][0]
 
         if str(publishedAt) == str(db_published_at):
-            print('newsLoop unchanged')
             return
         else:
-            print('newsLoop detected changes')
             DBConnection.updatePublishedAt(publishedAt)
 
             title = selected_top_headline['title']
@@ -1365,22 +1363,16 @@ async def newsLoop():
             if url is not None and validators.url(url):
                 url2 = url.rsplit('/',1)[1]
                 url1 = url.rsplit('/',1)[0]
-                print('url2: {}'.format(url2))
-                print('url1: {}'.format(url1))
                 if url2 is not None and url2 != '' and not url2.isalnum():
                     url2 = quote(url2)
                     url = url1 +'/'+ url2
-                    print('url: {}'.format(url))
 
-            if urlToImage is not None and validators.url(urlToImage):
+            '''if urlToImage is not None and validators.url(urlToImage):
                 urlToImage2 = urlToImage.rsplit('/',1)[1]
                 urlToImage1 = urlToImage.rsplit('/',1)[0]
-                print('urlToImage2: {}'.format(urlToImage2))
-                print('urlToImage1: {}'.format(urlToImage2))
                 if urlToImage2 is not None and urlToImage2 != '' and not urlToImage2.isalnum():
                     urlToImage2 = quote(urlToImage2)
-                    urlToImage = urlToImage1 +'/'+ urlToImage2
-                    print('url: {}'.format(urlToImage))
+                    urlToImage = urlToImage1 +'/'+ urlToImage2'''
 
             embed = discord.Embed(title=title)
             if url is not None and validators.url(url):
@@ -1403,9 +1395,7 @@ async def newsLoop():
             await BDS_PD_Channel.send(embed=embed)
             await BLG_MC_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
-            print('newsLoop successfully sent')
     except Exception as e:
-        print('newsLoop exception occured')
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
 
@@ -1413,8 +1403,6 @@ async def newsLoop():
 async def covLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
-        print('covLoop triggered on {}'.format(timestamp))
-
         #api / json
         hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -1435,10 +1423,8 @@ async def covLoop():
         db_case_no = DBConnection.getCaseNo()[0][0]
 
         if int(caseNo) == int(db_case_no):
-            print('covLoop unchanged')
             return
         else:
-            print('covLoop detected changes')
             DBConnection.updateCaseNo(caseNo)
 
             embed = discord.Embed(title='最新SARS-CoV-2曾到訪的大廈', url='https://data.gov.hk/tc-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent/resource/4ff8e5fa-9c94-4490-9b13-764e520ecb5b')
@@ -1458,9 +1444,7 @@ async def covLoop():
             await BDS_PD_Channel.send(embed=embed)
             await BLG_MC_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
-            print('covLoop successfully sent')
     except Exception as e:
-        print('covLoop exception occured')
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))
 
@@ -1528,10 +1512,12 @@ class Special(commands.Cog):
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         print('newsLoop triggered on {} [test]'.format(timestamp))
         # /v2/top-headlines
-        top_headlines = newsapi.get_top_headlines(category='business', language='zh', country='hk')
+        #top_headlines = newsapi.get_top_headlines(category='business', language='zh', country='hk')
+        top_headlines = newsapi.get_top_headlines(category='business', language='en')
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
-            if (top_headline['author'] == '香港經濟日報HKET'):
+            #if top_headline['author'] == '香港經濟日報HKET':
+            if top_headline['source']['name'] == 'BloombergQuint':
                 selected_top_headline = top_headline
                 break
         if selected_top_headline == '' or selected_top_headline is None:
@@ -1565,7 +1551,7 @@ class Special(commands.Cog):
                 url = url1 +'/'+ url2
                 print('url: {}'.format(url))
 
-        if urlToImage is not None and validators.url(urlToImage):
+        '''if urlToImage is not None and validators.url(urlToImage):
             urlToImage2 = urlToImage.rsplit('/',1)[1]
             urlToImage1 = urlToImage.rsplit('/',1)[0]
             print('urlToImage2: {}'.format(urlToImage2))
@@ -1573,7 +1559,7 @@ class Special(commands.Cog):
             if urlToImage2 is not None and urlToImage2 != '' and not urlToImage2.isalnum():
                 urlToImage2 = quote(urlToImage2)
                 urlToImage = urlToImage1 +'/'+ urlToImage2
-                print('url: {}'.format(urlToImage))
+                print('urlToImage: {}'.format(urlToImage))'''
 
         '''urlToImage2 = urlToImage.split('/',1)[1]
         urlToImage1 = urlToImage.split('/',1)[0]
@@ -1581,10 +1567,10 @@ class Special(commands.Cog):
             urlToImage = urlToImage1 + urlToImage2'''
 
         embed = discord.Embed(title=title)
-        if url is not None:
+        if url is not None and validators.url(url):
             embed.url = url
         embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-        if urlToImage is not None:
+        if urlToImage is not None and validators.url(urlToImage):
             embed.set_thumbnail(url=urlToImage)
         else:
             embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
