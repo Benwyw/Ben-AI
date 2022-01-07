@@ -1333,8 +1333,7 @@ async def newsLoop():
     try:
         # /v2/top-headlines
         top_headlines = newsapi.get_top_headlines(category='technology', language='zh', country='hk')
-        #top_headlines = newsapi.get_top_headlines(category='business', language='en')
-        #top_headlines = newsapi.get_top_headlines(q='stock', sources='bloomberg', language='en')
+
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
             if top_headline['author'] == '香港經濟日報HKET':
@@ -1345,8 +1344,6 @@ async def newsLoop():
             return
 
         publishedAt = selected_top_headline['publishedAt']
-
-        #db
         db_published_at = DBConnection.getPublishedAt()[0][0]
 
         if str(publishedAt) == str(db_published_at):
@@ -1356,16 +1353,22 @@ async def newsLoop():
 
             title = selected_top_headline['title']
             url = selected_top_headline['url']
-            urlToImage = selected_top_headline['urlToImage']
+            urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and validators.url(selected_top_headline['urlToImage']) else 'https://i.imgur.com/UdkSDcb.png'
             authorName = selected_top_headline['source']['name']
             author = selected_top_headline['author']
+            description = selected_top_headline['description']
+            footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
 
+            embed = discord.Embed(title=title)
+
+            #url handlings
             if url is not None and validators.url(url):
                 url2 = url.rsplit('/',1)[1]
                 url1 = url.rsplit('/',1)[0]
                 if url2 is not None and url2 != '' and not url2.isalnum():
                     url2 = quote(url2)
                     url = url1 +'/'+ url2
+                embed.url = url
 
             '''if urlToImage is not None and validators.url(urlToImage):
                 urlToImage2 = urlToImage.rsplit('/',1)[1]
@@ -1374,19 +1377,10 @@ async def newsLoop():
                     urlToImage2 = quote(urlToImage2)
                     urlToImage = urlToImage1 +'/'+ urlToImage2'''
 
-            embed = discord.Embed(title=title)
-            if url is not None and validators.url(url):
-                embed.url = url
+            embed.description = description
             embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-            if urlToImage is not None and validators.url(urlToImage):
-                embed.set_thumbnail(url=urlToImage)
-            else:
-                embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
-            embed.description = selected_top_headline['description']
-            if author is not None:
-                embed.set_footer(text='{}\n{}'.format(author, publishedAt))
-            else:
-                embed.set_footer(text='{}'.format(publishedAt))
+            embed.set_thumbnail(url=urlToImage)
+            embed.set_footer(text=footer)
 
             BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
             BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
@@ -1680,112 +1674,69 @@ class Special(commands.Cog):
 
     @slash_command(guild_ids=guild_ids, name='updateserverpw')
     @commands.is_owner()
-    async def updateserverpw(self, ctx: commands.Context, message):
+    async def updateserverpw(self, ctx: commands.Context, id, pw):
         '''Update server pw by (id pw)'''
 
         await ctx.defer()
-
         result = "No operations."
-        id = ""
-        pw = ""
-        status = ""
-        if (message is not None and ' ' in message):
-            id = message.split(' ')[0]
-            pw = message.split(' ')[1]
 
+        try:
             DBConnection.updateServerPw(str(id), str(pw))
-            result = "Successfully updated {} {} in serverlist".format(id, pw)
-            status = "Success"
-        else:
-            result = "You cannot update NULL!"
-            status = "Failed"
-        
+            result = "Successfully updated password for `{}` in serverlist".format(id)
+        except Exception as e:
+            result = "Failed to update password for `{}` in serverlist".format(id)
+
         await ctx.send_followup(result)
-        if status == "Success":
-            await bot.get_channel(356782441777725440).send("私人伺服器已更新密碼 | `/getserver {}`".format(id))
-            await bot.get_channel(772038210057535488).send("私人伺服器已更新密碼 | `/getserver {}`".format(id))
+        await bot.get_channel(356782441777725440).send("私人伺服器已更新密碼 | `/getserver {}`".format(id))
+        await bot.get_channel(772038210057535488).send("私人伺服器已更新密碼 | `/getserver {}`".format(id))
 
     @slash_command(guild_ids=guild_ids, name='deleteserver')
     @commands.is_owner()
-    async def deleteserver(self, ctx: commands.Context, message):
+    async def deleteserver(self, ctx: commands.Context, id):
         '''Delete server by (id)'''
 
         await ctx.defer()
-
         result = "No operations."
-        if (message is not None):
-            id = message
-            DBConnection.deleteServer(str(id))
-            result = "Successfully deleted {} in serverlist".format(id)
-        else:
-            result = "You cannot delete NULL!"
+
+        DBConnection.deleteServer(str(id))
+        result = "Successfully deleted `{}` in serverlist".format(id)
         
         await ctx.send_followup(result)
 
     @slash_command(guild_ids=guild_ids, name='updateserver')
     @commands.is_owner()
-    async def updateserver(self, ctx: commands.Context, message):
+    async def updateserver(self, ctx: commands.Context, id, pw=None, game: str=None, port: int=None, remarks: str=None):
         '''Update server pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
 
         await ctx.defer()
-
         result = "No operations."
-        if (message is not None and '$' in message):
-            id = message.split('$')[0]
-            pw = message.split('$')[1]
-            game = message.split('$')[2]
-            port = message.split('$')[3]
-            remarks = message.split('$')[4]
 
-            if pw != "-":
-                if remarks != "-":
-                    remarks = "Private | " + remarks + " | `/getserver {}`".format(id)
-                else:
-                    remarks = "Private | `/getserver {}`".format(id)
-            else:
-                if remarks != "-":
-                    remarks = "Public | " + remarks
-                else:
-                    remarks = "Public" + remarks
-
-            DBConnection.updateServer(id, pw, game, port, remarks)
-            result = "Successfully updated {} {} {} {} {} in serverlist".format(id, pw, game, port, remarks)
+        if pw is not None:
+            remarks = "Private | {} | `/getserver {}`".format(remarks,id) if remarks is not None else "Private | `/getserver {}`".format(id)
         else:
-            result = "You cannot update NULL! Template: `/createserver \"id$pw$Game$Port$Remarks\"`"
+            remarks = "Public | {}".format(remarks) if remarks is not None else "Public"
+
+        DBConnection.updateServer(id, pw, game, port, remarks)
+        result = "Successfully updated `{}` in serverlist".format(id)
         
         await ctx.send_followup(result)
 
     @slash_command(guild_ids=guild_ids, name='createserver')
     @commands.is_owner()
-    async def createserver(self, ctx: commands.Context, message):
+    async def createserver(self, ctx: commands.Context, id, pw=None, game: str=None, port: int=None, remarks: str=None):
         '''Create server id pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
 
         result = "No operations."
-        if (message is not None and '$' in message):
-            await ctx.defer()
-            id = message.split('$')[0]
-            pw = message.split('$')[1]
-            game = message.split('$')[2]
-            port = message.split('$')[3]
-            remarks = message.split('$')[4]
+        await ctx.defer()
 
-            if pw != "-":
-                if remarks != "-":
-                    remarks = "Private | " + remarks + " | `/getserver {}`".format(id)
-                else:
-                    remarks = "Private | `/getserver {}`".format(id)
-            else:
-                if remarks != "-":
-                    remarks = "Public | " + remarks
-                else:
-                    remarks = "Public" + remarks
-
-            DBConnection.createServer(id, pw, game, port, remarks)
-            result = "Successfully created {} {} {} {} {} in serverlist".format(id, pw, game, port, remarks)
-            await ctx.send_followup(result)
+        if pw is not None:
+            remarks = "Private | {} | `/getserver {}`".format(remarks, id) if remarks is not None else "Private | `/getserver {}`".format(id)
         else:
-            result = "You cannot create NULL! Template: `/createserver \"id$pw$Game$Port$Remarks\"`"
-            await ctx.respond(result)
+            remarks = "Public | {}".format(remarks) if remarks is not None else "Public"
+
+        DBConnection.createServer(id, pw, game, port, remarks)
+        result = "Successfully created `{}` in serverlist".format(id)
+        await ctx.send_followup(result)
 
     @slash_command(guild_ids=guild_ids, name='getserver')
     async def _getserver(self, ctx: commands.Context, code):
