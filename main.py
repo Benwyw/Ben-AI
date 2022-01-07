@@ -62,7 +62,6 @@ import matplotlib.pyplot as plt
 #========================News API========================
 from newsapi import NewsApiClient
 from urllib.parse import quote
-import validators
 
 #========================Cov Locate========================
 from urllib.request import Request, urlopen
@@ -1353,7 +1352,7 @@ async def newsLoop():
 
             title = selected_top_headline['title']
             url = selected_top_headline['url']
-            urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and validators.url(selected_top_headline['urlToImage']) else 'https://i.imgur.com/UdkSDcb.png'
+            urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and 'http' in selected_top_headline['urlToImage'] and '://' in selected_top_headline['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
             authorName = selected_top_headline['source']['name']
             author = selected_top_headline['author']
             description = selected_top_headline['description']
@@ -1362,20 +1361,13 @@ async def newsLoop():
             embed = discord.Embed(title=title)
 
             #url handlings
-            if url is not None and validators.url(url):
+            if url is not None and 'http' in url and '://' in url:
                 url2 = url.rsplit('/',1)[1]
                 url1 = url.rsplit('/',1)[0]
                 if url2 is not None and url2 != '' and not url2.isalnum():
                     url2 = quote(url2)
                     url = url1 +'/'+ url2
                 embed.url = url
-
-            '''if urlToImage is not None and validators.url(urlToImage):
-                urlToImage2 = urlToImage.rsplit('/',1)[1]
-                urlToImage1 = urlToImage.rsplit('/',1)[0]
-                if urlToImage2 is not None and urlToImage2 != '' and not urlToImage2.isalnum():
-                    urlToImage2 = quote(urlToImage2)
-                    urlToImage = urlToImage1 +'/'+ urlToImage2'''
 
             embed.description = description
             embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
@@ -1535,7 +1527,7 @@ class Special(commands.Cog):
         authorName = selected_top_headline['source']['name']
         author = selected_top_headline['author']
 
-        if url is not None and validators.url(url):
+        if url is not None and 'http' in url and '://' in url:
             url2 = url.rsplit('/',1)[1]
             url1 = url.rsplit('/',1)[0]
             print('url2: {}'.format(url2))
@@ -1545,26 +1537,12 @@ class Special(commands.Cog):
                 url = url1 +'/'+ url2
                 print('url: {}'.format(url))
 
-        '''if urlToImage is not None and validators.url(urlToImage):
-            urlToImage2 = urlToImage.rsplit('/',1)[1]
-            urlToImage1 = urlToImage.rsplit('/',1)[0]
-            print('urlToImage2: {}'.format(urlToImage2))
-            print('urlToImage1: {}'.format(urlToImage2))
-            if urlToImage2 is not None and urlToImage2 != '' and not urlToImage2.isalnum():
-                urlToImage2 = quote(urlToImage2)
-                urlToImage = urlToImage1 +'/'+ urlToImage2
-                print('urlToImage: {}'.format(urlToImage))'''
-
-        '''urlToImage2 = urlToImage.split('/',1)[1]
-        urlToImage1 = urlToImage.split('/',1)[0]
-        if urlToImage is not None and validators.url(urlToImage) and urlToImage2 is not None and urlToImage2 != '':
-            urlToImage = urlToImage1 + urlToImage2'''
 
         embed = discord.Embed(title=title)
-        if url is not None and validators.url(url):
+        if url is not None and 'http' in url and '://' in url:
             embed.url = url
         embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-        if urlToImage is not None and validators.url(urlToImage):
+        if urlToImage is not None and 'http' in urlToImage and '://' in urlToImage:
             embed.set_thumbnail(url=urlToImage)
         else:
             embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
@@ -2638,19 +2616,32 @@ class General(commands.Cog):
                                             sort_by='publishedAt',
                                             page=1)
         for result in results['articles']:
-            embed = discord.Embed(title=result['title'])
-            if result['url'] is not None and validators.url(result['url']) :
-                embed.url = result['url']
-            embed.set_author(name=result['source']['name'], icon_url='https://i.imgur.com/UdkSDcb.png')
-            if result['urlToImage'] is not None and validators.url(result['urlToImage']):
-                embed.set_thumbnail(url=result['urlToImage'])
-            else:
-                embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
-            embed.description = result['description']
-            if result['author'] is not None:
-                embed.set_footer(text='{}\n{}'.format(result['author'], result['publishedAt']))
-            else:
-                embed.set_footer(text='{}'.format(result['publishedAt']))
+
+            title = result['title']
+            url = result['url']
+            urlToImage = result['urlToImage'] if result['urlToImage'] is not None and 'http' in result['urlToImage'] and '://' in result['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
+            authorName = result['source']['name']
+            author = result['author']
+            description = result['description']
+            publishedAt = result['publishedAt']
+            footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
+
+            embed = discord.Embed(title=title)
+
+            #url handlings
+            if url is not None and 'http' in url and '://' in url:
+                url2 = url.rsplit('/',1)[1]
+                url1 = url.rsplit('/',1)[0]
+                if url2 is not None and url2 != '' and not url2.isalnum():
+                    url2 = quote(url2)
+                    url = url1 +'/'+ url2
+                embed.url = url
+
+            embed.description = description
+            embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
+            embed.set_thumbnail(url=urlToImage)
+            embed.set_footer(text=footer)
+
             await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='stock')
