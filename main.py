@@ -61,6 +61,7 @@ import matplotlib.pyplot as plt
 
 #========================News API========================
 from newsapi import NewsApiClient
+from urllib.parse import quote
 import validators
 
 #========================Cov Locate========================
@@ -1338,9 +1339,11 @@ async def newsLoop():
             if (top_headline['author'] == '香港經濟日報HKET'):
                 selected_top_headline = top_headline
                 break
+
         if selected_top_headline == '' or selected_top_headline is None:
             print('newsLoop HKET not found')
             return
+
         publishedAt = selected_top_headline['publishedAt']
 
         #db
@@ -1357,16 +1360,27 @@ async def newsLoop():
             url = selected_top_headline['url']
             urlToImage = selected_top_headline['urlToImage']
             authorName = selected_top_headline['source']['name']
+            author = selected_top_headline['author']
 
-            url2 = url.split('/',1)[1]
-            url1 = url.split('/',1)[0]
-            if url is not None and validators.url(url) and url2 is not None and url2 != '':
-                url = url1 + url2
+            if url is not None and validators.url(url):
+                url2 = url.rsplit('/',1)[1]
+                url1 = url.rsplit('/',1)[0]
+                print('url2: {}'.format(url2))
+                print('url1: {}'.format(url1))
+                if url2 is not None and url2 != '' and not url2.isalnum():
+                    url2 = quote(url2)
+                    url = url1 +'/'+ url2
+                    print('url: {}'.format(url))
 
-            urlToImage2 = urlToImage.split('/',1)[1]
-            urlToImage1 = urlToImage.split('/',1)[0]
-            if urlToImage is not None and validators.url(urlToImage) and urlToImage2 is not None and urlToImage2 != '':
-                urlToImage = urlToImage1 + urlToImage2
+            if urlToImage is not None and validators.url(urlToImage):
+                urlToImage2 = urlToImage.rsplit('/',1)[1]
+                urlToImage1 = urlToImage.rsplit('/',1)[0]
+                print('urlToImage2: {}'.format(urlToImage2))
+                print('urlToImage1: {}'.format(urlToImage2))
+                if urlToImage2 is not None and urlToImage2 != '' and not urlToImage2.isalnum():
+                    urlToImage2 = quote(urlToImage2)
+                    urlToImage = urlToImage1 +'/'+ urlToImage2
+                    print('url: {}'.format(urlToImage))
 
             embed = discord.Embed(title=title)
             if url is not None and validators.url(url) and ' ' not in url:
@@ -1377,10 +1391,10 @@ async def newsLoop():
             else:
                 embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
             embed.description = selected_top_headline['description']
-            if selected_top_headline['author'] is not None:
-                embed.set_footer(text='{}\n{}'.format(selected_top_headline['author'], selected_top_headline['publishedAt']))
+            if author is not None:
+                embed.set_footer(text='{}\n{}'.format(author, publishedAt))
             else:
-                embed.set_footer(text='{}'.format(selected_top_headline['publishedAt']))
+                embed.set_footer(text='{}'.format(publishedAt))
 
             BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
             BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
@@ -1504,17 +1518,91 @@ class Special(commands.Cog):
             file = discord.File(fp=img, filename='memeup.png')
         await ctx.send_followup(file=file)
     
-    @slash_command(guild_ids=guild_ids, name='testavatar')
-    async def _testparam(self, ctx: commands.Context):
-        '''Test command for avatar embed'''
+    @slash_command(guild_ids=guild_ids, name='testnewsloop')
+    @commands.is_owner()
+    async def _testnewsloop(self, ctx: commands.Context):
+        '''Test command for newsLoop'''
+
+        await ctx.defer()
+
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-        embed = discord.Embed()
-        embed.set_author(name=str(ctx.author.display_name), icon_url=ctx.author.display_avatar.url)
-        embed.title = "已上線"
-        embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
-        embed.description = '<@{}>'.format(ctx.author.id)
-        embed.set_footer(text=timestamp)
-        await ctx.respond(embed=embed)
+        print('newsLoop triggered on {} [test]'.format(timestamp))
+        # /v2/top-headlines
+        top_headlines = newsapi.get_top_headlines(category='business', language='zh', country='hk')
+        selected_top_headline = ''
+        for top_headline in top_headlines['articles']:
+            if (top_headline['author'] == '香港經濟日報HKET'):
+                selected_top_headline = top_headline
+                break
+        if selected_top_headline == '' or selected_top_headline is None:
+            print('newsLoop HKET not found')
+            return
+        publishedAt = selected_top_headline['publishedAt']
+
+        #db
+        #db_published_at = DBConnection.getPublishedAt()[0][0]
+
+        #if str(publishedAt) == str(db_published_at):
+            #print('newsLoop unchanged')
+            #return
+        #else:
+        print('newsLoop detected changes[test]')
+        #DBConnection.updatePublishedAt(publishedAt)
+
+        title = selected_top_headline['title']
+        url = selected_top_headline['url']
+        urlToImage = selected_top_headline['urlToImage']
+        authorName = selected_top_headline['source']['name']
+        author = selected_top_headline['author']
+
+        if url is not None and validators.url(url):
+            url2 = url.rsplit('/',1)[1]
+            url1 = url.rsplit('/',1)[0]
+            print('url2: {}'.format(url2))
+            print('url1: {}'.format(url1))
+            if url2 is not None and url2 != '' and not url2.isalnum():
+                url2 = quote(url2)
+                url = url1 +'/'+ url2
+                print('url: {}'.format(url))
+
+        if urlToImage is not None and validators.url(urlToImage):
+            urlToImage2 = urlToImage.rsplit('/',1)[1]
+            urlToImage1 = urlToImage.rsplit('/',1)[0]
+            print('urlToImage2: {}'.format(urlToImage2))
+            print('urlToImage1: {}'.format(urlToImage2))
+            if urlToImage2 is not None and urlToImage2 != '' and not urlToImage2.isalnum():
+                urlToImage2 = quote(urlToImage2)
+                urlToImage = urlToImage1 +'/'+ urlToImage2
+                print('url: {}'.format(urlToImage))
+
+        '''urlToImage2 = urlToImage.split('/',1)[1]
+        urlToImage1 = urlToImage.split('/',1)[0]
+        if urlToImage is not None and validators.url(urlToImage) and urlToImage2 is not None and urlToImage2 != '':
+            urlToImage = urlToImage1 + urlToImage2'''
+
+        embed = discord.Embed(title=title)
+        if url is not None:
+            embed.url = url
+        embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
+        if urlToImage is not None:
+            embed.set_thumbnail(url=urlToImage)
+        else:
+            embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
+        embed.description = selected_top_headline['description']
+        if author is not None:
+            embed.set_footer(text='{}\n{}'.format(author, publishedAt))
+        else:
+            embed.set_footer(text='{}'.format(publishedAt))
+
+        #BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+        #BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+        #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+        #await BDS_PD_Channel.send(embed=embed)
+        #await BLG_MC_Channel.send(embed=embed)
+        #await BMS_OT_Channel.send(embed=embed)
+        await ctx.send_followup(embed=embed)
+        print('newsLoop successfully sent')
 
 
     @slash_command(guild_ids=guild_ids, name='log')
