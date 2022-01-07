@@ -195,3 +195,20 @@ class DBConnection:
         DBCursor.execute(sqlQuery)
         result = DBCursor.fetchall()
         return result
+
+    @classmethod
+    def getCaseNo(cls):
+        botDB, DBCursor = cls.connection()
+        sqlQuery = 'select case_no from CovLocate limit 1'
+        DBCursor.execute(sqlQuery)
+        result = DBCursor.fetchall()
+        return result
+
+    @classmethod
+    def updateCaseNo(cls, case_no: str):
+        botDB, DBCursor = cls.connection()
+        query = """UPDATE CovLocate
+                SET case_no=%s"""
+        data = (case_no,)
+        DBCursor.execute(query, data)
+        botDB.commit()

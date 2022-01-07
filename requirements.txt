@@ -17,4 +17,5 @@ pytz
 typing-extensions
 newsapi-python
 validators
+urllib3
 git+https://github.com/Pycord-Development/pycord@3bd5a4984d3db6157998685e662651560d0b8988
