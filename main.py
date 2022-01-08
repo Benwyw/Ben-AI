@@ -1336,7 +1336,7 @@ async def newsLoop():
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
             #if top_headline['author'] == '香港經濟日報HKET':
-            if selected_top_headline['source']['name'] == 'Rthk.hk':
+            if top_headline['source']['name'] == 'Rthk.hk':
                 selected_top_headline = top_headline
                 break
 
@@ -1494,65 +1494,69 @@ class Special(commands.Cog):
     async def _testnewsloop(self, ctx: commands.Context):
         '''Test command for newsLoop'''
 
+        await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-        try:
-            # /v2/top-headlines
-            top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
+        #try:
+        # /v2/top-headlines
+        top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
+        print('after api')
+        selected_top_headline = ''
+        for top_headline in top_headlines['articles']:
+            #if top_headline['author'] == '香港經濟日報HKET':
+            if top_headline['source']['name'] == 'Rthk.hk':
+                selected_top_headline = top_headline
+                break
 
-            selected_top_headline = ''
-            for top_headline in top_headlines['articles']:
-                #if top_headline['author'] == '香港經濟日報HKET':
-                if selected_top_headline['source']['name'] == 'Rthk.hk':
-                    selected_top_headline = top_headline
-                    break
+        if selected_top_headline == '' or selected_top_headline is None:
+            print('hadline none')
+            return
 
-            if selected_top_headline == '' or selected_top_headline is None:
-                return
+        publishedAt = selected_top_headline['publishedAt']
+        db_published_at = DBConnection.getPublishedAt()[0][0]
 
-            publishedAt = selected_top_headline['publishedAt']
-            db_published_at = DBConnection.getPublishedAt()[0][0]
+        if str(publishedAt) == str(db_published_at):
+            print('published same')
+            return
+        else:
+            DBConnection.updatePublishedAt(publishedAt)
 
-            if str(publishedAt) == str(db_published_at):
-                return
-            else:
-                DBConnection.updatePublishedAt(publishedAt)
+            title = selected_top_headline['title']
+            url = selected_top_headline['url']
+            urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and 'http' in selected_top_headline['urlToImage'] and '://' in selected_top_headline['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
+            authorName = selected_top_headline['source']['name']
+            author = selected_top_headline['author']
+            description = selected_top_headline['description']
+            footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
 
-                title = selected_top_headline['title']
-                url = selected_top_headline['url']
-                urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and 'http' in selected_top_headline['urlToImage'] and '://' in selected_top_headline['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
-                authorName = selected_top_headline['source']['name']
-                author = selected_top_headline['author']
-                description = selected_top_headline['description']
-                footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
+            embed = discord.Embed(title=title)
 
-                embed = discord.Embed(title=title)
+            #url handlings
+            if url is not None and 'http' in url and '://' in url:
+                url2 = url.rsplit('/',1)[1]
+                url1 = url.rsplit('/',1)[0]
+                if url2 is not None and url2 != '' and not url2.isalnum():
+                    url2 = quote(url2)
+                    url = url1 +'/'+ url2
+                embed.url = url
 
-                #url handlings
-                if url is not None and 'http' in url and '://' in url:
-                    url2 = url.rsplit('/',1)[1]
-                    url1 = url.rsplit('/',1)[0]
-                    if url2 is not None and url2 != '' and not url2.isalnum():
-                        url2 = quote(url2)
-                        url = url1 +'/'+ url2
-                    embed.url = url
+            embed.description = description
+            embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
+            embed.set_thumbnail(url=urlToImage)
+            embed.set_footer(text=footer)
 
-                embed.description = description
-                embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-                embed.set_thumbnail(url=urlToImage)
-                embed.set_footer(text=footer)
+            ##BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+            #BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-                ##BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                #BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
-                #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+            #await BDS_PD_Channel.send(embed=embed)
+            #await BLG_MC_Channel.send(embed=embed)
+            #await BMS_OT_Channel.send(embed=embed)
 
-                #await BDS_PD_Channel.send(embed=embed)
-                #await BLG_MC_Channel.send(embed=embed)
-                #await BMS_OT_Channel.send(embed=embed)
-
-                await ctx.send(embed=embed)
-        except Exception as e:
+            await ctx.send_followup(embed=embed)
+        '''except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
+            await ctx.send_followup('Error')'''
 
 
     @slash_command(guild_ids=guild_ids, name='log')
