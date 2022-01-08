@@ -1335,7 +1335,8 @@ async def newsLoop():
 
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
-            if top_headline['author'] == '香港經濟日報HKET':
+            #if top_headline['author'] == '香港經濟日報HKET':
+            if selected_top_headline['source']['name'] == 'Rthk.hk':
                 selected_top_headline = top_headline
                 break
 
