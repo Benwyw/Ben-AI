@@ -1376,11 +1376,11 @@ async def newsLoop():
             embed.set_footer(text=footer)
 
             BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-            BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
             await BDS_PD_Channel.send(embed=embed)
-            await BLG_MC_Channel.send(embed=embed)
+            await BLG_ST_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
@@ -1425,11 +1425,11 @@ async def covLoop():
             embed.set_footer(text='{}'.format(timestamp))
 
             BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-            BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
             await BDS_PD_Channel.send(embed=embed)
-            await BLG_MC_Channel.send(embed=embed)
+            await BLG_ST_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
