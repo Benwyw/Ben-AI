@@ -1,5 +1,5 @@
 pip
-youtube_dl
+yt-dlp
 python-dotenv
 ffmpeg
 PyNaCl
