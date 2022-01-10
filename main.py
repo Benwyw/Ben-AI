@@ -804,6 +804,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'no_warnings': True,
         'default_search': 'auto',
         'source_address': '0.0.0.0',
+        'cachedir': False,
         'verbose': True
     }
 
@@ -813,7 +814,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
     }
 
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
-    ytdl.cache.remove()
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
         super().__init__(source, volume)
@@ -1331,11 +1331,12 @@ async def newsLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
         # /v2/top-headlines
-        top_headlines = newsapi.get_top_headlines(category='technology', language='zh', country='hk')
+        top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
 
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
-            if top_headline['author'] == '香港經濟日報HKET':
+            #if top_headline['author'] == '香港經濟日報HKET':
+            if top_headline['source']['name'] == 'Rthk.hk':
                 selected_top_headline = top_headline
                 break
 
@@ -1375,17 +1376,17 @@ async def newsLoop():
             embed.set_footer(text=footer)
 
             BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-            BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
             await BDS_PD_Channel.send(embed=embed)
-            await BLG_MC_Channel.send(embed=embed)
+            await BLG_ST_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
 
-@loop(minutes=1)
+@loop(minutes=15)
 async def covLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
@@ -1424,11 +1425,11 @@ async def covLoop():
             embed.set_footer(text='{}'.format(timestamp))
 
             BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-            BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
             await BDS_PD_Channel.send(embed=embed)
-            await BLG_MC_Channel.send(embed=embed)
+            await BLG_ST_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
@@ -1494,73 +1495,68 @@ class Special(commands.Cog):
         '''Test command for newsLoop'''
 
         await ctx.defer()
-
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-        print('newsLoop triggered on {} [test]'.format(timestamp))
+        #try:
         # /v2/top-headlines
-        #top_headlines = newsapi.get_top_headlines(category='business', language='zh', country='hk')
-        top_headlines = newsapi.get_top_headlines(category='business', language='en')
+        top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
+        print('after api')
         selected_top_headline = ''
         for top_headline in top_headlines['articles']:
             #if top_headline['author'] == '香港經濟日報HKET':
-            if top_headline['source']['name'] == 'BloombergQuint':
+            if top_headline['source']['name'] == 'Rthk.hk':
                 selected_top_headline = top_headline
                 break
+
         if selected_top_headline == '' or selected_top_headline is None:
-            print('newsLoop HKET not found')
+            print('hadline none')
             return
+
         publishedAt = selected_top_headline['publishedAt']
+        db_published_at = DBConnection.getPublishedAt()[0][0]
 
-        #db
-        #db_published_at = DBConnection.getPublishedAt()[0][0]
+        if str(publishedAt) == str(db_published_at):
+            print('published same')
+            return
+        else:
+            DBConnection.updatePublishedAt(publishedAt)
 
-        #if str(publishedAt) == str(db_published_at):
-            #print('newsLoop unchanged')
-            #return
-        #else:
-        print('newsLoop detected changes[test]')
-        #DBConnection.updatePublishedAt(publishedAt)
+            title = selected_top_headline['title']
+            url = selected_top_headline['url']
+            urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and 'http' in selected_top_headline['urlToImage'] and '://' in selected_top_headline['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
+            authorName = selected_top_headline['source']['name']
+            author = selected_top_headline['author']
+            description = selected_top_headline['description']
+            footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
 
-        title = selected_top_headline['title']
-        url = selected_top_headline['url']
-        urlToImage = selected_top_headline['urlToImage']
-        authorName = selected_top_headline['source']['name']
-        author = selected_top_headline['author']
+            embed = discord.Embed(title=title)
 
-        if url is not None and 'http' in url and '://' in url:
-            url2 = url.rsplit('/',1)[1]
-            url1 = url.rsplit('/',1)[0]
-            print('url2: {}'.format(url2))
-            print('url1: {}'.format(url1))
-            if url2 is not None and url2 != '' and not url2.isalnum():
-                url2 = quote(url2)
-                url = url1 +'/'+ url2
-                print('url: {}'.format(url))
+            #url handlings
+            if url is not None and 'http' in url and '://' in url:
+                url2 = url.rsplit('/',1)[1]
+                url1 = url.rsplit('/',1)[0]
+                if url2 is not None and url2 != '' and not url2.isalnum():
+                    url2 = quote(url2)
+                    url = url1 +'/'+ url2
+                embed.url = url
 
-
-        embed = discord.Embed(title=title)
-        if url is not None and 'http' in url and '://' in url:
-            embed.url = url
-        embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-        if urlToImage is not None and 'http' in urlToImage and '://' in urlToImage:
+            embed.description = description
+            embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
             embed.set_thumbnail(url=urlToImage)
-        else:
-            embed.set_thumbnail(url='https://i.imgur.com/UdkSDcb.png')
-        embed.description = selected_top_headline['description']
-        if author is not None:
-            embed.set_footer(text='{}\n{}'.format(author, publishedAt))
-        else:
-            embed.set_footer(text='{}'.format(publishedAt))
+            embed.set_footer(text=footer)
 
-        #BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-        #BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
-        #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+            ##BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+            #BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+            #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-        #await BDS_PD_Channel.send(embed=embed)
-        #await BLG_MC_Channel.send(embed=embed)
-        #await BMS_OT_Channel.send(embed=embed)
-        await ctx.send_followup(embed=embed)
-        print('newsLoop successfully sent')
+            #await BDS_PD_Channel.send(embed=embed)
+            #await BLG_MC_Channel.send(embed=embed)
+            #await BMS_OT_Channel.send(embed=embed)
+
+            await ctx.send_followup(embed=embed)
+        '''except Exception as e:
+            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
+            await ctx.send_followup('Error')'''
 
 
     @slash_command(guild_ids=guild_ids, name='log')
