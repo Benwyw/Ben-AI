@@ -59,6 +59,9 @@ from alpha_vantage.timeseries import TimeSeries
 import matplotlib
 import matplotlib.pyplot as plt
 
+#========================Free Games========================
+#from bs4 import BeautifulSoup
+
 #========================News API========================
 from newsapi import NewsApiClient
 from urllib.parse import quote
@@ -1326,6 +1329,79 @@ class Music(commands.Cog):
 #========================General========================
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
+'''@loop(hours=1)
+async def gamesLoop():
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+        hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+
+        url = Request("https://www.indiegamebundles.com/category/free/", headers=hdr)
+        html_page = urlopen(url)
+        soup = BeautifulSoup(html_page, "lxml")
+        link = ''
+        text = ''
+        for title in soup.findAll('h3'): #entry-title td-module-title
+            #print(str(title)+'\n')
+            titleClass = title.get('class')
+            if 'entry-title' in titleClass and 'td-module-title' in titleClass:
+                title = str(title)
+                #print(title+'\n')
+                link = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[0]
+                text = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[1].split('</a></h3>')[0].split('\">')[0]
+                print('{}\n{}\n\n'.format(link, text))
+
+                #DB check title
+                text_30 = text[:min(len(text), 30)]
+                db_text_30 = DBConnection.getPublishedAt('indiegamebundles')[0][0]
+
+                if str(text_30) == str(db_text_30):
+                    return
+                else:
+                    DBConnection.updatePublishedAt(text_30, 'indiegamebundles')
+
+                    title = text
+                    url = link
+                    urlToImage = 'https://i.imgur.com/RWIVDRN.png'
+                    authorName = 'Indie Game Bundles'
+                    description = selected_top_headline['description']
+                    footer = timestamp
+
+                    embed = discord.Embed(title=title)
+                    embed.color = 0xb50024
+
+                    #url handlings
+                    if url is not None and 'http' in url and '://' in url:
+                        url2 = url.rsplit('/',1)[1]
+                        url1 = url.rsplit('/',1)[0]
+                        if url2 is not None and url2 != '' and not url2.isalnum():
+                            url2 = quote(url2)
+                            url = url1 +'/'+ url2
+                        embed.url = url
+
+                    embed.description = description
+                    embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
+                    embed.set_thumbnail(url=urlToImage)
+                    embed.set_footer(text=footer)
+
+                    BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                    BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                    BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                    await BDS_PD_Channel.send(embed=embed)
+                    await BLG_ST_Channel.send(embed=embed)
+                    await BMS_OT_Channel.send(embed=embed)
+
+                break
+                #titles.append(title.get('class'))
+    except Exception as e:
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))'''
+
 @loop(hours=1)
 async def newsLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
@@ -1360,6 +1436,7 @@ async def newsLoop():
             footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
 
             embed = discord.Embed(title=title)
+            embed.color = 0xb50024
 
             #url handlings
             if url is not None and 'http' in url and '://' in url:
@@ -1415,6 +1492,7 @@ async def covLoop():
             DBConnection.updateCaseNo(caseNo)
 
             embed = discord.Embed(title='最新SARS-CoV-2曾到訪的大廈', url='https://data.gov.hk/tc-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent/resource/4ff8e5fa-9c94-4490-9b13-764e520ecb5b')
+            embed.color = 0x00c1ae
             embed.set_author(name='data.gov.hk', icon_url='https://i.imgur.com/64ivaYA.png')
             embed.set_thumbnail(url='https://i.imgur.com/CrepYT5.png')
             if lastVisitedDate is not None and lastVisitedDate != "":
