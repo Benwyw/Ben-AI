@@ -21,7 +21,7 @@ import io
 import pytz
 import requests
 import discord
-import yt_dlp #import youtube_dl
+import yt_dlp
 import pandas as pd
 import MinecraftServer as mc
 
@@ -776,7 +776,7 @@ async def gameLoop():
 
 #========================Music========================
 # Silence useless bug reports messages
-youtube_dl.utils.bug_reports_message = lambda: ''
+yt_dlp.utils.bug_reports_message = lambda: ''
 
 
 class VoiceError(Exception):
@@ -813,7 +813,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'options': '-vn',
     }
 
-    ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
+    ytdl = yt_dlp.YoutubeDL(YTDL_OPTIONS)
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
         super().__init__(source, volume)
