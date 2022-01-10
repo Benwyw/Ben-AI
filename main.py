@@ -1436,7 +1436,7 @@ async def newsLoop():
             footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
 
             embed = discord.Embed(title=title)
-            embed.color = 0xb50024
+            #embed.color = 0xb50024
 
             #url handlings
             if url is not None and 'http' in url and '://' in url:
