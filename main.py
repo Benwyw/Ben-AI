@@ -21,7 +21,7 @@ import io
 import pytz
 import requests
 import discord
-import youtube_dl
+import yt-dlp #import youtube_dl
 import pandas as pd
 import MinecraftServer as mc
 
