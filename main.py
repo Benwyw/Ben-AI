@@ -1344,12 +1344,12 @@ async def newsLoop():
             return
 
         publishedAt = selected_top_headline['publishedAt']
-        db_published_at = DBConnection.getPublishedAt()[0][0]
+        db_published_at = DBConnection.getPublishedAt('RTHK')[0][0]
 
         if str(publishedAt) == str(db_published_at):
             return
         else:
-            DBConnection.updatePublishedAt(publishedAt)
+            DBConnection.updatePublishedAt(publishedAt, 'RTHK')
 
             title = selected_top_headline['title']
             url = selected_top_headline['url']
@@ -1512,13 +1512,13 @@ class Special(commands.Cog):
             return
 
         publishedAt = selected_top_headline['publishedAt']
-        db_published_at = DBConnection.getPublishedAt()[0][0]
+        db_published_at = DBConnection.getPublishedAt('RTHK')[0][0]
 
         if str(publishedAt) == str(db_published_at):
             print('published same')
             return
         else:
-            DBConnection.updatePublishedAt(publishedAt)
+            DBConnection.updatePublishedAt(publishedAt, 'RTHK')
 
             title = selected_top_headline['title']
             url = selected_top_headline['url']

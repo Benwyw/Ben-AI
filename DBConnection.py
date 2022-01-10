@@ -214,18 +214,22 @@ class DBConnection:
         botDB.commit()
 
     @classmethod
-    def getPublishedAt(cls):
+    def getPublishedAt(cls, pointType: str):
         botDB, DBCursor = cls.connection()
-        sqlQuery = 'select publishedAt from News limit 1'
-        DBCursor.execute(sqlQuery)
+        query =  """select publishedAt
+                    from Points
+                    where type = %s"""
+        data = (pointType,)
+        DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
 
     @classmethod
-    def updatePublishedAt(cls, publishedAt: str):
+    def updatePublishedAt(cls, publishedAt: str, pointType: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE News
-                SET publishedAt=%s"""
-        data = (publishedAt,)
+                SET publishedAt=%s
+                WHERE type=%s"""
+        data = (publishedAt, pointType)
         DBCursor.execute(query, data)
         botDB.commit()
