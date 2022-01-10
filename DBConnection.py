@@ -227,7 +227,7 @@ class DBConnection:
     @classmethod
     def updatePublishedAt(cls, publishedAt: str, pointType: str):
         botDB, DBCursor = cls.connection()
-        query = """UPDATE News
+        query = """UPDATE Points
                 SET publishedAt=%s
                 WHERE type=%s"""
         data = (publishedAt, pointType)
