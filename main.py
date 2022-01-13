@@ -60,7 +60,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 #========================Free Games========================
-#from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 
 #========================News API========================
 from newsapi import NewsApiClient
@@ -1329,78 +1329,79 @@ class Music(commands.Cog):
 #========================General========================
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
-'''@loop(hours=1)
+@loop(hours=1)
 async def gamesLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
         hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'en-US,en;q=0.8',
-       'Connection': 'keep-alive'}
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+        'Accept-Encoding': 'none',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Connection': 'keep-alive'}
 
         url = Request("https://www.indiegamebundles.com/category/free/", headers=hdr)
         html_page = urlopen(url)
         soup = BeautifulSoup(html_page, "lxml")
-        link = ''
-        text = ''
-        for title in soup.findAll('h3'): #entry-title td-module-title
-            #print(str(title)+'\n')
-            titleClass = title.get('class')
-            if 'entry-title' in titleClass and 'td-module-title' in titleClass:
-                title = str(title)
-                #print(title+'\n')
-                link = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[0]
-                text = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[1].split('</a></h3>')[0].split('\">')[0]
-                print('{}\n{}\n\n'.format(link, text))
 
-                #DB check title
-                text_30 = text[:min(len(text), 30)]
-                db_text_30 = DBConnection.getPublishedAt('indiegamebundles')[0][0]
+        text = '' #game title
+        link = '' #game url
+        desc = '' #game desc
+        dt = '' #posted dt
+        for title in soup.findAll("div", class_="td-module-meta-info"): #entry-title td-module-title
+            soup_section = BeautifulSoup(str(title), "lxml")
 
-                if str(text_30) == str(db_text_30):
-                    return
-                else:
-                    DBConnection.updatePublishedAt(text_30, 'indiegamebundles')
-
-                    title = text
-                    url = link
-                    urlToImage = 'https://i.imgur.com/RWIVDRN.png'
-                    authorName = 'Indie Game Bundles'
-                    description = selected_top_headline['description']
-                    footer = timestamp
-
-                    embed = discord.Embed(title=title)
-                    embed.color = 0xb50024
-
-                    #url handlings
-                    if url is not None and 'http' in url and '://' in url:
-                        url2 = url.rsplit('/',1)[1]
-                        url1 = url.rsplit('/',1)[0]
-                        if url2 is not None and url2 != '' and not url2.isalnum():
-                            url2 = quote(url2)
-                            url = url1 +'/'+ url2
-                        embed.url = url
-
-                    embed.description = description
-                    embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
-                    embed.set_thumbnail(url=urlToImage)
-                    embed.set_footer(text=footer)
-
-                    BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                    BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
-                    BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
-
-                    await BDS_PD_Channel.send(embed=embed)
-                    await BLG_ST_Channel.send(embed=embed)
-                    await BMS_OT_Channel.send(embed=embed)
-
+            for section in soup_section.findAll("time", class_="entry-date updated td-module-date"):
+                dt = str(section).split('datetime=\"')[1].split('\">',1)[0]
+                #print(dt+'\n') #text_30 = text[:min(len(text), 30)]
                 break
-                #titles.append(title.get('class'))
+            dt_db = DBConnection.getPublishedAt('indiegamebundles')[0][0]
+            if str(dt) == str(dt_db):
+                return
+            else:
+                DBConnection.updatePublishedAt(dt, 'indiegamebundles')
+
+                for section in soup_section.findAll("h3", class_="entry-title td-module-title"):
+                    title = str(section)
+                    link = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[0]
+                    text = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[1].split('</a></h3>')[0].split('\">')[0]
+                    break
+
+                for section in soup_section.findAll("div", class_="td-excerpt"):
+                    desc = str(section).split('\">',1)[1].split('</',1)[0]
+                    break
+
+                #embed construct
+                embed = discord.Embed()
+                embed.title = text
+                embed.color = 0xb50024
+                embed.description = desc
+                embed.set_author(name='Indie Game Bundles', icon_url='https://i.imgur.com/UdkSDcb.png')
+                embed.set_thumbnail(url='https://i.imgur.com/RWIVDRN.png')
+                embed.set_footer(text=dt)
+
+                #url handlings
+                url = link
+                if url is not None and 'http' in url and '://' in url:
+                    url2 = url.rsplit('/',1)[1]
+                    url1 = url.rsplit('/',1)[0]
+                    if url2 is not None and url2 != '' and not url2.isalnum():
+                        url2 = quote(url2)
+                        url = url1 +'/'+ url2
+                    embed.url = url
+
+                BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                await BDS_PD_Channel.send(embed=embed)
+                await BLG_ST_Channel.send(embed=embed)
+                await BMS_OT_Channel.send(embed=embed)
+
+            break
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))'''
+        await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
 
 @loop(hours=1)
 async def newsLoop():
@@ -1566,6 +1567,86 @@ class Special(commands.Cog):
             img.seek(0)
             file = discord.File(fp=img, filename='memeup.png')
         await ctx.send_followup(file=file)
+
+    @slash_command(guild_ids=guild_ids, name='testgamesloop')
+    @commands.is_owner()
+    async def _testgamesloop(self, ctx: commands.Context):
+        '''Test command for gamesLoop'''
+
+        await ctx.defer()
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+        try:
+            hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+            'Accept-Encoding': 'none',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Connection': 'keep-alive'}
+
+            url = Request("https://www.indiegamebundles.com/category/free/", headers=hdr)
+            html_page = urlopen(url)
+            soup = BeautifulSoup(html_page, "lxml")
+
+            text = '' #game title
+            link = '' #game url
+            desc = '' #game desc
+            dt = '' #posted dt
+            for title in soup.findAll("div", class_="td-module-meta-info"): #entry-title td-module-title
+                soup_section = BeautifulSoup(str(title), "lxml")
+
+                for section in soup_section.findAll("time", class_="entry-date updated td-module-date"):
+                    dt = str(section).split('datetime=\"')[1].split('\">',1)[0]
+                    #print(dt+'\n') #text_30 = text[:min(len(text), 30)]
+                    break
+                dt_db = DBConnection.getPublishedAt('indiegamebundles')[0][0]
+                if str(dt) == str(dt_db):
+                    return
+                else:
+                    DBConnection.updatePublishedAt(dt, 'indiegamebundles')
+
+                    for section in soup_section.findAll("h3", class_="entry-title td-module-title"):
+                        title = str(section)
+                        link = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[0]
+                        text = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[1].split('</a></h3>')[0].split('\">')[0]
+                        break
+
+                    for section in soup_section.findAll("div", class_="td-excerpt"):
+                        desc = str(section).split('\">',1)[1].split('</',1)[0]
+                        break
+
+                    #embed construct
+                    embed = discord.Embed()
+                    embed.title = text
+                    embed.color = 0xb50024
+                    embed.description = desc
+                    embed.set_author(name='Indie Game Bundles', icon_url='https://i.imgur.com/UdkSDcb.png')
+                    embed.set_thumbnail(url='https://i.imgur.com/RWIVDRN.png')
+                    embed.set_footer(text=dt)
+
+                    #url handlings
+                    url = link
+                    if url is not None and 'http' in url and '://' in url:
+                        url2 = url.rsplit('/',1)[1]
+                        url1 = url.rsplit('/',1)[0]
+                        if url2 is not None and url2 != '' and not url2.isalnum():
+                            url2 = quote(url2)
+                            url = url1 +'/'+ url2
+                        embed.url = url
+
+                    BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                    #BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                    #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                    await BDS_PD_Channel.send(embed=embed)
+                    #await BLG_ST_Channel.send(embed=embed)
+                    #await BMS_OT_Channel.send(embed=embed)
+
+                    await ctx.send_followup(embed=embed)
+
+                break
+        except Exception as e:
+            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
     
     @slash_command(guild_ids=guild_ids, name='testnewsloop')
     @commands.is_owner()
@@ -2859,6 +2940,7 @@ async def on_ready():
     gameLoop.start()
     covLoop.start()
     newsLoop.start()
+    gamesLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event
