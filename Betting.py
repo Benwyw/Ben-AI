@@ -14,7 +14,7 @@ class Betting(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="提高您的賭注。",
                       brief="提高您的賭注",
                       name='raise',
-                      help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
+                      help="將您的賭注提高指定的數量。 該命令的格式為 /raise <amount>。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __raise(self, ctx, raiseby: float = None):
         await ctx.defer()
@@ -47,7 +47,7 @@ class Betting(commands.Cog):
             await ctx.send_followup(embed=embed)
             return
 
-        embed.set_footer(text="格式為 $raise <加注金額>。")
+        embed.set_footer(text="格式為 /raise <加注金額>。")
         embed.add_field(name="您的餘額", value="$" + str(authorMoney), inline=False)
 
         if GAME.playerStatus[ID] == "Fold":
@@ -106,7 +106,7 @@ class Betting(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="跟注最高賭注。",
                       brief="跟注最高賭注",
                       name='call',
-                      help="匹配當前最高賭注。 格式為 $call。 不需要任何參數。 需要足夠的資金才能使用。",
+                      help="匹配當前最高賭注。 格式為 /call。 不需要任何參數。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __call(self, ctx):
         ID = str(ctx.author.id)
@@ -137,7 +137,7 @@ class Betting(commands.Cog):
             await ctx.respond(embed=embed)
             return
 
-        embed.set_footer(text="格式為 $raise <加注金額>。")
+        embed.set_footer(text="格式為 /raise <加注金額>。")
         embed.add_field(name="Your Balance", value="$" + str(authorMoney), inline=False)
 
         if GAME.playerStatus[ID] == "Fold":
@@ -177,7 +177,7 @@ class Betting(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="放棄您的賭注，放下您的手。",
                       brief="放棄您的賭注",
                       name='fold',
-                      help="棄牌棄牌，不再參與。 您將輸掉任何您已經下注的金額。 格式為 $fold。 不需要任何參數。",
+                      help="棄牌棄牌，不再參與。 您將輸掉任何您已經下注的金額。 格式為 /fold。 不需要任何參數。",
                       pass_context=True)
     async def __fold(self, ctx):
         ID = str(ctx.author.id)
@@ -214,7 +214,7 @@ class Betting(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="View the money in the pot.",
                       brief="View the money in the pot",
                       name='pot',
-                      help="看看目前有多少錢可以贏得彩池。 格式為 $pot。 不需要任何參數。",
+                      help="看看目前有多少錢可以贏得彩池。 格式為 /pot。 不需要任何參數。",
                       pass_context=True)
     async def __pot(self, ctx):
         embed = discord.Embed(title="Pot", color=0x00ff00)
@@ -249,7 +249,7 @@ class Betting(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="檢查當前最高賭注。",
                       brief="查看當前最高賭注",
                       name='highest',
-                      help="檢查當前最高賭注是多少。 格式為 $highest。 不需要任何參數。",
+                      help="檢查當前最高賭注是多少。 格式為 /highest。 不需要任何參數。",
                       pass_context=True)
     async def __highest(self, ctx):
         embed = discord.Embed(title="Highest Bet", color=0x00ff00)
