@@ -1329,6 +1329,88 @@ class Music(commands.Cog):
 #========================General========================
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
+@loop(minutes=30)
+async def hypebeastLoop():
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+        hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+
+        url = Request("https://hypebeast.com/zh/latest", headers=hdr)
+        html_page = urlopen(url)
+        soup = BeautifulSoup(html_page, "lxml")
+
+        text = '' #game title
+        link = '' #game url
+        img = '' #image url
+        desc = '' #game desc
+        dt = '' #posted dt
+        for title in soup.findAll("div", class_="post-box"):
+            if "post-box sticky-post" in str(title):
+                continue
+
+            soup_section = BeautifulSoup(str(title), "lxml")
+
+            for section in soup_section.findAll("time", class_="timeago"):
+                dt = str(section).split('datetime=\"')[1].split('\">',1)[0]
+                break
+            dt_db = DBConnection.getPublishedAt('hypebeast')[0][0]
+            if str(dt) == str(dt_db):
+                return
+            else:
+                DBConnection.updatePublishedAt(dt, 'hypebeast')
+
+                for section in soup_section.findAll("a", class_="title"):
+                    title = str(section)
+                    link = title.split('href=\"')[1].split('\"')[0]
+                    text = title.split('title=\"')[1].split('\"')[0].strip()
+                    break
+
+                for section in soup_section.findAll("div", class_="post-box-content-excerpt"):
+                    desc = str(section).split('\">',1)[1].split('</',1)[0].strip()
+                    break
+
+                for section in soup_section.findAll("img", class_="img-fluid lazy-load"):
+                    img_text = str(section).split('alt=\"',1)[1].split('\"')[0].strip()
+                    if text == img_text:
+                        img = str(section).split('data-srcset=\"',1)[1].split(' 1x',1)[0]
+                        break
+
+                #embed construct
+                embed = discord.Embed()
+                embed.title = text
+                embed.description = desc
+                embed.set_author(name='Hypebeast', icon_url='https://i.imgur.com/9IvVe1D.png')
+                embed.set_thumbnail(url=img)
+                embed.set_footer(text=dt)
+
+                #url handlings
+                url = link
+                if url is not None and 'http' in url and '://' in url:
+                    url2 = url.rsplit('/',1)[1]
+                    url1 = url.rsplit('/',1)[0]
+                    if url2 is not None and url2 != '' and not url2.isalnum():
+                        url2 = quote(url2)
+                        url = url1 +'/'+ url2
+                    embed.url = url
+
+                BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                await BDS_PD_Channel.send(embed=embed)
+                await BLG_ST_Channel.send(embed=embed)
+                await BMS_OT_Channel.send(embed=embed)
+
+            break
+    except Exception as e:
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in hypebeastLoop\n{}'.format(e,timestamp))
+
 @loop(hours=1)
 async def gamesLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
@@ -2470,8 +2552,9 @@ class Special(commands.Cog):
     @is_in_guild(671654280985313282)
     async def _blklist(self, ctx: commands.Context):
         '''特別指令。Unblock verification request。'''
+        await ctx.defer()
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
-            await ctx.respond('Request processed.')
+            await ctx.send_followup('Request processed.')
 
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
             req_ver_channel = bot.get_channel(878538264762527744)
@@ -2491,15 +2574,16 @@ class Special(commands.Cog):
             req_ver_embed_to_staff.description = str(temp_blocked_list_names)
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
+        else:
+            await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')
 
     @slash_command(guild_ids=guild_ids, name='dm')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _dm(self, ctx: commands.Context, target, content):
         """特別指令。Bot DM for Minecraft Staff usage。"""
+        await ctx.defer()
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
-            await ctx.respond('Request processed.')
-
             req_ver_channel = bot.get_channel(878538264762527744)
             target = target.lower()
 
@@ -2539,10 +2623,12 @@ class Special(commands.Cog):
             try:
                 await person.send(content)
             except Exception as e:
-                await ctx.send("無法傳訊至: "+str(person))
+                await ctx.send_followup("無法傳訊至: "+str(person))
                 await req_ver_channel.send(str(e))
             else:
-                await ctx.send("成功傳訊至: "+str(person))
+                await ctx.send_followup("成功傳訊至: "+str(person))
+        else:
+            await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')
 
     @slash_command(guild_ids=guild_ids, name='ver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
@@ -2581,6 +2667,8 @@ class Special(commands.Cog):
                 req_ver_embed_to_staff.description = str(e)
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
+        else:
+            await ctx.respond('請去 <#878538264762527744> 或 <#692466531447210105>')
 
     @slash_command(guild_ids=guild_ids, name='discver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
@@ -2941,6 +3029,7 @@ async def on_ready():
     covLoop.start()
     newsLoop.start()
     gamesLoop.start()
+    hypebeastLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event
