@@ -17,6 +17,7 @@ class Betting(commands.Cog):
                       help="將您的賭注提高指定的數量。 該命令的格式為 $raise <amount>。 需要足夠的資金才能使用。",
                       pass_context=True)
     async def __raise(self, ctx, raiseby: float = None):
+        await ctx.defer()
         ID = str(ctx.author.id)
         embed = discord.Embed(title="Bet Raise", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -27,14 +28,14 @@ class Betting(commands.Cog):
 
         if not checkInGame(ctx.author):
             embed.description = "您不在遊戲中。"
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         GAME = getGame(ctx.author)
 
         if not channelCheck(GAME, ctx.channel):
             embed.description = "您不在指定遊戲的頻道中。 請去那裡。"
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         embed.add_field(name="遊戲編號", value=str(GAME.ID), inline=False)
@@ -43,7 +44,7 @@ class Betting(commands.Cog):
         if not GAME.gameUnderway:
             embed.description = "該遊戲尚未開始。"
             embed.set_footer(text="使用 /start 啟動此遊戲。")
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         embed.set_footer(text="格式為 $raise <加注金額>。")
@@ -51,7 +52,7 @@ class Betting(commands.Cog):
 
         if GAME.playerStatus[ID] == "Fold":
             embed.description = "您不參與當前的一手牌。 等待下一個開始。"
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         '''if GAME.playerStatus[ID] == "Raise":
@@ -63,20 +64,20 @@ class Betting(commands.Cog):
 
         if authorMoney < raiseby:
             embed.description = "您沒有足夠資金來加注 $" + str(raiseby) + "。"
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         if raiseby + GAME.bets[ID] <= GAME.maxBet:
             embed.add_field(name="當前最高賭注", value="$" + str(GAME.maxBet), inline=False)
             embed.description = "沒有擊敗當前最高的賭注。"
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         if raiseby + GAME.bets[ID] > 5050:
             embed.add_field(name="您的總下注", value="$" + str(GAME.bets[ID]), inline=False)
             embed.add_field(name="最高加注限額", value="$5000", inline=False)
             embed.description = "無法加注 ${}。".format(raiseby)
-            await ctx.send(embed=embed)
+            await ctx.send_followup(embed=embed)
             return
 
         GAME.bets[ID] += raiseby
@@ -91,7 +92,7 @@ class Betting(commands.Cog):
         embed.add_field(name="彩池(Pot)", value="$" + str(GAME.pot))
         embed.description = "你把賭注提高到 $" + str(GAME.bets[ID])
 
-        await ctx.send(embed=embed)
+        await ctx.send_followup(embed=embed)
 
     @__raise.error
     async def raise_error(self, ctx, error):
