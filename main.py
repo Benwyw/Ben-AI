@@ -1430,7 +1430,23 @@ async def gamesLoop():
         link = '' #game url
         desc = '' #game desc
         dt = '' #posted dt
-        for title in soup.findAll("div", class_="td-module-meta-info"): #entry-title td-module-title
+        img = '' #image url
+
+        for title in soup.findAll("div", class_="td-module-container"):
+            soup_section = BeautifulSoup(str(title), "lxml")
+
+            for section in soup_section.findAll("div", class_="td-module-thumb"):
+                soup_section = BeautifulSoup(str(section), "lxml")
+
+                for section in soup_section.findAll("span", class_="entry-thumb td-thumb-css rocket-lazyload"):
+                    img = str(section).split('data-bg=\"')[1].split('\"',1)[0]
+                    break
+            
+                break
+            break
+
+
+        for title in soup.findAll("div", class_="td-module-meta-info"):
             soup_section = BeautifulSoup(str(title), "lxml")
 
             for section in soup_section.findAll("time", class_="entry-date updated td-module-date"):
@@ -1442,6 +1458,7 @@ async def gamesLoop():
                 return
             else:
                 DBConnection.updatePublishedAt(dt, 'indiegamebundles')
+                #continue else
 
                 for section in soup_section.findAll("h3", class_="entry-title td-module-title"):
                     title = str(section)
@@ -1458,8 +1475,8 @@ async def gamesLoop():
                 embed.title = text
                 embed.color = 0xb50024
                 embed.description = desc
-                embed.set_author(name='Indie Game Bundles', icon_url='https://i.imgur.com/UdkSDcb.png')
-                embed.set_thumbnail(url='https://i.imgur.com/RWIVDRN.png')
+                embed.set_author(name='Indie Game Bundles', icon_url='https://i.imgur.com/RWIVDRN.png')
+                embed.set_thumbnail(url=img)
                 embed.set_footer(text=dt)
 
                 #url handlings
@@ -1531,7 +1548,7 @@ async def newsLoop():
                 embed.url = url
 
             embed.description = description
-            embed.set_author(name=authorName, icon_url='https://i.imgur.com/UdkSDcb.png')
+            embed.set_author(name=authorName, icon_url='https://i.imgur.com/lO1q6vJ.png') #News API logo: https://i.imgur.com/UdkSDcb.png
             embed.set_thumbnail(url=urlToImage)
             embed.set_footer(text=footer)
 
