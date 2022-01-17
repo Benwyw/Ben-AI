@@ -1617,6 +1617,25 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.is_owner()
+    @slash_command(guild_ids=guild_ids, name='autocheckdbusers')
+    async def _autocheckdbusers(self, ctx: commands.Context):
+        '''Automatically search and add missing user to DB'''
+
+        await ctx.defer()
+
+        counter = 0
+
+        for guild in bot.guilds:
+            print(guild)
+            for member in guild.members:
+                print(member)
+                if not DBConnection.checkUserInDB(str(member.id)):
+                    DBConnection.addUserToDB(str(member.id))
+                    counter += 1
+        
+        await ctx.send_followup('Found {} missing members in DB, added to DB.'.format(counter))
+
     @slash_command(guild_ids=guild_ids, name='meme')
     async def _meme(self, ctx: commands.Context, url, text, txtsize, pos, color):
         '''圖片網址(.jpg .png .gif) 文字(自己唸啦屌) 文字大小(數字) 位置(up center down) 顏色(red)'''
@@ -3254,15 +3273,15 @@ async def on_message(message):
                            '/reward','/bonus','/b','/prize','/rank','/draw']
     minecraft_command_List = ['/bind', '/bound', '/unbind', '/ver', '/discver' '/dm', '/block', '/unblock', '/blocklist']
 
-    if message.content.split(' ')[0] in casino_command_List:
+    '''if message.content.split(' ')[0] in casino_command_List:
         if not DBConnection.checkUserInDB(str(message.author.id)):
-            DBConnection.addUserToDB(str(message.author.id))
+            DBConnection.addUserToDB(str(message.author.id))'''
 
     await bot.process_commands(message)
 
-    if (message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List or message.content.split(' ')[0] in minecraft_command_List) and \
+    '''if (message.content.split(' ')[0] in casino_command_List or message.content.split(' ')[0] in music_command_List or message.content.split(' ')[0] in minecraft_command_List) and \
             not(message.guild is None and message.author != bot.user):
-        await message.delete()
+        await message.delete()'''
 
 
     #Mentions Ben AI
@@ -3398,6 +3417,9 @@ async def on_member_join(member):
             await pok_channel.send("{} 加入了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
         except:
             pass
+
+    if not DBConnection.checkUserInDB(str(member.id)):
+        DBConnection.addUserToDB(str(member.id))
 
 @bot.event
 async def on_member_remove(member):
