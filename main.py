@@ -371,7 +371,7 @@ class RiotApi(object):
 
         gsbn = self.get_summoner_by_name(summoner_name)
 
-        if gsbn is not None and int(len(gsbn)) > 0:
+        if gsbn is not None and int(len(gsbn)) > 0 and 'puuid' in str(gsbn):
             gsbn = gsbn['puuid']
 
             gmbn = self.get_matches_by_name(gsbn)
@@ -1514,7 +1514,7 @@ async def lolLoop():
                     doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in testlolloop\n{}'.format(e,timestamp))
+        await BDS_Log_Channel.send('{}\n\nError occured in lolloop\n{}'.format(e,timestamp))
 
 @loop(minutes=15)
 async def hypebeastLoop():
