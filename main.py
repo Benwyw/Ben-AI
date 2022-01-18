@@ -3414,6 +3414,7 @@ async def on_ready():
     newsLoop.start()
     gamesLoop.start()
     hypebeastLoop.start()
+    lolLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event
