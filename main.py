@@ -323,6 +323,66 @@ def sortHand(user: discord.Member, HAND):
 """
 Commands Start Here
 """
+#========================RIOT LoL
+class RiotApi(object):
+    def __init__(self, api_key: str, region="na1"):
+        self.__RIOT_API_KEY = api_key
+        self.__HEADER = {'X-Riot-Token': self.__RIOT_API_KEY}
+        self.__REGION = region
+        self.__ROUTING = "americas"
+        self.__BASE_URL = ".api.riotgames.com/lol/"
+        self.__API_URL_SUMMONER_V4 = "https://" + self.__REGION + self.__BASE_URL + "summoner/v4/summoners/"
+        self.__API_URL_MATCH_V5 = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/by-puuid/"
+        self.__API_URL_MATCH_V5_MATCHID = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/"
+
+    def get_summoner_by_name(self, summoner_name: str) -> dict:
+        """Summoner Infos and Ids
+        @param summoner_name: LoL summoner name
+        @return json object of infos and ids
+        """
+        url = self.__API_URL_SUMMONER_V4 + "by-name/" + summoner_name
+        request = requests.get(url, headers=self.__HEADER)
+        return request.json()
+
+    def get_matches_by_name(self, puuid: str) -> dict:
+        """Get summoner match history by name"""
+
+        url = self.__API_URL_MATCH_V5 + puuid + "/ids"
+        request = requests.get(url, headers=self.__HEADER)
+        return request.json()
+
+    def get_matches_by_matchid(self, matchid: str) -> dict:
+        """Get matches by match id"""
+
+        url = self.__API_URL_MATCH_V5_MATCHID + matchid
+        request = requests.get(url, headers=self.__HEADER)
+        return request.json()
+
+    def get_summoner_by_puuid(self, puuid: str) -> dict:
+        """Get summoner info by puuid"""
+
+        url = self.__API_URL_SUMMONER_V4 + "by-puuid/" + puuid
+        request = requests.get(url, headers=self.__HEADER)
+        return request.json()
+
+    #call
+    def get_latest_matches_by_name(self, summoner_name:str) -> dict:
+        """Latest match history info by summoner name"""
+
+        gsbn = self.get_summoner_by_name(summoner_name)
+
+        if gsbn is not None and int(len(gsbn)) > 0:
+            gsbn = gsbn['puuid']
+
+            gmbn = self.get_matches_by_name(gsbn)
+
+            if gmbn is not None and int(len(gmbn)) > 0:
+                gmbn = gmbn[0]
+                return self.get_matches_by_matchid(gmbn)
+        
+        return None
+
+#========================Game
 class Game(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="遊戲幫助指令。",
                       name="cmd",
@@ -1329,6 +1389,133 @@ class Music(commands.Cog):
 #========================General========================
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
+@loop(minutes=10)
+async def lolLoop():
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+
+        count = 0
+        #totalcount = 0
+        summonerNames = DBConnection.getLolSummonerNames()
+
+        load_dotenv()
+        riotApi = RiotApi(os.getenv('RIOT_API_KEY'))
+
+        for summonerName in summonerNames:
+            if count == 20:
+                asyncio.sleep(1)
+                count = 0
+                #totalcount += count
+
+            count += 1
+            summonerName = str(summonerName[0])
+            match = riotApi.get_latest_matches_by_name(summonerName)
+
+            if match is None:
+                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in lolloop summoner: {} possibly not found\n'.format(timestamp, summonerName))
+                continue
+
+            matchId = match['metadata']['matchId']
+
+            #DB operations
+            dt_db = DBConnection.getLolPublishedAt(summonerName)[0][0]
+            if str(matchId) == str(dt_db):
+                continue
+            else:
+                DBConnection.updateLolPublishedAt(matchId, summonerName)
+
+                gameDuration = match['info']['gameDuration']
+                gameMode = match['info']['gameMode']
+                gameType = match['info']['gameType']
+                gameStartTimestamp = match['info']['gameStartTimestamp']
+
+                for participant in match['info']['participants']:
+
+                    #if a list of participant names...
+                    if participant['summonerName'] == summonerName:
+                        #general
+                        summonerLevel = participant['summonerLevel']
+                        championName = participant['championName']
+                        win = participant['win']
+
+                        #economy
+                        goldEarned = participant['goldEarned']
+                        goldSpent = participant['goldSpent']
+
+                        #KDA
+                        kills = participant['kills']
+                        deaths = participant['deaths']
+                        assists = participant['assists']
+
+                        #double triple quadra penta kill
+                        doubleKills = participant['doubleKills']
+                        tripleKills = participant['tripleKills']
+                        quadraKills = participant['quadraKills']
+                        pentaKills = participant['pentaKills']
+
+                        break
+
+                title = str(summonerName)
+                color = 0x000000
+                if win is True:
+                    title += ' 勝利'
+                    color = 0x00ff00
+                else:
+                    title += ' 失敗'
+                    color = 0xff0000
+
+                summonerNameFormat = summonerName.replace(' ', '%20')
+                url = 'https://na.op.gg/summoner/userName={}'.format(summonerNameFormat)
+                thumbnail = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg'.format(championName)
+                dt = str(gameStartTimestamp)
+
+                #embed construct
+                embed = discord.Embed()
+                embed.title = title
+                embed.color = color
+                embed.url = url
+                #embed.description = desc
+                embed.set_author(name='League of Legends (NA)', icon_url='https://i.imgur.com/tkjOxrX.png')
+                embed.set_thumbnail(url=thumbnail)
+
+                embed.add_field(name="召喚師等級", value='{}'.format(summonerLevel), inline=True)
+                embed.add_field(name="英雄名字", value='{}'.format(championName), inline=True)
+                embed.add_field(name="獲得金幣", value='{}'.format(goldEarned), inline=True)
+
+                embed.add_field(name="遊戲時長", value='{} 分鐘'.format(int(gameDuration)/60), inline=True)
+                embed.add_field(name="遊戲模式", value='{}'.format(gameMode), inline=True)
+                embed.add_field(name="遊戲類型", value='{}'.format(gameType), inline=True)
+
+                embed.add_field(name="擊殺", value='{}'.format(kills), inline=True)
+                embed.add_field(name="死亡", value='{}'.format(deaths), inline=True)
+                embed.add_field(name="助攻", value='{}'.format(assists), inline=True)
+
+                embed.add_field(name="雙殺", value='{}'.format(doubleKills), inline=True)
+                embed.add_field(name="三連殺", value='{}'.format(tripleKills), inline=True)
+                embed.add_field(name="四連殺", value='{}'.format(quadraKills), inline=True)
+                embed.add_field(name="五連殺", value='{}'.format(pentaKills), inline=True)
+
+                embed.set_footer(text=dt)
+
+                BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                await BDS_PD_Channel.send(embed=embed)
+                await BLG_ST_Channel.send(embed=embed)
+                #await BMS_OT_Channel.send(embed=embed)
+
+                '''print('\n\n')
+                print('matchId: {}\ngameDuration: {}\ngameMode: {}\ngameType: {}\n \
+                    summonerLevel: {}\nchampionName: {}\nwin: {}\n \
+                    goldEarned: {}\ngoldSpent: {}\n \
+                    kills: {}\ndeaths: {}\nassists: {}\n \
+                    doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
+    except Exception as e:
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in testlolloop\n{}'.format(e,timestamp))
+
 @loop(minutes=15)
 async def hypebeastLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
@@ -1685,6 +1872,167 @@ class Special(commands.Cog):
             img.seek(0)
             file = discord.File(fp=img, filename='memeup.png')
         await ctx.send_followup(file=file)
+
+    @slash_command(guild_ids=guild_ids, name='deletelol')
+    @commands.is_owner()
+    async def _deletelol(self, ctx:commands.Context, summonername):
+        '''Delete summoner name into NA listener DB'''
+
+        await ctx.defer()
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+        try:
+            DBConnection.deleteLol(summonername)
+            await ctx.send_followup('Success!')
+        except Exception as e:
+            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in deletelol\n{}'.format(e,timestamp))
+
+    @slash_command(guild_ids=guild_ids, name='insertlol')
+    @commands.is_owner()
+    async def _insertlol(self, ctx:commands.Context, summonername):
+        '''Insert summoner name into NA listener DB'''
+
+        await ctx.defer()
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+        try:
+            DBConnection.insertLol(summonername)
+            await ctx.send_followup('Success!')
+        except Exception as e:
+            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in insertlol\n{}'.format(e,timestamp))
+
+    @slash_command(guild_ids=guild_ids, name='testlolloop')
+    @commands.is_owner()
+    async def _testlolloop(self, ctx:commands.Context):
+        '''Test lol NA server riot API'''
+
+        await ctx.defer()
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+        try:
+
+            count = 0
+            #totalcount = 0
+            summonerNames = DBConnection.getLolSummonerNames()
+
+            load_dotenv()
+            riotApi = RiotApi(os.getenv('RIOT_API_KEY'))
+
+            for summonerName in summonerNames:
+                if count == 20:
+                    asyncio.sleep(1)
+                    count = 0
+                    #totalcount += count
+
+                count += 1
+                summonerName = str(summonerName[0])
+                match = riotApi.get_latest_matches_by_name(summonerName)
+
+                if match is None:
+                    BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                    await BDS_Log_Channel.send('{}\n\nError occured in lolloop summoner: {} possibly not found\n'.format(timestamp, summonerName))
+                    continue
+
+                matchId = match['metadata']['matchId']
+
+                #DB operations
+                dt_db = DBConnection.getLolPublishedAt(summonerName)[0][0]
+                if str(matchId) == str(dt_db):
+                    continue
+                else:
+                    DBConnection.updateLolPublishedAt(matchId, summonerName)
+
+                    gameDuration = match['info']['gameDuration']
+                    gameMode = match['info']['gameMode']
+                    gameType = match['info']['gameType']
+                    gameStartTimestamp = match['info']['gameStartTimestamp']
+
+                    for participant in match['info']['participants']:
+
+                        #if a list of participant names...
+                        if participant['summonerName'] == summonerName:
+                            #general
+                            summonerLevel = participant['summonerLevel']
+                            championName = participant['championName']
+                            win = participant['win']
+
+                            #economy
+                            goldEarned = participant['goldEarned']
+                            goldSpent = participant['goldSpent']
+
+                            #KDA
+                            kills = participant['kills']
+                            deaths = participant['deaths']
+                            assists = participant['assists']
+
+                            #double triple quadra penta kill
+                            doubleKills = participant['doubleKills']
+                            tripleKills = participant['tripleKills']
+                            quadraKills = participant['quadraKills']
+                            pentaKills = participant['pentaKills']
+
+                            break
+
+                    title = str(summonerName)
+                    color = 0x000000
+                    if win is True:
+                        title += ' 勝利'
+                        color = 0x00ff00
+                    else:
+                        title += ' 失敗'
+                        color = 0xff0000
+
+                    summonerNameFormat = summonerName.replace(' ', '%20')
+                    url = 'https://na.op.gg/summoner/userName={}'.format(summonerNameFormat)
+                    thumbnail = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg'.format(championName)
+                    dt = str(gameStartTimestamp)
+
+                    #embed construct
+                    embed = discord.Embed()
+                    embed.title = title
+                    embed.color = color
+                    embed.url = url
+                    #embed.description = desc
+                    embed.set_author(name='League of Legends (NA)', icon_url='https://i.imgur.com/tkjOxrX.png')
+                    embed.set_thumbnail(url=thumbnail)
+
+                    embed.add_field(name="召喚師等級", value='{}'.format(summonerLevel), inline=True)
+                    embed.add_field(name="英雄名字", value='{}'.format(championName), inline=True)
+                    embed.add_field(name="獲得金幣", value='{}'.format(goldEarned), inline=True)
+
+                    embed.add_field(name="遊戲時長", value='{} 分鐘'.format(int(gameDuration)/60), inline=True)
+                    embed.add_field(name="遊戲模式", value='{}'.format(gameMode), inline=True)
+                    embed.add_field(name="遊戲類型", value='{}'.format(gameType), inline=True)
+
+                    embed.add_field(name="擊殺", value='{}'.format(kills), inline=True)
+                    embed.add_field(name="死亡", value='{}'.format(deaths), inline=True)
+                    embed.add_field(name="助攻", value='{}'.format(assists), inline=True)
+
+                    embed.add_field(name="雙殺", value='{}'.format(doubleKills), inline=True)
+                    embed.add_field(name="三連殺", value='{}'.format(tripleKills), inline=True)
+                    embed.add_field(name="四連殺", value='{}'.format(quadraKills), inline=True)
+                    embed.add_field(name="五連殺", value='{}'.format(pentaKills), inline=True)
+
+                    embed.set_footer(text=dt)
+
+                    BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                    #BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                    #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                    await BDS_PD_Channel.send(embed=embed)
+                    #await BLG_ST_Channel.send(embed=embed)
+                    #await BMS_OT_Channel.send(embed=embed)
+
+                    await ctx.send_followup(embed=embed)
+
+                    '''print('\n\n')
+                    print('matchId: {}\ngameDuration: {}\ngameMode: {}\ngameType: {}\n \
+                        summonerLevel: {}\nchampionName: {}\nwin: {}\n \
+                        goldEarned: {}\ngoldSpent: {}\n \
+                        kills: {}\ndeaths: {}\nassists: {}\n \
+                        doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
+        except Exception as e:
+            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in testlolloop\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='testgamesloop')
     @commands.is_owner()
