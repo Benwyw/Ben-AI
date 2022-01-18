@@ -1468,7 +1468,7 @@ async def lolLoop():
                 summonerNameFormat = summonerName.replace(' ', '%20')
                 url = 'https://na.op.gg/summoner/userName={}'.format(summonerNameFormat)
                 thumbnail = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg'.format(championName)
-                dt = str(gameStartTimestamp)
+                dt = str(datetime.utcfromtimestamp(int(gameStartTimestamp)/1000).strftime('%Y-%m-%d %H:%M:%S'))
 
                 #embed construct
                 embed = discord.Embed()
