@@ -1551,6 +1551,7 @@ async def twLolLoop():
                     unavailableCounter += 1
 
     except Exception as e:
+        e = str(e)
         BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
         dt_duration_30 = e[:min(len(e), 30)] #limit length to 30 char
         dt_db = DBConnection.getLolPublishedAt(getRegion('tw'), 'server')[0][0]
