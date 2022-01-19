@@ -235,51 +235,51 @@ class DBConnection:
         botDB.commit()
 
     @classmethod
-    def insertLol(cls, remarks: str):
+    def insertLol(cls, region: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO Points (type, remarks) 
                 VALUES (%s, %s) """
-        dataTuple = ('lol', remarks)
+        dataTuple = (region, remarks)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
 
     @classmethod
-    def deleteLol(cls, remarks: str):
+    def deleteLol(cls, region: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """DELETE FROM Points
                 WHERE type=%s and remarks=%s """
-        data = ('lol',remarks)
+        data = (region,remarks)
         DBCursor.execute(query, data)
         botDB.commit()
 
     @classmethod
-    def getLolPublishedAt(cls, remarks: str):
+    def getLolPublishedAt(cls, region: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query =  """select publishedAt
                     from Points
                     where type = %s and remarks = %s"""
-        data = ('lol',remarks)
+        data = (region,remarks)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
 
     @classmethod
-    def updateLolPublishedAt(cls, publishedAt: str, remarks: str):
+    def updateLolPublishedAt(cls, region: str, publishedAt: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE Points
                 SET publishedAt=%s
                 WHERE type=%s and remarks = %s"""
-        data = (publishedAt, 'lol', remarks)
+        data = (publishedAt, region, remarks)
         DBCursor.execute(query, data)
         botDB.commit()
 
     @classmethod
-    def getLolSummonerNames(cls):
+    def getLolSummonerNames(cls, region: str):
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
                     where type = %s"""
-        data = ('lol',)
+        data = (region,)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result

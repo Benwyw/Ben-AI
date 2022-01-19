@@ -78,6 +78,13 @@ load_dotenv()
 ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
 newsapi = NewsApiClient(api_key=os.getenv('NEWS_API_KEY'))
 
+def getRegion(region):
+    region = region.lower()
+    if region == 'tw':
+        return 'loltw'
+    elif region == 'na':
+        return 'lolna'
+
 #========================Checks========================
 def is_in_guild(guild_id):
     async def predicate(ctx):
@@ -1390,13 +1397,182 @@ class Music(commands.Cog):
 dmList = [254517813417476097,525298794653548751,562972196880777226,199877205071888384,407481608560574464,346518519015407626,349924747686969344,270781455678832641,363347146080256001,272977239014899713,262267347379683329,394354007650336769,372395366986940416,269394999890673664]
 
 @loop(minutes=10)
-async def lolLoop():
+async def twLolLoop():
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+        unavailableCounter = 0
+        hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+
+        summonerNames = DBConnection.getLolSummonerNames(getRegion('tw'))
+        if summonerNames is None or int(len(summonerNames)) == 0:
+            return
+
+        for summonerName in summonerNames:
+            summonerName = str(summonerName[0])
+
+            if ' ' in summonerName:
+                summonerNameFormat = summonerName.replace(' ', '%20')
+            else:
+                summonerNameFormat = summonerName
+
+            url_construct = "https://twlolstats.com/summoner/?summoner={}".format(summonerNameFormat)
+            url = Request(url_construct, headers=hdr)
+            html_page = urlopen(url)
+            soup = BeautifulSoup(html_page, "lxml")
+
+            for title in soup.findAll("input", class_="loadMore btn btn-primary"):
+                uuid = str(title).split(',',1)[1].split(', \'',1)[1].split('\'',1)[0]
+                break
+
+            for content in soup.findAll("div", class_="col-sm-6"):
+                soup_section = BeautifulSoup(str(content), "lxml")
+                for section in soup_section.findAll("div"):
+                    if '<div>Level ' in str(section):
+                        summonerLevel = str(section).split('<div>Level ')[1].split('</div>')[0]
+                        break
+
+            url = Request("https://twlolstats.com/moreGames/{}/game1".format(uuid), headers=hdr)
+            html_page = urlopen(url)
+            soup = BeautifulSoup(html_page, "lxml")
+
+            gameMode = ''
+            dt = ''
+            gameDuration = ''
+
+            for content in soup.findAll("tr"):
+
+                soup_section = BeautifulSoup(str(content), "lxml")
+                for section in soup_section.findAll("img"):
+                    thumbnail = str(section).split('\"',1)[1].split('\\"',1)[0]
+                    break
+
+                for section in soup_section.findAll("b"):
+                    title = str(section).split('>',1)[1].split('<',1)[0].encode('utf-8').decode('unicode_escape')
+                    break
+                
+                for section in soup_section.findAll("div"):
+                    if section is not None and str(section) != '' and str(section) != ' ' and '<' in str(section) and '>' in str(section):
+                        tempSection = str(section).split('>',1)[1].split('<',1)[0]
+
+                    if '/' in tempSection and dt == '':
+                        dt = tempSection
+                    elif 'min' in tempSection and 's' in tempSection and gameDuration == '':
+                        gameDuration = tempSection
+                    elif '\\' not in tempSection and gameMode == '':
+                        gameMode = tempSection
+
+                count = 0
+                for section in soup_section.findAll("span"):
+                    if section is not None and str(section) != '' and str(section) != ' ' and '<' in str(section) and '>' in str(section):
+                        tempSection = str(section).split('>',1)[1].split('<',1)[0]
+                        if tempSection == '/':
+                            continue
+
+                    if count == 0:
+                        kills = tempSection
+                    elif count == 1:
+                        deaths = tempSection
+                    elif count == 2:
+                        assists = tempSection
+
+                    count += 1
+
+                break
+
+            #DB operations
+            if ' ' in gameDuration:
+                dt_gD = gameDuration.replace(' ','')
+            if 'min' in gameDuration:
+                dt_gD = gameDuration.replace('min','')
+            if 's' in gameDuration:
+                dt_gD = gameDuration.replace('s','')
+            dt_duration = '{}{}{}{}{}{}'.format(gameMode, dt, dt_gD, kills, deaths, assists) #format for unique id
+            dt_duration_30 = dt_duration[:min(len(dt_duration), 30)] #limit length to 30 char
+            dt_db = DBConnection.getLolPublishedAt(getRegion('tw'), summonerName)[0][0]
+            if str(dt_duration_30) == str(dt_db):
+                continue
+            else:
+                DBConnection.updateLolPublishedAt(getRegion('tw'), dt_duration_30, summonerName)
+
+                color = 0x000000
+                if title == '勝利':
+                    color = 0x00ff00
+                else:
+                    color = 0xff0000
+
+                title = title.format('{} {}'.format(summonerName, title))
+                url = url_construct
+                championName = thumbnail.split('champion/')[1].split('.')[0]
+
+                #embed construct
+                embed = discord.Embed()
+                embed.title = title
+                embed.color = color
+                embed.url = url
+                #embed.description = desc
+                embed.set_author(name='League of Legends (TW)', icon_url='https://i.imgur.com/tkjOxrX.png')
+                embed.set_thumbnail(url=thumbnail)
+
+                embed.add_field(name="召喚師等級", value='{}'.format(summonerLevel), inline=True)
+                embed.add_field(name="英雄名字", value='{}'.format(championName), inline=True)
+                #embed.add_field(name="獲得金幣", value='{}'.format(goldEarned), inline=True)
+
+                embed.add_field(name="遊戲時長", value='{} 分鐘'.format(gameDuration), inline=True)
+                embed.add_field(name="遊戲模式", value='{}'.format(gameMode), inline=True)
+                #embed.add_field(name="遊戲類型", value='{}'.format(gameType), inline=True)
+
+                embed.add_field(name="擊殺", value='{}'.format(kills), inline=True)
+                embed.add_field(name="死亡", value='{}'.format(deaths), inline=True)
+                embed.add_field(name="助攻", value='{}'.format(assists), inline=True)
+
+                #embed.add_field(name="雙殺", value='{}'.format(doubleKills), inline=True)
+                #embed.add_field(name="三連殺", value='{}'.format(tripleKills), inline=True)
+                #embed.add_field(name="四連殺", value='{}'.format(quadraKills), inline=True)
+                #embed.add_field(name="五連殺", value='{}'.format(pentaKills), inline=True)
+
+                embed.set_footer(text=dt)
+
+                #BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+
+                #await BDS_PD_Channel.send(embed=embed)
+                await BLG_ST_Channel.send(embed=embed)
+                #await BMS_OT_Channel.send(embed=embed)
+                if unavailableCounter == 0:
+                    dt_db = DBConnection.getLolPublishedAt(getRegion('tw'), 'server')[0][0]
+                    if str(dt_db) != 'available':
+                        DBConnection.updateLolPublishedAt(getRegion('tw'), 'available', 'server')
+                    unavailableCounter += 1
+
+    except Exception as e:
+        BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+        dt_duration_30 = e[:min(len(e), 30)] #limit length to 30 char
+        dt_db = DBConnection.getLolPublishedAt(getRegion('tw'), 'server')[0][0]
+        if str(dt_duration_30) != str(dt_db):
+            DBConnection.updateLolPublishedAt(getRegion('tw'), dt_duration_30, 'server')
+            embed = discord.Embed()
+            embed.title = 'Garena系統暫時無法使用'
+            embed.description = e
+            embed.set_author(name='League of Legends (TW)', icon_url='https://i.imgur.com/tkjOxrX.png')
+            await BLG_ST_Channel.send(embed=embed)
+
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in twLolLoop\n{}'.format(e,timestamp))
+
+@loop(minutes=10)
+async def naLolLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
 
         count = 0
         #totalcount = 0
-        summonerNames = DBConnection.getLolSummonerNames()
+        summonerNames = DBConnection.getLolSummonerNames(getRegion('na'))
 
         load_dotenv()
         riotApi = RiotApi(os.getenv('RIOT_API_KEY'))
@@ -1419,11 +1595,11 @@ async def lolLoop():
             matchId = match['metadata']['matchId']
 
             #DB operations
-            dt_db = DBConnection.getLolPublishedAt(summonerName)[0][0]
+            dt_db = DBConnection.getLolPublishedAt(getRegion('na'), summonerName)[0][0]
             if str(matchId) == str(dt_db):
                 continue
             else:
-                DBConnection.updateLolPublishedAt(matchId, summonerName)
+                DBConnection.updateLolPublishedAt(getRegion('na'), matchId, summonerName)
 
                 gameDuration = match['info']['gameDuration']
                 gameMode = match['info']['gameMode']
@@ -1498,11 +1674,11 @@ async def lolLoop():
 
                 embed.set_footer(text=dt)
 
-                BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
+                #BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
                 BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
                 #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-                await BDS_PD_Channel.send(embed=embed)
+                #await BDS_PD_Channel.send(embed=embed)
                 await BLG_ST_Channel.send(embed=embed)
                 #await BMS_OT_Channel.send(embed=embed)
 
@@ -1514,7 +1690,7 @@ async def lolLoop():
                     doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in lolloop\n{}'.format(e,timestamp))
+        await BDS_Log_Channel.send('{}\n\nError occured in naLolLoop\n{}'.format(e,timestamp))
 
 @loop(minutes=15)
 async def hypebeastLoop():
@@ -1875,35 +2051,37 @@ class Special(commands.Cog):
 
     @slash_command(guild_ids=guild_ids, name='deletelol')
     @commands.is_owner()
-    async def _deletelol(self, ctx:commands.Context, summonername):
-        '''Delete summoner name into NA listener DB'''
+    async def _deletelol(self, ctx:commands.Context, region:str, summonername:str):
+        '''Delete summoner name tw na'''
 
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         try:
-            DBConnection.deleteLol(summonername)
-            await ctx.send_followup('Success!')
+            region = getRegion(region)
+            DBConnection.deleteLol(region, summonername)
+            await ctx.send_followup('Deleted {} to {}'.format(summonername, region))
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in deletelol\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='insertlol')
     @commands.is_owner()
-    async def _insertlol(self, ctx:commands.Context, summonername):
-        '''Insert summoner name into NA listener DB'''
+    async def _insertlol(self, ctx:commands.Context, region:str, summonername:str):
+        '''Insert summoner name tw na'''
 
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         try:
-            DBConnection.insertLol(summonername)
-            await ctx.send_followup('Success!')
+            region = getRegion(region)
+            DBConnection.insertLol(region, summonername)
+            await ctx.send_followup('Inserted {} to {}'.format(summonername, region))
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in insertlol\n{}'.format(e,timestamp))
 
-    @slash_command(guild_ids=guild_ids, name='testlolloop')
+    @slash_command(guild_ids=guild_ids, name='testnalolloop')
     @commands.is_owner()
-    async def _testlolloop(self, ctx:commands.Context):
+    async def _testnalolloop(self, ctx:commands.Context):
         '''Test lol NA server riot API'''
 
         await ctx.defer()
@@ -1912,7 +2090,7 @@ class Special(commands.Cog):
 
             count = 0
             #totalcount = 0
-            summonerNames = DBConnection.getLolSummonerNames()
+            summonerNames = DBConnection.getLolSummonerNames(getRegion('na'))
 
             load_dotenv()
             riotApi = RiotApi(os.getenv('RIOT_API_KEY'))
@@ -1935,11 +2113,11 @@ class Special(commands.Cog):
                 matchId = match['metadata']['matchId']
 
                 #DB operations
-                dt_db = DBConnection.getLolPublishedAt(summonerName)[0][0]
+                dt_db = DBConnection.getLolPublishedAt(getRegion('na'), summonerName)[0][0]
                 if str(matchId) == str(dt_db):
                     continue
                 else:
-                    DBConnection.updateLolPublishedAt(matchId, summonerName)
+                    DBConnection.updateLolPublishedAt(getRegion('na'), matchId, summonerName)
 
                     gameDuration = match['info']['gameDuration']
                     gameMode = match['info']['gameMode']
@@ -2032,7 +2210,7 @@ class Special(commands.Cog):
                         doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-            await BDS_Log_Channel.send('{}\n\nError occured in testlolloop\n{}'.format(e,timestamp))
+            await BDS_Log_Channel.send('{}\n\nError occured in testnalolloop\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='testgamesloop')
     @commands.is_owner()
@@ -3414,7 +3592,8 @@ async def on_ready():
     newsLoop.start()
     gamesLoop.start()
     hypebeastLoop.start()
-    lolLoop.start()
+    naLolLoop.start()
+    twLolLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event
