@@ -85,8 +85,8 @@ async def getNewsEmbed(source):
         # /v2/top-headlines
         if source == 'Rthk.hk':
             top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
-        elif source == 'YouTube':
-            top_headlines = newsapi.get_top_headlines(category='business', language='en', country='us')
+        elif source == 'Bloomberg':
+            top_headlines = newsapi.get_everything(sources=source, language='en', sortBy='publishedAt')
         else:
             top_headlines = newsapi.get_top_headlines(sources=source)
 
@@ -1916,7 +1916,7 @@ async def gamesLoop():
 
 @loop(hours=1)
 async def newsLoop():
-    newsList = ['Rthk.hk', 'YouTube', 'IGN']
+    newsList = ['Rthk.hk', 'Bloomberg', 'IGN']
     for newsId in newsList:
         embed = await getNewsEmbed(newsId)
         if embed is not None:
