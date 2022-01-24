@@ -121,7 +121,7 @@ async def getNewsEmbed(source):
             #embed.color = 0xb50024
 
             #url handlings
-            if url is not None and 'http' in url and '://' in url:
+            if url is not None and 'http' in url and '://' in url and source == 'Rthk.hk':
                 url2 = url.rsplit('/',1)[1]
                 url1 = url.rsplit('/',1)[0]
                 if url2 is not None and url2 != '' and not url2.isalnum():
