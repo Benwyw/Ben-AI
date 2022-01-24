@@ -283,3 +283,14 @@ class DBConnection:
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
+
+    @classmethod
+    def getRemarks(cls, type: str):
+        botDB, DBCursor = cls.connection()
+        query =  """select remarks
+                    from Points
+                    where type = %s"""
+        data = (type,)
+        DBCursor.execute(query, data)
+        result = DBCursor.fetchall()
+        return result
