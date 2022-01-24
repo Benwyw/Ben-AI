@@ -121,15 +121,16 @@ async def getNewsEmbed(source):
             #embed.color = 0xb50024
 
             #url handlings
-            if url is not None and 'http' in url and '://' in url and source == 'Rthk.hk':
-                url2 = url.rsplit('/',1)[1]
-                url1 = url.rsplit('/',1)[0]
-                if url2 is not None and url2 != '' and not url2.isalnum():
-                    url2 = quote(url2)
-                    url = url1 +'/'+ url2
-                embed.url = url
-            else:
-                embed.url = url
+            if url is not None and 'http' in url and '://' in url:
+                if source == 'Rthk.hk':
+                    url2 = url.rsplit('/',1)[1]
+                    url1 = url.rsplit('/',1)[0]
+                    if url2 is not None and url2 != '' and not url2.isalnum():
+                        url2 = quote(url2)
+                        url = url1 +'/'+ url2
+                    embed.url = url
+                else:
+                    embed.url = url
 
             embed.description = description
             embed.set_author(name=authorName, icon_url=iurl) #News API logo: https://i.imgur.com/UdkSDcb.png
