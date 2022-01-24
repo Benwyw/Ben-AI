@@ -86,7 +86,7 @@ async def getNewsEmbed(source):
         if source == 'Rthk.hk':
             top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
         elif source == 'Bloomberg':
-            top_headlines = newsapi.get_everything(sources=source, language='en', sortBy='publishedAt')
+            top_headlines = newsapi.get_everything(sources=source, language='en', sort_by='publishedAt')
         else:
             top_headlines = newsapi.get_top_headlines(sources=source)
 
