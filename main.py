@@ -128,6 +128,8 @@ async def getNewsEmbed(source):
                     url2 = quote(url2)
                     url = url1 +'/'+ url2
                 embed.url = url
+            else:
+                embed.url = url
 
             embed.description = description
             embed.set_author(name=authorName, icon_url=iurl) #News API logo: https://i.imgur.com/UdkSDcb.png
