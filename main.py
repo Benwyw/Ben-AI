@@ -97,7 +97,6 @@ def getMapsImageByLatLon(lat, lon, zoom):
     if GOOGLE_MAPS_API_KEY is not None:
         urlparams['key'] = GOOGLE_MAPS_API_KEY
     try:
-        print(url+str(urlparams))
         response = requests.get(url, params=urlparams)
         image = Image.open(BytesIO(response.content))
     except requests.exceptions.RequestException as e:
