@@ -66,6 +66,44 @@ from bs4 import BeautifulSoup
 from newsapi import NewsApiClient
 from urllib.parse import quote
 
+#========================Google Map========================
+load_dotenv()
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAP_API_KEY')
+
+def getLatLonByAddress(address):
+    urlparams = {'address': address}
+    url = 'https://maps.googleapis.com/maps/api/geocode/json'
+    if GOOGLE_MAPS_API_KEY is not None:
+        urlparams['key'] = GOOGLE_MAPS_API_KEY
+    try:
+        response = requests.get(url, params=urlparams)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(e)
+    payload = response.json()
+    lat = payload['results'][0]['geometry']['location']['lat']
+    lon = payload['results'][0]['geometry']['location']['lng']
+    return lat, lon
+
+def getMapsImageByLatLon(lat, lon, zoom):
+    scale = 1
+    position = ','.join((str(lat), str(lon)))
+    urlparams = {'center': position,
+                'zoom': str(zoom),
+                'maptype': 'roadmap',
+                'scale': scale,
+                'size': '640x640'}
+    url = 'http://maps.google.com/maps/api/staticmap'
+    if GOOGLE_MAPS_API_KEY is not None:
+        urlparams['key'] = GOOGLE_MAPS_API_KEY
+    try:
+        print(url+str(urlparams))
+        response = requests.get(url, params=urlparams)
+        image = Image.open(BytesIO(response.content))
+    except requests.exceptions.RequestException as e:
+        print(e)
+    return image
+
 #========================Cov Locate========================
 from urllib.request import Request, urlopen
 import json
@@ -1953,6 +1991,19 @@ async def covLoop():
             return
         else:
             DBConnection.updateCaseNo(caseNo)
+            file = None
+
+            #Google Map
+            try:
+                lat, lon = getLatLonByAddress('{},+{}'.format(district,building))
+                image = getMapsImageByLatLon(lat, lon, 18)
+                with BytesIO() as img:
+                    image.save(img, 'PNG')
+                    img.seek(0)
+                    file = discord.File(fp=img, filename='gMapLocation.png')
+            except Exception as e:
+                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in covLoop Google Map\n{}'.format(e,timestamp))
 
             embed = discord.Embed(title='最新SARS-CoV-2曾到訪的大廈', url='https://data.gov.hk/tc-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent/resource/4ff8e5fa-9c94-4490-9b13-764e520ecb5b')
             embed.color = 0x00c1ae
@@ -1969,9 +2020,14 @@ async def covLoop():
             BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-            await BDS_PD_Channel.send(embed=embed)
-            await BLG_ST_Channel.send(embed=embed)
-            await BMS_OT_Channel.send(embed=embed)
+            if file is None:
+                await BDS_PD_Channel.send(embed=embed)
+                await BLG_ST_Channel.send(embed=embed)
+                await BMS_OT_Channel.send(embed=embed)
+            else:
+                await BDS_PD_Channel.send(embed=embed, file=file)
+                await BLG_ST_Channel.send(embed=embed, file=file)
+                await BMS_OT_Channel.send(embed=embed, file=file)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))
@@ -2079,138 +2135,33 @@ class Special(commands.Cog):
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in insertlol\n{}'.format(e,timestamp))
 
-    @slash_command(guild_ids=guild_ids, name='testnalolloop')
+    @slash_command(guild_ids=guild_ids, name='testgooglemap')
     @commands.is_owner()
-    async def _testnalolloop(self, ctx:commands.Context):
+    async def _testgooglemap(self, ctx:commands.Context, district:str, building:str):
         '''Test lol NA server riot API'''
 
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         try:
+            #temp Embed for testing
+            embed = discord.Embed()
+            embed.title = 'Test Google Map'
+            embed.color = 0x000000
+            embed.description = 'Google Map testing'
+            embed.set_author(name='Google Map')
+            embed.set_footer(text=timestamp)
 
-            count = 0
-            #totalcount = 0
-            summonerNames = DBConnection.getLolSummonerNames(getRegion('na'))
-
-            load_dotenv()
-            riotApi = RiotApi(os.getenv('RIOT_API_KEY'))
-
-            for summonerName in summonerNames:
-                if count == 20:
-                    asyncio.sleep(1)
-                    count = 0
-                    #totalcount += count
-
-                count += 1
-                summonerName = str(summonerName[0])
-                match = riotApi.get_latest_matches_by_name(summonerName)
-
-                if match is None:
-                    BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                    await BDS_Log_Channel.send('{}\n\nError occured in lolloop summoner: {} possibly not found\n'.format(timestamp, summonerName))
-                    continue
-
-                matchId = match['metadata']['matchId']
-
-                #DB operations
-                dt_db = DBConnection.getLolPublishedAt(getRegion('na'), summonerName)[0][0]
-                if str(matchId) == str(dt_db):
-                    continue
-                else:
-                    DBConnection.updateLolPublishedAt(getRegion('na'), matchId, summonerName)
-
-                    gameDuration = match['info']['gameDuration']
-                    gameMode = match['info']['gameMode']
-                    gameType = match['info']['gameType']
-                    gameStartTimestamp = match['info']['gameStartTimestamp']
-
-                    for participant in match['info']['participants']:
-
-                        #if a list of participant names...
-                        if participant['summonerName'] == summonerName:
-                            #general
-                            summonerLevel = participant['summonerLevel']
-                            championName = participant['championName']
-                            win = participant['win']
-
-                            #economy
-                            goldEarned = participant['goldEarned']
-                            goldSpent = participant['goldSpent']
-
-                            #KDA
-                            kills = participant['kills']
-                            deaths = participant['deaths']
-                            assists = participant['assists']
-
-                            #double triple quadra penta kill
-                            doubleKills = participant['doubleKills']
-                            tripleKills = participant['tripleKills']
-                            quadraKills = participant['quadraKills']
-                            pentaKills = participant['pentaKills']
-
-                            break
-
-                    title = str(summonerName)
-                    color = 0x000000
-                    if win is True:
-                        title += ' 勝利'
-                        color = 0x00ff00
-                    else:
-                        title += ' 失敗'
-                        color = 0xff0000
-
-                    summonerNameFormat = summonerName.replace(' ', '%20')
-                    url = 'https://na.op.gg/summoner/userName={}'.format(summonerNameFormat)
-                    thumbnail = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg'.format(championName)
-                    dt = str(gameStartTimestamp)
-
-                    #embed construct
-                    embed = discord.Embed()
-                    embed.title = title
-                    embed.color = color
-                    embed.url = url
-                    #embed.description = desc
-                    embed.set_author(name='League of Legends (NA)', icon_url='https://i.imgur.com/tkjOxrX.png')
-                    embed.set_thumbnail(url=thumbnail)
-
-                    embed.add_field(name="召喚師等級", value='{}'.format(summonerLevel), inline=True)
-                    embed.add_field(name="英雄名字", value='{}'.format(championName), inline=True)
-                    embed.add_field(name="獲得金幣", value='{}'.format(goldEarned), inline=True)
-
-                    embed.add_field(name="遊戲時長", value='{} 分鐘'.format(int(gameDuration)/60), inline=True)
-                    embed.add_field(name="遊戲模式", value='{}'.format(gameMode), inline=True)
-                    embed.add_field(name="遊戲類型", value='{}'.format(gameType), inline=True)
-
-                    embed.add_field(name="擊殺", value='{}'.format(kills), inline=True)
-                    embed.add_field(name="死亡", value='{}'.format(deaths), inline=True)
-                    embed.add_field(name="助攻", value='{}'.format(assists), inline=True)
-
-                    embed.add_field(name="雙殺", value='{}'.format(doubleKills), inline=True)
-                    embed.add_field(name="三連殺", value='{}'.format(tripleKills), inline=True)
-                    embed.add_field(name="四連殺", value='{}'.format(quadraKills), inline=True)
-                    embed.add_field(name="五連殺", value='{}'.format(pentaKills), inline=True)
-
-                    embed.set_footer(text=dt)
-
-                    BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                    #BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
-                    #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
-
-                    await BDS_PD_Channel.send(embed=embed)
-                    #await BLG_ST_Channel.send(embed=embed)
-                    #await BMS_OT_Channel.send(embed=embed)
-
-                    await ctx.send_followup(embed=embed)
-
-                    '''print('\n\n')
-                    print('matchId: {}\ngameDuration: {}\ngameMode: {}\ngameType: {}\n \
-                        summonerLevel: {}\nchampionName: {}\nwin: {}\n \
-                        goldEarned: {}\ngoldSpent: {}\n \
-                        kills: {}\ndeaths: {}\nassists: {}\n \
-                        doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
+            lat, lon = getLatLonByAddress('{},+{}'.format(district,building))
+            image = getMapsImageByLatLon(lat, lon, 18)
+            with BytesIO() as img:
+                image.save(img, 'PNG')
+                img.seek(0)
+                file = discord.File(fp=img, filename='gMapLocation.png')
+                
+            await ctx.send_followup(embed=embed, file=file)
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-            await BDS_Log_Channel.send('{}\n\nError occured in testnalolloop\n{}'.format(e,timestamp))
+            await BDS_Log_Channel.send('{}\n\nError occured in testgooglemap\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='testgamesloop')
     @commands.is_owner()
