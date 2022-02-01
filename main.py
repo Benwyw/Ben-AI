@@ -2135,33 +2135,27 @@ class Special(commands.Cog):
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in insertlol\n{}'.format(e,timestamp))
 
-    @slash_command(guild_ids=guild_ids, name='testgooglemap')
-    @commands.is_owner()
-    async def _testgooglemap(self, ctx:commands.Context, district:str, building:str):
-        '''Test lol NA server riot API'''
+    @slash_command(guild_ids=guild_ids, name='map')
+    async def _map(self, ctx:commands.Context, location:str):
+        '''Retrieve location map by location name'''
 
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         try:
-            #temp Embed for testing
-            embed = discord.Embed()
-            embed.title = 'Test Google Map'
-            embed.color = 0x000000
-            embed.description = 'Google Map testing'
-            embed.set_author(name='Google Map')
-            embed.set_footer(text=timestamp)
+            if ' ' in location:
+                location = location.replace(' ','+')
 
-            lat, lon = getLatLonByAddress('{},+{}'.format(district,building))
+            lat, lon = getLatLonByAddress('{}'.format(location))
             image = getMapsImageByLatLon(lat, lon, 18)
             with BytesIO() as img:
                 image.save(img, 'PNG')
                 img.seek(0)
                 file = discord.File(fp=img, filename='gMapLocation.png')
-                
-            await ctx.send_followup(embed=embed, file=file)
+
+            await ctx.send_followup(file=file)
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-            await BDS_Log_Channel.send('{}\n\nError occured in testgooglemap\n{}'.format(e,timestamp))
+            await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='testgamesloop')
     @commands.is_owner()
