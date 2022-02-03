@@ -1990,7 +1990,8 @@ async def covLoop():
             return
         else:
             DBConnection.updateCaseNo(caseNo)
-            file = None
+            image = None
+            imgfile = None
 
             #Google Map
             try:
@@ -1999,7 +2000,7 @@ async def covLoop():
                 with BytesIO() as img:
                     image.save(img, 'PNG')
                     img.seek(0)
-                    file = discord.File(fp=img, filename='gMapLocation.png')
+                    imgfile = discord.File(fp=img, filename='gMapLocation.png')
             except Exception as e:
                 BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                 await BDS_Log_Channel.send('{}\n\nError occured in covLoop Google Map\n{}'.format(e,timestamp))
@@ -2019,14 +2020,14 @@ async def covLoop():
             BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-            if file is None:
+            if imgfile is None:
                 await BDS_PD_Channel.send(embed=embed)
                 await BLG_ST_Channel.send(embed=embed)
                 await BMS_OT_Channel.send(embed=embed)
             else:
-                await BDS_PD_Channel.send(embed=embed, file=file)
-                await BLG_ST_Channel.send(embed=embed, file=file)
-                await BMS_OT_Channel.send(embed=embed, file=file)
+                await BDS_PD_Channel.send(embed=embed, file=imgfile)
+                await BLG_ST_Channel.send(embed=embed, file=imgfile)
+                await BMS_OT_Channel.send(embed=embed, file=imgfile)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         await BDS_Log_Channel.send('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))
