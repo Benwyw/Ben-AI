@@ -1992,6 +1992,8 @@ async def covLoop():
             DBConnection.updateCaseNo(caseNo)
             image = None
             imgfile = None
+            imgfile2 = None
+            imgfile3 = None
 
             #Google Map
             try:
@@ -2001,6 +2003,10 @@ async def covLoop():
                     image.save(img, 'PNG')
                     img.seek(0)
                     imgfile = discord.File(fp=img, filename='gMapLocation.png')
+                    img.seek(0)
+                    imgfile2 = discord.File(fp=img, filename='gMapLocation.png')
+                    img.seek(0)
+                    imgfile3 = discord.File(fp=img, filename='gMapLocation.png')
             except Exception as e:
                 BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                 await BDS_Log_Channel.send('{}\n\nError occured in covLoop Google Map\n{}'.format(e,timestamp))
@@ -2022,11 +2028,15 @@ async def covLoop():
 
             if imgfile is None:
                 await BDS_PD_Channel.send(embed=embed)
-                await BLG_ST_Channel.send(embed=embed)
-                await BMS_OT_Channel.send(embed=embed)
             else:
                 await BDS_PD_Channel.send(embed=embed, file=imgfile)
+            if imgfile2 is None:
+                await BLG_ST_Channel.send(embed=embed)
+            else:
                 await BLG_ST_Channel.send(embed=embed, file=imgfile)
+            if imgfile3 is None:
+                await BMS_OT_Channel.send(embed=embed)
+            else:
                 await BMS_OT_Channel.send(embed=embed, file=imgfile)
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
@@ -2150,9 +2160,14 @@ class Special(commands.Cog):
             with BytesIO() as img:
                 image.save(img, 'PNG')
                 img.seek(0)
-                file = discord.File(fp=img, filename='gMapLocation.png')
-
-            await ctx.send_followup(file=file)
+                imgfile = discord.File(fp=img, filename='gMapLocation.png')
+                img.seek(0)
+                imgfile2 = discord.File(fp=img, filename='gMapLocation.png')
+                img.seek(0)
+                imgfile3 = discord.File(fp=img, filename='gMapLocation.png')
+            await ctx.send_followup(file=imgfile)
+            await ctx.send_followup(file=imgfile2)
+            await ctx.send_followup(file=imgfile3)
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e,timestamp))
