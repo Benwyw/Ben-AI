@@ -2161,7 +2161,7 @@ class Special(commands.Cog):
 
             await ctx.send_followup(file=imgfile)
 
-            with BytesIO() as img:
+            '''with BytesIO() as img:
                 image.save(img, 'PNG')
                 img.seek(0)
                 imgfile = discord.File(fp=img, filename='gMapLocation.png')
@@ -2171,7 +2171,7 @@ class Special(commands.Cog):
                 image.save(img, 'PNG')
                 img.seek(0)
                 imgfile = discord.File(fp=img, filename='gMapLocation.png')
-            await ctx.send_followup(file=imgfile)
+            await ctx.send_followup(file=imgfile)'''
         except Exception as e:
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e,timestamp))
