@@ -966,7 +966,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'audioformat': 'mp3',
         'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
         'restrictfilenames': True,
-        'noplaylist': True,
+        'yesplaylist': True,
+        'flat_playlist': True,
         'nocheckcertificate': True,
         'ignoreerrors': False,
         'logtostderr': False,
@@ -1039,17 +1040,30 @@ class YTDLSource(discord.PCMVolumeTransformer):
         if processed_info is None:
             raise YTDLError('Couldn\'t fetch `{}`'.format(webpage_url))
 
+        sourceList = []
         if 'entries' not in processed_info:
-            info = processed_info
+            try:
+                info = processed_info
+                sourceList.append(cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info))
+            except Exception as e:
+                timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in if \'entries\' not in processed_info\n{}'.format(e,timestamp))
         else:
             info = None
             while info is None:
-                try:
-                    info = processed_info['entries'].pop(0)
-                except IndexError:
-                    raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
+                for pie in processed_info['entries']:
+                    try:
+                        info = processed_info['entries'].pop(0)
+                        sourceList.append(cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info))
+                    except Exception as e:
+                        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+                        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                        await BDS_Log_Channel.send('{}\n\nError occured in for pie in processed_info[\'entries\']\n{}'.format(e,timestamp))
+                    #except IndexError:
+                        #raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
 
-        return cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
+        return sourceList
 
     @staticmethod
     def parse_duration(duration: int):
@@ -1268,6 +1282,8 @@ class Music(commands.Cog):
     @slash_command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
         """我要進來了。"""
+        
+        await ctx.defer()
 
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
@@ -1276,7 +1292,7 @@ class Music(commands.Cog):
             return
 
         ctx.voice_state.voice = await destination.connect()
-        await ctx.respond(':thumbsup:')
+        await ctx.send_followup(':thumbsup:')
 
     @slash_command(guild_ids=guild_ids, name='join2', aliases=['j2'], invoke_without_subcommand=True)
     @commands.has_any_role('Ben AI')
@@ -1474,14 +1490,22 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
-                song = Song(source)
-                await ctx.voice_state.songs.put(song)
-            except YTDLError as e:
-                await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
-                return        
-            else:
-                await ctx.send_followup('加咗首 {}'.format(str(source)))
+                sourceList = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
+            #except YTDLError as e:
+            except Exception as e:
+                timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                #await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
+            
+            for source in sourceList:
+                try:
+                    song = Song(source)
+                    await ctx.voice_state.songs.put(song)
+                    await ctx.send_followup('加咗首 {}'.format(str(source)))
+                except Exception as e:
+                    BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                    await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
     @_join.before_invoke
     @_play.before_invoke
@@ -3551,12 +3575,12 @@ bot.add_cog(Game(bot))
 async def on_ready():
     status = "/ | 冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
-    gameLoop.start()
-    covLoop.start()
-    newsLoop.start()
-    gamesLoop.start()
-    hypebeastLoop.start()
-    naLolLoop.start()
+    #gameLoop.start()
+    #covLoop.start()
+    #newsLoop.start()
+    #gamesLoop.start()
+    #hypebeastLoop.start()
+    #naLolLoop.start()
     #twLolLoop.start() #Server error 500 24/7
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
