@@ -4152,6 +4152,8 @@ async def on_raw_message_delete(payload):
 async def on_voice_state_update(member, before, after): # Pok
     # Protection
     if member == bot.user:
+        if after.channel is not None and member.voice.self_deaf == False:
+            await member.guild.change_voice_state(channel=after.channel, self_deaf=True)
         return
     if member.guild.id != 351742829254410250:
         return
