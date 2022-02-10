@@ -3708,12 +3708,12 @@ async def pagetest_groups(ctx: discord.ApplicationContext):
 async def on_ready():
     status = "/ | 冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
-    #gameLoop.start()
-    #covLoop.start()
-    #newsLoop.start()
-    #gamesLoop.start()
-    #hypebeastLoop.start()
-    #naLolLoop.start()
+    gameLoop.start()
+    covLoop.start()
+    newsLoop.start()
+    gamesLoop.start()
+    hypebeastLoop.start()
+    naLolLoop.start()
     #twLolLoop.start() #Server error 500 24/7
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
