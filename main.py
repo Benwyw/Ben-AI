@@ -26,7 +26,8 @@ import pandas as pd
 import MinecraftServer as mc
 
 from discord import slash_command
-from discord.ext import commands
+from discord.ext import commands, pages
+from discord.ui import InputText, Modal
 
 from dotenv import load_dotenv
 from random import randrange
@@ -3594,17 +3595,125 @@ bot.add_cog(Special(bot))
 bot.add_cog(General(bot))
 bot.add_cog(Game(bot))
 
+'''@bot.slash_command(name="modaltest1", guild_ids=guild_ids)
+async def modal_slash(ctx):
+    """Shows an example of a modal dialog being invoked from a slash command."""
+    modal = MyModal()
+    await ctx.interaction.response.send_modal(modal)'''
+
+@bot.slash_command(name="modaltest", guild_ids=guild_ids)
+async def modaltest(ctx):
+    """模態demo"""
+    #await ctx.delete()
+    #await ctx.respond('Completed', ephemeral=True)
+
+    class MyModal(Modal):
+        def __init__(self, person) -> None:
+            super().__init__(person)
+            self.add_item(InputText(label="is", placeholder="gay"))
+            self.add_item(
+                InputText(
+                    label="because",
+                    value="gay",
+                    style=discord.InputTextStyle.long,
+                )
+            )
+            self.person = person
+
+        async def callback(self, interaction: discord.Interaction):
+            embed = discord.Embed(title=self.person, color=discord.Color.random())
+            embed.add_field(name="is", value=self.children[0].value, inline=False)
+            embed.add_field(name="because", value=self.children[1].value, inline=False)
+            await interaction.response.send_message(embeds=[embed])
+
+    class MyView(discord.ui.View):
+        person = None
+        @discord.ui.button(label="開始評論", style=discord.ButtonStyle.primary, row=4)
+        async def button_callback(self, button, interaction):
+            if self.person is not None:
+                modal = MyModal(self.person)
+                await interaction.response.send_modal(modal)
+
+        @discord.ui.select(
+            placeholder="評論一條友",
+            min_values=1,
+            max_values=1,
+            options=[
+                discord.SelectOption(
+                    label="Pok", description="Pok is"
+                ),
+                discord.SelectOption(
+                    label="Kei", description="Kei is"
+                ),
+            ],
+        )
+        async def select_callback(self, select, interaction):
+            modal = MyModal(select.values[0])
+            #modal.title = select.values[0]
+            self.person = select.values[0]
+            #await interaction.response.send_modal(modal)
+
+    view = MyView()
+    await ctx.interaction.response.send_message(content="\u200b", view=view)
+
+'''@bot.slash_command(name="groups", guild_ids=guild_ids)
+async def pagetest_groups(ctx: discord.ApplicationContext):
+    """Demonstrates using page groups to switch between different sets of pages."""
+    page_buttons = [
+        pages.PaginatorButton("first", label="<<-", style=discord.ButtonStyle.green, row=1),
+        pages.PaginatorButton("prev", label="<-", style=discord.ButtonStyle.green, row=1),
+        pages.PaginatorButton("page_indicator", style=discord.ButtonStyle.gray, disabled=False, row=1),
+        pages.PaginatorButton("next", label="->", style=discord.ButtonStyle.green, row=1),
+        pages.PaginatorButton("last", label="->>", style=discord.ButtonStyle.green, row=1),
+    ]
+    view = discord.ui.View()
+    view.add_item(discord.ui.Button(label="Test Button, Does Nothing", row=2))
+    view.add_item(
+        discord.ui.Select(
+            placeholder="Test Select Menu, Does Nothing",
+            options=[
+                discord.SelectOption(
+                    label="Example Option",
+                    value="Example Value",
+                    description="This menu does nothing!",
+                )
+            ],
+        )
+    )
+    page_groups = [
+        pages.PageGroup(
+            pages=get_pages(),
+            label="Main Page Group",
+            description="Main Pages for Main Things",
+            default_button_row=1,
+            custom_view=view,
+        ),
+        pages.PageGroup(
+            pages=[
+                "Second Set of Pages, Page 1",
+                "Second Set of Pages, Page 2",
+                "Look, it's group 2, page 3!",
+            ],
+            label="Second Page Group",
+            description="Secondary Pages for Secondary Things",
+            custom_buttons=page_buttons,
+            use_default_buttons=False,
+            custom_view=view,
+        ),
+    ]
+    paginator = pages.Paginator(pages=page_groups, show_menu=True, custom_view=view, default_button_row=1)
+    await paginator.respond(ctx.interaction, ephemeral=False)'''
 
 @bot.event
 async def on_ready():
     status = "/ | 冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
-    gameLoop.start()
-    covLoop.start()
-    newsLoop.start()
-    gamesLoop.start()
-    hypebeastLoop.start()
-    naLolLoop.start()
+    #gameLoop.start()
+    #covLoop.start()
+    #newsLoop.start()
+    #gamesLoop.start()
+    #hypebeastLoop.start()
+    #naLolLoop.start()
     #twLolLoop.start() #Server error 500 24/7
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
