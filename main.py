@@ -3991,11 +3991,11 @@ async def on_message(message):
     #Anti Bot Pok
     if message.guild.id == 351742829254410250:
         if message.author.id == 941598922948870186 and (('ben' in message.content.lower() and 'gay' in message.content.lower()) or ('is' in message.content.lower() and 'gay' in message.content.lower())):
-            message.reply('Pok gay')
+            await message.reply('Pok gay')
         if message.author.id != 941598922948870186 and 'ben' in message.content.lower() and 'gay' in message.content.lower():
-            message.reply('Pok is gay')
+            await message.reply('Pok is gay')
         if 'ben' == message.content.lower():
-            message.reply('is strong')
+            await message.reply('is strong')
 
 
     #Shield
