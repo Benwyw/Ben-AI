@@ -3801,6 +3801,14 @@ async def on_command_error(ctx, error):
         await ctx.send(msg)
 
 @bot.event
+async def on_reaction_add(reaction, user):
+    if reaction.message.guild.id == 351742829254410250 and (('ben' in reaction.message.content.lower() and 'gay' in reaction.message.content.lower()) or ('ben' == reaction.message.content.lower())):
+        if len(reaction.message.reactions) == 3 and "🇬" in str(reaction.message.reactions) and "🇦" in str(reaction.message.reactions) and "🇾" in str(reaction.message.reactions):
+            await reaction.message.add_reaction("🇵")
+            await reaction.message.add_reaction("🇴")
+            await reaction.message.add_reaction("🇰")
+
+@bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
@@ -3936,31 +3944,88 @@ async def on_message(message):
     #Mentions Ben AI
     if bot.user.mentioned_in(message) and '@everyone' not in message.content and '@here' not in message.content:
         e = discord.Embed()
+
+        seedCategory = randrange(3)
         seed = randrange(6)
-        if seed == 0:
-            img = "https://i.imgur.com/CWOMg81.jpg"
-            msg = "你就是我的Master嗎"
-        elif seed == 1:
-            img = "https://i.imgur.com/UatUsA5.jpg"
-            msg = "此後吾之劍與Ben同在，Ben之命運與吾共存。"
-        elif seed == 2:
-            img = "https://i.imgur.com/NeEknCF.jpg"
-            msg = "Ben心之所向，即為我劍之所指。"
-        elif seed == 3:
-            img = "https://i.imgur.com/PzzfeIx.gif"
-            msg = "I am the bone of my sword.\n" \
-                  "Steel is my body, and fire is my blood.\n" \
-                  "I have created over a thousand blades.\n" \
-                  "Unknown to death,Nor known to life.\n" \
-                  "Have withstood pain to create many weapons.\n" \
-                  "Yet, those hands will never hold anything.\n" \
-                  "So as I pray, unlimited blade works."
-        elif seed == 4:
-            img = "https://i.imgur.com/QPMalxQ.jpg"
-            msg = "Ben來承認，Ben來允許，Ben來背負整個世界。"
-        elif seed == 5:
-            img = "https://i.imgur.com/o8EHHMV.gif"
-            msg = "輸給誰都可以，但是，決不能輸給自己。"
+
+        if seedCategory == 0:
+            if seed == 0:
+                img = "https://i.imgur.com/CWOMg81.jpg"
+                msg = "你就是我的Master嗎"
+            elif seed == 1:
+                img = "https://i.imgur.com/UatUsA5.jpg"
+                msg = "此後吾之劍與Ben同在，Ben之命運與吾共存。"
+            elif seed == 2:
+                img = "https://i.imgur.com/NeEknCF.jpg"
+                msg = "Ben心之所向，即為我劍之所指。"
+            elif seed == 3:
+                img = "https://i.imgur.com/PzzfeIx.gif"
+                msg = "I am the bone of my sword.\n" \
+                    "Steel is my body, and fire is my blood.\n" \
+                    "I have created over a thousand blades.\n" \
+                    "Unknown to death,Nor known to life.\n" \
+                    "Have withstood pain to create many weapons.\n" \
+                    "Yet, those hands will never hold anything.\n" \
+                    "So as I pray, unlimited blade works."
+            elif seed == 4:
+                img = "https://i.imgur.com/QPMalxQ.jpg"
+                msg = "Ben來承認，Ben來允許，Ben來背負整個世界。"
+            elif seed == 5:
+                img = "https://i.imgur.com/o8EHHMV.gif"
+                msg = "輸給誰都可以，但是，決不能輸給自己。"
+
+        elif seedCategory == 1:
+            #demon slayer
+            if seed == 0:
+                img = "https://i.imgur.com/VWvwDQp.gif"
+                msg = "不要讓其他人掌握你的生殺大權，\n" \
+                    "不要悲慘的跪下來求任何人，\n" \
+                    "如果這麼做有用的話，\n" \
+                    "你的<@{}>就不會被鬼殺了。".format(941598922948870186)
+            elif seed == 1:
+                img = "https://i.imgur.com/IkLDag7.gif"
+                msg = "情緒支配下的攻擊，兩個字，愚Pok。\n" \
+                    "你就不能用自己的頭腦思考一下嗎？\n" \
+                    "如果光憑「憤怒」就能勝利，那世界上就不會有鬼了。"
+            elif seed == 2:
+                img = "https://i.imgur.com/3UJZUUl.gif"
+                msg = "禰豆子禰豆子禰豆子\n" \
+                    "禰豆子禰豆子禰豆子\n" \
+                    "禰豆子禰豆子禰豆子"
+            elif seed == 3:
+                img = "https://i.imgur.com/TtMVkGI.gif"
+                msg = "???!!!"
+            elif seed == 4:
+                img == "https://i.imgur.com/xsQJglf.jpg"
+                msg = "無論如何，\n" \
+                    "都請為自己感到自豪並且努力活下去。"
+            elif seed == 5:
+                img == "https://i.imgur.com/MfaJOtc.gif"
+                msg = "你就是雷柱個friend，\n" \
+                    "__好撚雷__嗎？"
+
+        elif seedCategory == 2:
+            if seed == 0:
+                img = "https://i.imgur.com/yY9Lwjz.gif"
+                msg = "OT on99！"
+            elif seed == 1:
+                img = "https://i.imgur.com/pDCgoaR.png"
+                msg = "就算你說些聽起來像一回事的大道理，\n" \
+                    "你也只不過想要認為自己是正確的罷了。"
+            elif seed == 2:
+                img = "https://i.imgur.com/gCZK0SQ.jpg"
+                msg = "不幸的人做什麼都會被原諒嗎？"
+            elif seed == 3:
+                img = "https://i.imgur.com/l51cxNQ.png"
+                msg = "以死獲勝跟拼死獲勝，這兩者完全不同喔，\n" \
+                    "<@{}>，使出全力吧，你要更貪心一點。".format(941598922948870186)
+            elif seed == 4:
+                img == "https://i.imgur.com/Bfg91US.gif"
+                msg = "在我生命中沒有一席之地的人，\n" \
+                    "我不希望他們影響到我的內心。"
+            elif seed == 5:
+                img == "https://i.imgur.com/vElML0o.gif"
+                msg = "Strong"
 
         e.set_image(url=img)
         e.set_footer(text=msg)
