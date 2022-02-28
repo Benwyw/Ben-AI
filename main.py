@@ -2101,7 +2101,7 @@ class Special(commands.Cog):
         print('Executing kickallfromben...')
 
         counter = 0
-        protect_ids = [254517813417476097, 232833713648435200]
+        protect_ids = [254517813417476097, 232833713648435200, 809526579389792338]
         protected_names = '保護名單:'
         ben_home_text_channel = bot.get_channel(918890234459090984)
         kicked_members = '已踢除名單:'
@@ -2111,7 +2111,7 @@ class Special(commands.Cog):
             if protect_ids is not None and member.id in protect_ids:
                 protected_names += '\n{}'.format(member)
             else:
-                roleList = None
+                '''roleList = None
                 timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
                 for role in member.roles:
@@ -2138,9 +2138,15 @@ class Special(commands.Cog):
                     await ctx.send_followup("無法傳訊至: "+str(person))
                     await ben_home_text_channel.send(str(e))
                 else:
-                    await ctx.send_followup("成功傳訊至: "+str(person))
+                    await ctx.send_followup("成功傳訊至: "+str(person))'''
 
-                await member.kick(reason='End of service, 28Feb2022 (Discord) | 17Dec2021 (Minecraft)')
+                try:
+                    await member.kick(reason='End of service, 28Feb2022 (Discord) | 17Dec2021 (Minecraft)')
+                except Exception as e:
+                    await ctx.send_followup("無法踢除: "+str(member))
+                    await ben_home_text_channel.send(str(e))
+                else:
+                    await ctx.send_followup("成功踢除: "+str(member))
                 kicked_members += '\n{}'.format(member)
                 counter += 1
         
