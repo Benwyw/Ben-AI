@@ -2092,6 +2092,64 @@ class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner'))
+    @slash_command(guild_ids=[671654280985313282], name='kickallfromben')
+    async def _kickallfromben(self, ctx: commands.Context):
+        '''Kick all from Minecraft server'''
+
+        await ctx.defer()
+        print('Executing kickallfromben...')
+
+        counter = 0
+        protect_ids = [254517813417476097, 232833713648435200]
+        protected_names = '保護名單:'
+        ben_home_text_channel = bot.get_channel(918890234459090984)
+        kicked_members = '已踢除名單:'
+
+        ben_guild = bot.get_guild(671654280985313282)
+        for member in ben_guild.members:
+            if protect_ids is not None and member.id in protect_ids:
+                protected_names += '\n{}'.format(member)
+            else:
+                roleList = None
+                timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+                for role in member.roles:
+                    if ('everyone' not in role.name):
+                        if roleList is None:
+                            roleList = role.name
+                        else:
+                            roleList += ' | {}'.format(role.name)
+
+                embed = discord.Embed()
+                embed.url = "https://www.benwyw.com/"
+                embed.title = "End of service"
+                embed.description = "28Feb2022 (Discord) | 17Dec2021 (Minecraft)"
+                embed.set_author(name='Ben\'s Minecraft Server', icon_url='https://i.imgur.com/NssQKDi.png')
+                embed.set_thumbnail(url="https://i.imgur.com/a4aDhEm.png")
+                embed.add_field(name="Your user roles", value=roleList, inline=False)
+                embed.add_field(name="Instagram", value='@mcbenwywcom', inline=True)
+                embed.set_footer(text=timestamp)
+
+                person = member
+                try:
+                    await person.send(content='End of service, thank you for your support.\n服務結束，感謝您的支持。', embed=embed)
+                except Exception as e:
+                    await ctx.send_followup("無法傳訊至: "+str(person))
+                    await ben_home_text_channel.send(str(e))
+                else:
+                    await ctx.send_followup("成功傳訊至: "+str(person))
+
+                await member.kick(reason='End of service, 28Feb2022 (Discord) | 17Dec2021 (Minecraft)')
+                kicked_members += '\n{}'.format(member)
+                counter += 1
+        
+        await ctx.send_followup('{}'.format(protected_names))
+        await ctx.send_followup('{}'.format(kicked_members))
+        await ctx.send_followup('在 {} 已踢除 {} 位非受保護成員'.format(ben_guild, counter))
+
+        print('Completed execution of kickallfromben.')
+
     @commands.is_owner()
     @slash_command(guild_ids=guild_ids, name='autocheckdbusers')
     async def _autocheckdbusers(self, ctx: commands.Context):
