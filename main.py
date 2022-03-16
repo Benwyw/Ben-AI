@@ -4045,7 +4045,7 @@ async def on_message(message):
                 msg = "不要讓其他人掌握你的生殺大權，\n" \
                     "不要悲慘的跪下來求任何人，\n" \
                     "如果這麼做有用的話，\n" \
-                    "你的{}就不會被鬼殺了。".format(bot.get_user(941598922948870186).display_name)
+                    "你的{}就不會被鬼殺了。".format('BOT')
             elif seed == 1:
                 img = "https://i.imgur.com/IkLDag7.gif"
                 msg = "情緒支配下的攻擊，兩個字，愚Pok。\n" \
@@ -4082,7 +4082,7 @@ async def on_message(message):
             elif seed == 3:
                 img = "https://i.imgur.com/l51cxNQ.png"
                 msg = "以死獲勝跟拼死獲勝，這兩者完全不同喔，\n" \
-                    "{}，使出全力吧，你要更貪心一點。".format(bot.get_user(941598922948870186).display_name)
+                    "{}，使出全力吧，你要更貪心一點。".format(bot.get_user(346518519015407626).display_name)
             elif seed == 4:
                 img == "https://i.imgur.com/Bfg91US.gif"
                 msg = "在我生命中沒有一席之地的人，\n" \
