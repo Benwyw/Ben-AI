@@ -1217,6 +1217,18 @@ async def on_message(message):
 
 @bot.event
 async def on_guild_join(guild):
+    # Log
+    try:
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        try:
+            await BDS_Log_Channel.send('<@254517813417476097>\nJoined a new server {}\n{}'.format(guild.name,timestamp))
+        except Exception as e:
+            await BDS_Log_Channel.send('<@254517813417476097>\nError when attempt to send notification for joining a new server\n{}'.format(e))
+    except:
+        pass
+    
+    # DB
     for member in guild.members:
         if not DBConnection.checkUserInDB(str(member.id)):
             DBConnection.addUserToDB(str(member.id))
