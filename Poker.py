@@ -16,6 +16,9 @@ from PIL import Image, ImageDraw, ImageColor
 import main
 from main import *
 
+from globalImport import *
+from cogs.Game import *
+
 def betCheck(GAME):
     needToMatch = []
     for player, status in GAME.playerStatus.items():

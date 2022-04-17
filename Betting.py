@@ -4,7 +4,7 @@ from DBConnection import DBConnection
 
 import discord
 import main
-from main import checkInGame, getGame, channelCheck, slash_command
+from cogs.Game import checkInGame, getGame, channelCheck, slash_command
 
 #========================Slash========================
 global guild_ids
