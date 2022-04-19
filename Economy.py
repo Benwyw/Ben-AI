@@ -5,10 +5,12 @@ from DBConnection import DBConnection
 import discord.ext.commands
 from discord.ext.commands import Bot, has_permissions, CheckFailure
 
+from globalImport import *
+
 imgUrl = "https://i.imgur.com/ydS4u8P.png"
 
 class Economy(commands.Cog):
-    @commands.command(description="Check user balance.",
+    @slash_command(guild_ids=guild_ids, description="Check user balance.",
                       brief="Check user balance",
                       help="Check a user's balance. Mention a user to check their balance, or none to check your own. Format is $bal <mention user/none>.",
                       pass_context=True)
@@ -36,7 +38,7 @@ class Economy(commands.Cog):
             embed.set_footer(text="Mention a user to check their balance.")
             await ctx.send(embed=embed)
 
-    @commands.command(description="Set money for user. Requires administrator permissions.",
+    @slash_command(guild_ids=guild_ids, description="Set money for user. Requires administrator permissions.",
                       brief="Set money for user",
                       help="Set the balance of a user to a specified value. Requires administrator permissions for use. Mention a user to"
                            " set their balance. Format is $setbal <mention user> <balance amount>.",
@@ -75,7 +77,7 @@ class Economy(commands.Cog):
             embed.set_thumbnail(url=imgUrl)
             await ctx.send(embed=embed)
 
-    @commands.command(description="Pay a user.",
+    @slash_command(guild_ids=guild_ids, description="Pay a user.",
                       brief="Pay a user",
                       help="Pay a user from your own balance. You must have sufficient funds to pay the value you specified. Mention"
                            " the user who you'd like to pay. Format is $pay <mention user> <payment amount>.",
