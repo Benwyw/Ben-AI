@@ -37,7 +37,7 @@ bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java�
 
 # Slash
 global guild_ids
-guild_ids = [763404947500564500, 351742829254410250, 671654280985313282]
+guild_ids = [763404947500564500, 351742829254410250, 671654280985313282, 490302069425700864]
 
 #from main import bot
 
