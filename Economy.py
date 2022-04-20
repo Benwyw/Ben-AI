@@ -19,13 +19,12 @@ class Economy(commands.Cog):
         await ctx.defer()
         if user is None:
             user = ctx.author
-        if not DBConnection.checkUserInDB(str(user.id)):
+        temp = DBConnection.checkUserInDB(str(user.id))
+        if not temp:
             DBConnection.addUserToDB(str(user.id))
-
         money = DBConnection.fetchUserData("userBalance", str(user.id))
-
         embed = discord.Embed(title="用戶餘額", color=0x00ff00)
-        embed.set_author(name=user.display_name, icon_url=user.avatar_url)
+        embed.set_author(name=user.display_name, icon_url=user.display_avatar.url)
         embed.set_thumbnail(url=imgUrl)
         embed.description = "$" + str(money)
         await ctx.send_followup(embed=embed)
@@ -34,7 +33,7 @@ class Economy(commands.Cog):
     async def bal_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title="Command Error", color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url=imgUrl)
             embed.description = "Invalid user provided."
             embed.set_footer(text="Mention a user to check their balance.")
@@ -51,7 +50,7 @@ class Economy(commands.Cog):
     async def setbal(self, ctx, user: discord.Member = None, amount: float = None):
         await ctx.defer()
         embed = discord.Embed(title="Set User Balance", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=imgUrl)
 
         if amount is None or user is None:
@@ -70,14 +69,14 @@ class Economy(commands.Cog):
             embed = discord.Embed(title="Command Error",
                                   description="Invalid arguments detected for command 'setbal'. Check $help setbal for more details.",
                                   color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url=imgUrl)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
             embed = discord.Embed(title="權限錯誤",
                                   description="您無權使用此指令。",
                                   color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url=imgUrl)
             await ctx.send(embed=embed)
 
@@ -90,7 +89,7 @@ class Economy(commands.Cog):
     async def pay(self, ctx, user: discord.Member = None, amount: float = None):
         await ctx.defer()
         embed = discord.Embed(title="支付", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=imgUrl)
         if user is None:
             embed.description = "沒有提供收款人。"
@@ -135,7 +134,7 @@ class Economy(commands.Cog):
     async def pay_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title="指令錯誤", color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url=imgUrl)
             embed.description = "檢測到指令為 \'pay\' 的無效參數。 嘗試 $pay <提及用戶> <金額>"
             await ctx.send(embed=embed)
