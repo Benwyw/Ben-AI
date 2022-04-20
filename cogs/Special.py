@@ -956,6 +956,7 @@ class Special(commands.Cog):
             botupdates_channel = bot.get_channel(910000426240340009)
             logs_channel = bot.get_channel(809527650955296848)
             main_channel = bot.get_channel(356782441777725440) #BrianLee Game Discord
+            cave_channel = bot.get_channel(490302069425700866) #Cave ben-ai
             crows_channel = bot.get_channel(925673962283884584) #Ben Discord Bot
 
             #images related
@@ -987,6 +988,13 @@ class Special(commands.Cog):
                 await main_channel.send(embed=embed_botupdates)
             except Exception as e:
                 await ctx.send_followup("Unable to send message to 主頻道")
+                await logs_channel.send(str(e))
+                
+            #send main
+            try:
+                await cave_channel.send(embed=embed_botupdates)
+            except Exception as e:
+                await ctx.send_followup("Unable to send message to Cave")
                 await logs_channel.send(str(e))
 
             #send crows
