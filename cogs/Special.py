@@ -93,18 +93,41 @@ class Special(commands.Cog):
         await ctx.send_followup('Found {} missing members in DB, added to DB.'.format(counter))
 
     memeChoice = [
-        OptionChoice(name="Up", value="up"),
-        OptionChoice(name="Center", value="center"),
-        OptionChoice(name="Down", value="down")
+        OptionChoice(name="Up", value="up", name_localizations={"zh-TW": "上"}),
+        OptionChoice(name="Center", value="center", name_localizations={"zh-TW": "中"}),
+        OptionChoice(name="Down", value="down", name_localizations={"zh-TW": "下"})
+    ]
+    meme_size_choice = [
+        OptionChoice(name="Small", value=10, name_localizations={"zh-TW": "小"}),
+        OptionChoice(name="Medium", value=50, name_localizations={"zh-TW": "中"}),
+        OptionChoice(name="Large", value=100, name_localizations={"zh-TW": "大"})
+    ]
+    meme_color_choice = [
+        OptionChoice(name="Red", value="red", name_localizations={"zh-TW": "紅"}),
+        OptionChoice(name="Green", value="green", name_localizations={"zh-TW": "綠"}),
+        OptionChoice(name="Blue", value="blue", name_localizations={"zh-TW": "藍"}),
+        OptionChoice(name="Yellow", value="yellow", name_localizations={"zh-TW": "黃"}),
+        OptionChoice(name="Cyan", value="cyan", name_localizations={"zh-TW": "藍綠"}),
+        OptionChoice(name="Magenta", value="magenta", name_localizations={"zh-TW": "洋紅"}),
+        OptionChoice(name="White", value="white", name_localizations={"zh-TW": "白"}),
+        OptionChoice(name="Black", value="black", name_localizations={"zh-TW": "黑"})
     ]
     @slash_command(guild_ids=guild_ids,
                    name='meme',
-                   description='圖片網址(.jpg .png .gif) 文字(自己唸啦屌) 文字大小(數字) 位置(up center down) 顏色(red)')
-    async def _meme(self, ctx: commands.Context, url:Option(str, "Image url"), text:Option(str, "Meme text of your choice"), txtsize:Option(str, "An integer"), pos:Option(str, "Select position", required = True, choices=memeChoice), color:Option(str, "e.g Red")):
+                   description='Meme generator',
+                   description_localizations={"zh-TW": "梗圖生成器"})
+    async def _meme(self, ctx: commands.Context,
+                    text:Option(str, "Input text of your choice", name_localizations={"zh-TW": "文字"}), 
+                    txtsize:Option(int, description = "Font size", required = True, choices = meme_size_choice, name_localizations={"zh-TW": "文字大小"}),
+                    pos:Option(str, "Position", required = True, choices=memeChoice, name_localizations={"zh-TW": "位置"}),
+                    color:Option(str, "Color", required = True, choices = meme_color_choice, name_localizations={"zh-TW": "顏色"}),
+                    attachment:Option(discord.Attachment, "Image", required=True, name_localizations={"zh-TW": "圖片"})):
+                    #url:Option(str, "Image url, either one", required=False)
+        
         await ctx.defer()
-
         try:
-            image = Image.open(BytesIO(requests.get(url).content))
+            #processed_url = attachment if attachment is not None else url
+            image = Image.open(BytesIO(requests.get(attachment).content))
             image = image.convert('RGBA')
             draw = ImageDraw.Draw(image)
             txt = text
@@ -142,11 +165,12 @@ class Special(commands.Cog):
             draw.text(((W-w)/2,(H-h)/50), txt, font=font, fill=color) #up
 
             await ctx.send_followup('{}\n出現了以上問題所以用了預設梗圖'.format(e))
-        with BytesIO() as img:
-            image.save(img, 'PNG')
-            img.seek(0)
-            file = discord.File(fp=img, filename='memeup.png')
-        await ctx.send_followup(file=file)
+        else:
+            with BytesIO() as img:
+                image.save(img, 'PNG')
+                img.seek(0)
+                file = discord.File(fp=img, filename='memeup.png')
+            await ctx.send_followup(file=file)
 
     @slash_command(guild_ids=guild_ids, name='deletelol')
     @commands.is_owner()
