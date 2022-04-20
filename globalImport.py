@@ -21,10 +21,7 @@ from random import randrange
 from datetime import datetime
 from tika import parser
 
-
-# Game imports
 import re
-from Game import Game, TexasHoldEm, President
 from DBConnection import DBConnection
 from sortingOrders import order, presOrder, pokerOrder, suitOrder
 from io import BytesIO
@@ -56,13 +53,8 @@ from alpha_vantage.timeseries import TimeSeries
 import matplotlib
 import matplotlib.pyplot as plt
 
-
-
-
-
-
-
-
+# Game imports
+from Game import Game, TexasHoldEm, President
 
 # Card ordering dictionary
 ORDER = order

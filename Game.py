@@ -7,7 +7,10 @@ import itertools
 from abc import abstractmethod
 from DBConnection import DBConnection
 from CardEval import evaluateHand, handType
-from discord.ext.tasks import loop
+#from discord.ext.tasks import loop
+
+from globalImport import *
+from cogs.Game import showHand, gameList, sortHand
 
 DECK_CONST = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",
               "deck/2S.png", "deck/3D.png", "deck/3C.png", "deck/3H.png", "deck/3S.png",
@@ -106,7 +109,6 @@ class TexasHoldEm(Game):
         await self.newHand()
 
     async def newHand(self):
-        from main import bot, showHand
         self.gameEnded = False
         self.lastBet = False
         self.pre_lastBet = False
@@ -188,8 +190,7 @@ class TexasHoldEm(Game):
             embed.set_thumbnail(url=TexasHoldEm.imageUrl)
             await self.channel.send(embed=embed)
 
-            import main
-            main.gameList.remove(self)
+            gameList.remove(self)
             del self
             return
 
@@ -200,8 +201,7 @@ class TexasHoldEm(Game):
             embed.set_thumbnail(url=TexasHoldEm.imageUrl)
             await self.channel.send(embed=embed)
 
-            import main
-            main.gameList.remove(self)
+            gameList.remove(self)
             del self
             return
 
@@ -212,9 +212,6 @@ class TexasHoldEm(Game):
             embed = discord.Embed(title="德州撲克", colour=0x00ff00)
             embed.add_field(name="遊戲編號", value=str(self.ID))
             embed.set_thumbnail(url=TexasHoldEm.imageUrl)
-
-            import main
-            from main import bot, showHand
 
             score = {}
             overallMax = 0
@@ -308,8 +305,7 @@ class TexasHoldEm(Game):
                 embed.add_field(name="遊戲編號", value=str(self.ID))
                 await self.channel.send(embed=embed)
 
-                import main
-                main.gameList.remove(self)
+                gameList.remove(self)
                 del self
                 return
             else:
@@ -320,8 +316,7 @@ class TexasHoldEm(Game):
                     embed.add_field(name="遊戲編號", value=str(self.ID))
                     await self.channel.send(embed=embed)
 
-                    import main
-                    main.gameList.remove(self)
+                    gameList.remove(self)
                     del self
                     return
 
@@ -352,7 +347,6 @@ class President(Game):
             self.playerHands.update({ID: []})
 
         playerIndex = 0
-        from main import bot, sortHand
         while len(self.DECK) > 0:
             dealToPlayer = bot.get_user(int(self.players[playerIndex]))
             self.deal(dealToPlayer, 1)
@@ -376,7 +370,6 @@ class President(Game):
         if self.turnIndex >= len(self.activePlayers):
             self.turnIndex = 0
 
-        from main import bot, showHand
         self.currentPlayer = bot.get_user(int(self.activePlayers[self.turnIndex]))
 
         embed = discord.Embed(title=self.currentPlayer.name + "'s Hand", description=None, color=0x00ff00)
@@ -432,8 +425,7 @@ class President(Game):
             embed.set_thumbnail(url=TexasHoldEm.imageUrl)
             await self.channel.send(embed=embed)
 
-            import main
-            main.gameList.remove(self)
+            gameList.remove(self)
             del self
             return
 
@@ -443,8 +435,7 @@ class President(Game):
             embed.add_field(name="Game ID", value=str(self.ID))
             embed.set_thumbnail(url=President.imageUrl)
             await self.channel.send(embed=embed)
-            import main
-            main.gameList.remove(self)
+            gameList.remove(self)
             del self
             return
 
@@ -454,7 +445,6 @@ class President(Game):
         if self.turnIndex >= len(self.activePlayers):
             self.turnIndex = 0
 
-        from main import bot
         self.currentPlayer = bot.get_user(int(self.activePlayers[self.turnIndex]))
 
         if len(self.finished) == len(self.players) - 1:
@@ -478,7 +468,6 @@ class President(Game):
             embed.add_field(name="Last Place", value=bot.get_user(int(self.activePlayers[0])).name, inline=False)
             embed.add_field(name="Game ID", value=str(self.ID), inline=False)
             await self.channel.send(embed=embed)
-            import main
-            main.gameList.remove(self)
+            gameList.remove(self)
             del self
             return
