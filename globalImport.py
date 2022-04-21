@@ -33,8 +33,10 @@ BOT_PREFIX = '$'
 bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
 
 # Slash
-global guild_ids
-guild_ids = [763404947500564500, 351742829254410250, 671654280985313282, 490302069425700864]
+from config.GlobalVariables import *
+load_dotenv()
+if os.getenv('TOKEN')[0:3] == 'ODE':
+    guild_ids = [guild_BenDiscordBot]
 
 #from main import bot
 
@@ -69,10 +71,10 @@ import json
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
 
-'''
-import logging
-logging.basicConfig(level="DEBUG")
-'''
+
+'''import logging
+logging.basicConfig(level="DEBUG")'''
+
 
 newsapi = NewsApiClient(api_key=os.getenv('NEWS_API_KEY'))
 

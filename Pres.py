@@ -3,11 +3,9 @@
 import random
 from random import randrange
 import asyncio
-import discord
-from discord.ext import commands
-import discord.ext.commands
-from main import *
+from globalImport import *
 from CardEval import num_pairs, get_pair, hasTriple
+from cogs.Game import *
 
 def keyByValue(value, d):
     for key, val in d.items():
@@ -284,5 +282,7 @@ class Pres(commands.Cog):
         embed.add_field(name="Game ID", value=str(GAME.ID))
         await ctx.send(file=file, embed=embed)
 
-def setup(bot):
+def setup(
+    bot: commands.Bot
+) -> None:
     bot.add_cog(Pres(bot))

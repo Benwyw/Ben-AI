@@ -13,8 +13,6 @@ import sys
 import io
 from timeit import default_timer as timer
 from PIL import Image, ImageDraw, ImageColor
-import main
-from main import *
 
 from globalImport import *
 from cogs.Game import *
@@ -181,6 +179,8 @@ class Poker(commands.Cog):
         embed.add_field(name="檯上卡片", value="已發的牌: " + str(len(GAME.communityCards)), inline=False)
 
         await ctx.send(file=file, embed=embed)
-
-def setup(bot):
+  
+def setup(
+    bot: commands.Bot
+) -> None:
     bot.add_cog(Poker(bot))
