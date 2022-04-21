@@ -722,6 +722,7 @@ bot.load_extension('cogs.Music') #bot.add_cog(Music(bot))
 bot.load_extension('cogs.Special') #bot.add_cog(Special(bot))
 bot.load_extension('cogs.General') #bot.add_cog(General(bot))
 bot.load_extension('cogs.Game') #bot.add_cog(Game(bot))
+bot.load_extension('cogs.CyberSecurity')
 
 '''@bot.slash_command(name="modaltest1", guild_ids=guild_ids)
 async def modal_slash(ctx):
@@ -901,6 +902,37 @@ async def on_command_error(ctx, error):
 
         await ctx.send(msg)
 
+    if isinstance(error, commands.CommandOnCooldown):
+        hour = 0
+        min = 0
+        sec = 0
+
+        while error.retry_after >= 60*60:
+            hour += 1
+            error.retry_after -= 60*60
+        while error.retry_after >= 60:
+            min += 1
+            error.retry_after -= 60
+
+        sec += error.retry_after
+
+        start = "請於 **"
+        end = "** 後再使用。"
+        middle = ""
+
+        if hour != 0:
+            middle += "{}時".format(hour)
+        if min != 0:
+            middle += "{}分".format(min)
+        if sec != 0:
+            middle += "{:.0f}秒".format(sec)
+
+        msg = start+middle+end
+
+        await ctx.send(msg)
+
+@bot.event
+async def on_application_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         hour = 0
         min = 0
