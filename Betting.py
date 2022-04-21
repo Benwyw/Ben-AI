@@ -1,15 +1,8 @@
 # CARDS BOT
-from discord.ext import commands
-from DBConnection import DBConnection
-
-import discord
-import main
+from globalImport import *
 from cogs.Game import checkInGame, getGame, channelCheck, slash_command
 
 #========================Slash========================
-global guild_ids
-guild_ids = main.guild_ids
-
 class Betting(commands.Cog):
     @slash_command(guild_ids=guild_ids, description="提高您的賭注。",
                       brief="提高您的賭注",
@@ -281,5 +274,7 @@ class Betting(commands.Cog):
         embed.description = "當前最高賭注是 $" + str(GAME.maxBet) + "."
         await ctx.send(embed=embed)
 
-def setup(bot):
+def setup(
+    bot: commands.Bot
+) -> None:
     bot.add_cog(Betting(bot))
