@@ -68,6 +68,12 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import json
 
+# URL Validator
+from urllib.parse import urlparse
+
+# for URL encode base64
+import base64
+
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
 
@@ -93,6 +99,10 @@ ts = TimeSeries(key=os.getenv('API_KEY'), output_format='pandas')
 # Google Map
 load_dotenv()
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAP_API_KEY')
+
+# Virus Total
+load_dotenv()
+VIRUS_TOTAL_API_KEY = os.getenv('VIRUS_TOTAL_API_KEY')
 
 def getLatLonByAddress(address):
     urlparams = {'address': address}
@@ -126,6 +136,13 @@ def getMapsImageByLatLon(lat, lon, zoom):
     except requests.exceptions.RequestException as e:
         print(e)
     return image
+
+def uri_validator(x):
+    try:
+        result = urlparse(x)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
 
 # Minecraft
 global mc_ops, temp_blocked_list
