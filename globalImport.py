@@ -143,6 +143,18 @@ def uri_validator(x):
         return all([result.scheme, result.netloc])
     except:
         return False
+    
+def post_scan(payload, api):
+    url = "https://www.virustotal.com/api/v3/urls"
+    
+    payload = f"url={payload}"
+    headers = {
+        "Accept": "application/json",
+        "x-apikey": f"{api}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    
+    return requests.post(url, data=payload, headers=headers)
 
 # Minecraft
 global mc_ops, temp_blocked_list
