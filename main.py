@@ -609,6 +609,11 @@ async def newsLoop():
             await BDS_PD_Channel.send(embed=embed)
             await BLG_ST_Channel.send(embed=embed)
             await BMS_OT_Channel.send(embed=embed)
+            
+            if newsId in ['Bloomberg', 'IGN']:
+                Cave_Channel = bot.get_channel(965809908970819614) #Cave - ben-ai
+                
+                await Cave_Channel.send(embed=embed)
 
 @loop(minutes=15)
 async def covLoop():
