@@ -42,7 +42,7 @@ async def getNewsEmbed(source):
             author = selected_top_headline['author']
             description = selected_top_headline['description']
             footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
-            iurl = str(DBConnection.getRemarks(source)[0][0])
+            iurl = str(DBConnection.getRemarks(source, 'Y')[0][0])
 
             embed = discord.Embed(title=title)
             #embed.color = 0xb50024

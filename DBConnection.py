@@ -285,12 +285,12 @@ class DBConnection:
         return result
 
     @classmethod
-    def getRemarks(cls, type: str):
+    def getRemarks(cls, type: str, active: str):
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
-                    where type = %s"""
-        data = (type,)
+                    where type = %s and active = %s"""
+        data = (type,active)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
