@@ -264,3 +264,6 @@ ffmpeg.exe
 
 # pycord
 pycord/
+
+#sh
+*.sh
