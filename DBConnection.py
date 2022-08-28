@@ -27,12 +27,15 @@ class DBConnection:
 
     @classmethod
     def connection(cls):
-        if DBConnection.botDB.is_connected():
-            pass
-        else:
-            #print("Not connected")
+        #if DBConnection.botDB.is_connected():
+        try:
+            DBConnection.botDB.ping()
+        #else:
+        except cx_Oracle.Error as e:
             DBConnection.botDB = cx_Oracle.connect(user=user, password=password,
                                dsn=dsnStr)
+        else:
+            pass
 
         DBCursor = DBConnection.botDB.cursor()
         return (DBConnection.botDB, DBCursor)
@@ -41,7 +44,7 @@ class DBConnection:
     def fetchUserData(cls, dataType: str, userID: str):
         botDB, DBCursor = cls.connection()
         vals = (userID, )
-        sqlQuery = 'select * from userData where userID = %s'
+        sqlQuery = 'select * from userData where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         result = DBCursor.fetchone()
         #DBCursor.close()
@@ -60,7 +63,7 @@ class DBConnection:
     def fetchUserMcName(cls, userID: str):
         botDB, DBCursor = cls.connection()
         vals = (userID, )
-        sqlQuery = 'select mcName from userData where userID = %s'
+        sqlQuery = 'select mcName from userData where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         result = DBCursor.fetchone()
         return result
@@ -87,7 +90,7 @@ class DBConnection:
     def updateUserBalance(cls, userID: str, balance: int):
         botDB, DBCursor = cls.connection()
         vals = (balance, userID)
-        sqlQuery = 'update userData set userBalance = %s where userID = %s'
+        sqlQuery = 'update userData set userBalance = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
         #DBCursor.close()
@@ -97,7 +100,7 @@ class DBConnection:
     def updateUserWin(cls, userID: str, win: int):
         botDB, DBCursor = cls.connection()
         vals = (win, userID)
-        sqlQuery = 'update userData set userWin = %s where userID = %s'
+        sqlQuery = 'update userData set userWin = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
         #DBCursor.close()
@@ -107,7 +110,7 @@ class DBConnection:
     def updateUserSortPref(cls, userID: str, sortPref: str):
         botDB, DBCursor = cls.connection()
         vals = (sortPref, userID)
-        sqlQuery = 'update userData set sortPref = %s where userID = %s'
+        sqlQuery = 'update userData set sortPref = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
         #DBCursor.close()
@@ -117,7 +120,7 @@ class DBConnection:
     def updateUserHandColor(cls, userID: str, color: str):
         botDB, DBCursor = cls.connection()
         vals = (color, userID)
-        sqlQuery = 'update userData set colorPref = %s where userID = %s'
+        sqlQuery = 'update userData set colorPref = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
         #DBCursor.close()
@@ -127,7 +130,7 @@ class DBConnection:
     def updateUserMcName(cls, userID: str, mcName: str):
         botDB, DBCursor = cls.connection()
         vals = (mcName, userID)
-        sqlQuery = 'update userData set mcName = %s where userID = %s'
+        sqlQuery = 'update userData set mcName = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
 
@@ -144,7 +147,7 @@ class DBConnection:
     def addUserToDB(cls, userID: str):
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO userData (userID, userBalance, colorPref, sortPref, userWin) 
-                VALUES (%s, %s, %s, %s, %s) """
+                VALUES (:1, :1, :1, :1, :1) """
         dataTuple = (userID, 10000, "#00ff00", 'd', 0)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
@@ -155,7 +158,7 @@ class DBConnection:
     def createServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO serverlist (id, pw, game, port, remarks) 
-                VALUES (%s, %s, %s, %s, %s) """
+                VALUES (:1, :1, :1, :1, :1) """
         dataTuple = (id, pw, game, port, remarks)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
@@ -164,8 +167,8 @@ class DBConnection:
     def updateServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE serverlist
-                SET pw=%s, game=%s, port=%s, remarks=%s
-                WHERE id=%s """
+                SET pw=:1, game=:1, port=:1, remarks=:1
+                WHERE id=:1 """
         dataTuple = (pw, game, port, remarks, id)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
@@ -174,8 +177,8 @@ class DBConnection:
     def updateServerPw(cls, id: str, pw: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE serverlist
-                SET pw=%s
-                WHERE id=%s """
+                SET pw=:1
+                WHERE id=:1 """
         dataTuple = (pw, id)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
@@ -184,7 +187,7 @@ class DBConnection:
     def deleteServer(cls, id: str):
         botDB, DBCursor = cls.connection()
         query = """DELETE FROM serverlist
-                WHERE id=%s """
+                WHERE id=:1 """
         data = (id,)
         DBCursor.execute(query, data)
         botDB.commit()
@@ -195,7 +198,7 @@ class DBConnection:
         vals = (id, )
         sqlQuery = """SELECT id, pw, game, port, remarks
                 FROM serverlist
-                WHERE id = %s"""
+                WHERE id = :1"""
         DBCursor.execute(sqlQuery, vals)
         return DBCursor.fetchone()
 
@@ -219,7 +222,7 @@ class DBConnection:
     def updateCaseNo(cls, case_no: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE CovLocate
-                SET case_no=%s"""
+                SET case_no=:1"""
         data = (case_no,)
         DBCursor.execute(query, data)
         botDB.commit()
@@ -229,7 +232,7 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query =  """select publishedAt
                     from Points
-                    where type = %s"""
+                    where type = :1"""
         data = (pointType,)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
@@ -239,8 +242,8 @@ class DBConnection:
     def updatePublishedAt(cls, publishedAt: str, pointType: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE Points
-                SET publishedAt=%s
-                WHERE type=%s"""
+                SET publishedAt=:1
+                WHERE type=:1"""
         data = (publishedAt, pointType)
         DBCursor.execute(query, data)
         botDB.commit()
@@ -249,7 +252,7 @@ class DBConnection:
     def insertLol(cls, region: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO Points (type, remarks) 
-                VALUES (%s, %s) """
+                VALUES (:1, :1) """
         dataTuple = (region, remarks)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
@@ -258,7 +261,7 @@ class DBConnection:
     def deleteLol(cls, region: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """DELETE FROM Points
-                WHERE type=%s and remarks=%s """
+                WHERE type=:1 and remarks=:1 """
         data = (region,remarks)
         DBCursor.execute(query, data)
         botDB.commit()
@@ -268,7 +271,7 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query =  """select publishedAt
                     from Points
-                    where type = %s and remarks = %s"""
+                    where type = :1 and remarks = :1"""
         data = (region,remarks)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
@@ -278,8 +281,8 @@ class DBConnection:
     def updateLolPublishedAt(cls, region: str, publishedAt: str, remarks: str):
         botDB, DBCursor = cls.connection()
         query = """UPDATE Points
-                SET publishedAt=%s
-                WHERE type=%s and remarks = %s"""
+                SET publishedAt=:1
+                WHERE type=:1 and remarks = :1"""
         data = (publishedAt, region, remarks)
         DBCursor.execute(query, data)
         botDB.commit()
@@ -289,7 +292,7 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
-                    where type = %s"""
+                    where type = :1"""
         data = (region,)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
@@ -300,7 +303,7 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
-                    where type = %s and active = %s"""
+                    where type = :1 and active = :1"""
         data = (type,active)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
