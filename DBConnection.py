@@ -1,18 +1,29 @@
-import os
+import os,sys
 from dotenv import load_dotenv
 
 #Game import
-import mysql.connector
+#import mysql.connector
+import cx_Oracle
+
+if str(sys.platform).startswith('win'):
+    cx_Oracle.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
+else:
+    cx_Oracle.init_oracle_client(lib_dir=r"/opt/oracle/instantclient_21_6")
+    
+
 
 load_dotenv()
-host = os.getenv('HOST')
-user = os.getenv('DBUSER')
-password = os.getenv('DBPW')
-database = os.getenv('DATABASE')
+dsnStr = os.getenv('DSNSTR')
+#host = os.getenv('HOST')
+user = os.getenv('ORACLE_DB_USER') #os.getenv('DBUSER')
+password = os.getenv('ORACLE_DB_PASSWORD') #os.getenv('DBPW')
+#database = os.getenv('DATABASE')
 
 class DBConnection:
-    botDB = mysql.connector.connect(host=host, user=user,
-                                    password=password, database=database)
+    #botDB = mysql.connector.connect(host=host, user=user,
+                                    #password=password, database=database)
+    botDB = cx_Oracle.connect(user=user, password=password,
+                               dsn=dsnStr)
 
     @classmethod
     def connection(cls):
@@ -20,8 +31,8 @@ class DBConnection:
             pass
         else:
             #print("Not connected")
-            DBConnection.botDB = mysql.connector.connect(host=host, user=user,
-                                            password=password, database=database)
+            DBConnection.botDB = cx_Oracle.connect(user=user, password=password,
+                               dsn=dsnStr)
 
         DBCursor = DBConnection.botDB.cursor()
         return (DBConnection.botDB, DBCursor)
