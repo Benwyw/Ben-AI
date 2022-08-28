@@ -20,4 +20,4 @@ urllib3
 lxml
 beautifulsoup4
 py-cord==2.1.1
-cx_Oracle
+oracledb

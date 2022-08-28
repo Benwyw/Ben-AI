@@ -3,12 +3,13 @@ from dotenv import load_dotenv
 
 #Game import
 #import mysql.connector
-import cx_Oracle
+import oracledb
 
 if str(sys.platform).startswith('win'):
-    cx_Oracle.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
-else:
-    cx_Oracle.init_oracle_client(lib_dir=r"/opt/oracle/instantclient_21_6")
+    print('Windows local test begin')
+    oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
+#else:
+    #cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
     
 
 
@@ -22,23 +23,25 @@ password = os.getenv('ORACLE_DB_PASSWORD') #os.getenv('DBPW')
 class DBConnection:
     #botDB = mysql.connector.connect(host=host, user=user,
                                     #password=password, database=database)
-    botDB = cx_Oracle.connect(user=user, password=password,
+    botDB = oracledb.connect(user=user, password=password,
                                dsn=dsnStr)
 
     @classmethod
     def connection(cls):
         #if DBConnection.botDB.is_connected():
         try:
-            DBConnection.botDB.ping()
+            if DBConnection.botDB.ping() is None:
+                pass
+            else:
+                raise ValueError('DB connection is not alive')
         #else:
-        except cx_Oracle.Error as e:
-            DBConnection.botDB = cx_Oracle.connect(user=user, password=password,
+        except Exception as e:
+            print('DB connection is not alive')
+            DBConnection.botDB = oracledb.connect(user=user, password=password,
                                dsn=dsnStr)
-        else:
-            pass
-
-        DBCursor = DBConnection.botDB.cursor()
-        return (DBConnection.botDB, DBCursor)
+        finally:
+            DBCursor = DBConnection.botDB.cursor()
+            return (DBConnection.botDB, DBCursor)
 
     @classmethod
     def fetchUserData(cls, dataType: str, userID: str):
