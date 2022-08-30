@@ -267,3 +267,9 @@ pycord/
 
 #sh
 *.sh
+
+#oracle
+oracle/
+
+#ubuntu
+*.out
