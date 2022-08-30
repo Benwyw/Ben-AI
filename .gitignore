@@ -273,3 +273,6 @@ oracle/
 
 #ubuntu
 *.out
+
+#SSH
+.ssh/
