@@ -18,6 +18,9 @@ class Playlist:
         self.footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
 
     def create_embed(self, description:str):
+        print('execute create embed')
         template = discord.Embed(title=self.title, description=description, url=self.url, color=self.color, author=self.author)
+        print('initialized template')
         template.set_footer(text=self.footer_text, icon_url=self.footer_icon_url)
+        print('before return template')
         return template
