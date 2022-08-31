@@ -4,7 +4,7 @@ class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @slash_command(guild_ids=guild_ids, name='hello')
+    @slash_command(name='hello')
     async def _hello(self, ctx: commands.Context):
         '''Say Hello to the AI'''
 
