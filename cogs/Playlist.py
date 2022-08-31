@@ -109,10 +109,9 @@ class Playlist(commands.Cog):
                 VideoID = music_url.split('.com/embed/')[1]
             elif 'tu.be/' in music_url:
                 VideoID = music_url.split('tu.be/')[1]'''
-
-            VideoID = pattern.split()
-            print(VideoID)
-            VideoID = VideoID[0]
+            print('in else')
+            VideoID = re.sub(regex_code, '', music_url)
+            print('after sub')
 
             params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
             url = "https://www.youtube.com/oembed"
