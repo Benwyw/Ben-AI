@@ -27,12 +27,17 @@ class Playlist(commands.Cog):
         # footer
         footer_text = 'Playlist footer'
         footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
-
-        template = discord.Embed(title=title, description=desc, url=url, color=color, author=author)
-        template.set_footer(text=footer_text, icon_url=footer_icon_url)
         print('2')
-        await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+        template = discord.Embed(title=title, description=desc, url=url, color=color)
         print('3')
+        template.set_author(name=author.display_name, icon_url=author.display_avatar.url)
+        print('4')
+        template.set_thumbnail(url=url)
+        print('5')
+        template.set_footer(text=footer_text, icon_url=footer_icon_url)
+        print('6')
+        await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+        print('7')
         await ctx.send_followup(embed=self.create_embed(desc))
 
 def setup(
