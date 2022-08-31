@@ -13,7 +13,7 @@ class Playlist(commands.Cog):
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         print('before send_followup')
-        await ctx.send_followup(ltp.Playlist.create_embed(desc))
+        await ctx.send_followup(embed=ltp.Playlist.create_embed(desc))
 
 def setup(
     bot: commands.Bot
