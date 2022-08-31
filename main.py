@@ -728,6 +728,7 @@ bot.load_extension('cogs.Special') #bot.add_cog(Special(bot))
 bot.load_extension('cogs.General') #bot.add_cog(General(bot))
 bot.load_extension('cogs.Game') #bot.add_cog(Game(bot))
 bot.load_extension('cogs.CyberSecurity')
+bot.load_extension('cogs.Playlist')
 
 '''@bot.slash_command(name="modaltest1", guild_ids=guild_ids)
 async def modal_slash(ctx):
