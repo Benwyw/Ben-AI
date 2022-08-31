@@ -118,10 +118,13 @@ class Playlist(commands.Cog):
             query_string = urllib.parse.urlencode(params)
             url = url + "?" + query_string
 
+            print('before urllib')
             with urllib.request.urlopen(url) as response:
                 response_text = response.read()
                 data = json.loads(response_text.decode())
-                template.description = f"{playlist_name} | data['title']"
+                template.description = f"{playlist_name} | {data['title']}"
+
+            print('after urllib')
 
             await log_channel.send(f'Successful insertplaylist validation\n{timestamp}')
             await ctx.send_followup(embed=template)
