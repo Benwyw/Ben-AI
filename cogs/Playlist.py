@@ -3,25 +3,6 @@ from globalImport import *
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-        # initial attributes
-        self.title          = 'Playlist title'
-        self.description    = 'Playlist description' # editable
-        self.url            = 'https://i.imgur.com/i5OEMRD.png'
-        self.color          = 0xFF0000
-        self.author         = bot.user
-
-        # footer
-        self.footer_text = 'Playlist footer'
-        self.footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
-
-    async def create_embed(self, description:str):
-        await log_channel.send('execute create embed')
-        template = discord.Embed(title=self.title, description=description, url=self.url, color=self.color, author=self.author)
-        await log_channel.send('initialized template')
-        template.set_footer(text=self.footer_text, icon_url=self.footer_icon_url)
-        await log_channel.send('before return template')
-        return template
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
     #@commands.cooldown(1, 600, commands.BucketType.user)
@@ -30,8 +11,28 @@ class Playlist(commands.Cog):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
         print('1')
-        await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+
+        # log channel in FBenI
+        log_channel = bot.get_channel(809527650955296848)
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+        await log_channel.send('initialized template')
+        # initial attributes
+        title          = 'Playlist title'
+        #description    = 'Playlist description' # editable
+        url            = 'https://i.imgur.com/i5OEMRD.png'
+        color          = 0xFF0000
+        author         = bot.user
+
+        # footer
+        footer_text = 'Playlist footer'
+        footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
+
+        template = discord.Embed(title=title, description=desc, url=url, color=color, author=author)
+        template.set_footer(text=footer_text, icon_url=footer_icon_url)
         print('2')
+        await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+        print('3')
         await ctx.send_followup(embed=self.create_embed(desc))
 
 def setup(
