@@ -36,8 +36,6 @@ class Playlist(commands.Cog):
         await ctx.send_followup(embed=template)
 
     @slash_command(guild_ids=guild_ids, name='createplaylist', description='Create playlist', description_localizations={"zh-TW": "建立播放清單"})
-    #@commands.cooldown(1, 600, commands.BucketType.user)
-    #cooldown=commands.CooldownMapping.from_cooldown(2, 60, commands.BucketType.default),
     async def _createplaylist(self, ctx:commands.Context, desc:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
@@ -65,6 +63,69 @@ class Playlist(commands.Cog):
         
         await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
         await ctx.send_followup(embed=template)
+
+    @slash_command(guild_ids=guild_ids, name='insertplaylist', description='Insert music into existing playlist', description_localizations={"zh-TW": "將音樂加入播放清單"})
+    async def _createplaylist(self, ctx:commands.Context, playlist_name:str, music_url:str):
+        #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
+        await ctx.defer()
+
+        # log channel in FBenI
+        log_channel = bot.get_channel(809527650955296848)
+        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+        await log_channel.send('initialized template')
+        # initial attributes
+        title          = 'Playlist title'
+        #description    = 'Playlist description' # editable
+        url            = 'https://i.imgur.com/i5OEMRD.png'
+        color          = 0xFF0000
+        author         = ctx.author
+
+        # footer
+        footer_text = 'Playlist footer'
+        footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
+
+        desc = f'{playlist_name} | {music_url}'
+
+        template = discord.Embed(title=title, description=desc, url=url, color=color)
+        template.set_author(name=author.display_name, icon_url=author.display_avatar.url)
+        template.set_thumbnail(url=url)
+        template.set_footer(text=footer_text, icon_url=footer_icon_url)
+
+
+        regex_code = "^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
+
+        pattern = re.compile(regex_code)
+        if not pattern.match(music_url):
+            await ctx.send_followup('Youtube URL only')
+        else:
+            #change to yours VideoID or change url inparams
+
+            '''if 'watch?v=' in music_url:
+                VideoID = music_url.split('watch?v=')[1]
+            elif '.com/v/' in music_url:
+                VideoID = music_url.split('.com/v/')[1]
+            elif '.com/embed/' in music_url:
+                VideoID = music_url.split('.com/embed/')[1]
+            elif 'tu.be/' in music_url:
+                VideoID = music_url.split('tu.be/')[1]'''
+
+            VideoID = pattern.split()
+            print(VideoID)
+            VideoID = VideoID[0]
+
+            params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
+            url = "https://www.youtube.com/oembed"
+            query_string = urllib.parse.urlencode(params)
+            url = url + "?" + query_string
+
+            with urllib.request.urlopen(url) as response:
+                response_text = response.read()
+                data = json.loads(response_text.decode())
+                template.description = f"{playlist_name} | data['title']"
+
+            await log_channel.send(f'Successful insertplaylist validation\n{timestamp}')
+            await ctx.send_followup(embed=template)
 
 def setup(
     bot: commands.Bot
