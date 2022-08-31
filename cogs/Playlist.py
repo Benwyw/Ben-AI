@@ -38,7 +38,7 @@ class Playlist(commands.Cog):
         print('6')
         await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
         print('7')
-        await ctx.send_followup(embed=self.create_embed(desc))
+        await ctx.send_followup(embed=template)
 
 def setup(
     bot: commands.Bot
