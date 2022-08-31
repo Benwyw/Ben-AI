@@ -1,9 +1,27 @@
 from globalImport import *
-import lib.template.Playlist as ltp
 
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+        # initial attributes
+        self.title          = 'Playlist title'
+        self.description    = 'Playlist description' # editable
+        self.url            = 'https://i.imgur.com/i5OEMRD.png'
+        self.color          = 0xFF0000
+        self.author         = bot.user
+
+        # footer
+        self.footer_text = 'Playlist footer'
+        self.footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
+
+    def create_embed(self, description:str):
+        log_channel.send('execute create embed')
+        template = discord.Embed(title=self.title, description=description, url=self.url, color=self.color, author=self.author)
+        log_channel.send('initialized template')
+        template.set_footer(text=self.footer_text, icon_url=self.footer_icon_url)
+        log_channel.send('before return template')
+        return template
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
     #@commands.cooldown(1, 600, commands.BucketType.user)
@@ -11,9 +29,8 @@ class Playlist(commands.Cog):
     async def _testplaylist(self, ctx:commands.Context, desc:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
-        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-        print('before send_followup')
-        await ctx.send_followup(embed=ltp.Playlist.create_embed(desc))
+        log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+        await ctx.send_followup(embed=self.create_embed(desc))
 
 def setup(
     bot: commands.Bot
