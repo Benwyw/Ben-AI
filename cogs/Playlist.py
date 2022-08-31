@@ -15,12 +15,12 @@ class Playlist(commands.Cog):
         self.footer_text = 'Playlist footer'
         self.footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
 
-    def create_embed(self, description:str):
-        log_channel.send('execute create embed')
+    async def create_embed(self, description:str):
+        await log_channel.send('execute create embed')
         template = discord.Embed(title=self.title, description=description, url=self.url, color=self.color, author=self.author)
-        log_channel.send('initialized template')
+        await log_channel.send('initialized template')
         template.set_footer(text=self.footer_text, icon_url=self.footer_icon_url)
-        log_channel.send('before return template')
+        await log_channel.send('before return template')
         return template
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
@@ -29,7 +29,7 @@ class Playlist(commands.Cog):
     async def _testplaylist(self, ctx:commands.Context, desc:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
-        log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+        await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
         await ctx.send_followup(embed=self.create_embed(desc))
 
 def setup(
