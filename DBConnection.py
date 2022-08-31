@@ -216,7 +216,7 @@ class DBConnection:
     @classmethod
     def getCaseNo(cls):
         botDB, DBCursor = cls.connection()
-        sqlQuery = 'select case_no from CovLocate limit 1'
+        sqlQuery = 'select case_no from CovLocate fetch first 1 row only'
         DBCursor.execute(sqlQuery)
         result = DBCursor.fetchall()
         return result
