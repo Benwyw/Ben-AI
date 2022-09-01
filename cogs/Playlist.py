@@ -111,7 +111,9 @@ class Playlist(commands.Cog):
             elif 'tu.be/' in music_url:
                 VideoID = music_url.split('tu.be/')[1]'''
             print('in else')
+
             # Retrieve Video ID
+            VideoID = pattern.search(music_url)
             for i in range(30):
                 try:
                     print(VideoID.group(i))
