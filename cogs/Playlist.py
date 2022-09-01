@@ -81,6 +81,7 @@ class Playlist(commands.Cog):
         print(timestamp)
         print('before log variable')
         print(lc)
+        await lc.send('test lc')
         print(tss)
         await log_channel.send('initialized template')
         # initial attributes
