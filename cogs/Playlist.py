@@ -1,4 +1,5 @@
 from globalImport import *
+import urllib.request
 
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -118,11 +119,14 @@ class Playlist(commands.Cog):
             query_string = urllib.parse.urlencode(params)
             url = url + "?" + query_string
 
+            print(f'VideoID: {VideoID}')
+            print(f'url: {url}')
             print('before urllib')
             with urllib.request.urlopen(url) as response:
-                response_text = response.read()
-                data = json.loads(response_text.decode())
-                template.description = f"{playlist_name} | {data['title']}"
+                data = json.loads(response.read().decode())
+                print(f"{data}")
+                print(f"{data['title']}")
+                template.description = f"{playlist_name} | str({data['title']})"
 
             print('after urllib')
 

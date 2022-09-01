@@ -74,8 +74,6 @@ from urllib.parse import urlparse
 # for URL encode base64
 import base64
 
-import urllib
-
 #Make plots bigger
 matplotlib.rcParams['figure.figsize'] = (20.0, 10.0)
 
