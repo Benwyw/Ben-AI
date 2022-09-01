@@ -92,7 +92,7 @@ class Playlist(commands.Cog):
             VideoID = pattern.search(music_url)
             for i in range(30):
                 try:
-                    print(VideoID.group(i))
+                    await log(VideoID.group(i))
                     if 'watch?v=' in VideoID.group(i) and 'https' not in VideoID.group(i):
                         VideoID = VideoID.group(i+1)
                         break
@@ -108,7 +108,7 @@ class Playlist(commands.Cog):
 
             with urllib.request.urlopen(url) as response:
                 data = json.loads(response.read().decode())
-                await log(print(f"{data}"))
+                await log(data)
                 await log(f"{data['title']}")
                 desc = str(data['title'])
             await log(f'before final sending follow up line')
