@@ -5,7 +5,6 @@ class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @classmethod
     async def create_embed(self, ctx, title, desc):
         '''
         return default embed with default values
@@ -112,7 +111,9 @@ class Playlist(commands.Cog):
                 await log(f"{data['title']}")
                 desc = str(data['title'])
             await log(f'before final sending follow up line')
-            await ctx.send_followup(embed=self.create_embed(ctx, f'已加入播放清單 {playlist_name}', f'{desc}'))
+            embed = self.create_embed(ctx, f'已加入播放清單 {playlist_name}', f'{desc}')
+            await log(embed)
+            await ctx.send_followup(embed=embed)
             await log(f'Successful insertplaylist validation')
 
 def setup(
