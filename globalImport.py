@@ -175,5 +175,6 @@ class YTDLError(Exception):
 yt_dlp.utils.bug_reports_message = lambda: ''
 
 # log channel in FBenI
+global log_channel, timestamp
 log_channel = bot.get_channel(809527650955296848)
 timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
