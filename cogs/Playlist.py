@@ -1,9 +1,6 @@
 from globalImport import *
 import urllib.request
 
-log_channel = bot.get_channel(809527650955296848)
-timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -49,6 +46,9 @@ class Playlist(commands.Cog):
     async def _createplaylist(self, ctx:commands.Context, desc:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
+
+        log_channel = get_log_channel()
+        timestamp = get_timestamp()
 
         await log_channel.send('initialized template')
         # initial attributes

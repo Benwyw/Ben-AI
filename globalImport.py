@@ -173,3 +173,9 @@ class YTDLError(Exception):
 # Music
 # Silence useless bug reports messages
 yt_dlp.utils.bug_reports_message = lambda: ''
+
+def get_log_channel():
+    return bot.get_channel(809527650955296848)
+
+def get_timestamp():
+    return str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
