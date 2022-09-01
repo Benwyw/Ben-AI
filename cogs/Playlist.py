@@ -6,10 +6,11 @@ class Playlist(commands.Cog):
         self.bot = bot
 
     @classmethod
-    def create_embed(self, ctx, title, desc):
+    async def create_embed(self, ctx, title, desc):
         '''
         return default embed with default values
         '''
+        await log('inside create_embed')
         # initial attributes
         #title          = title
         #description    = 'Playlist description' # editable
@@ -26,6 +27,8 @@ class Playlist(commands.Cog):
         embed.set_author(name=author.display_name, icon_url=author.display_avatar.url)
         embed.set_thumbnail(url=thumbnail_icon_url)
         embed.set_footer(text=footer_text, icon_url=footer_icon_url)
+
+        return embed
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
     #@commands.cooldown(1, 600, commands.BucketType.user)
