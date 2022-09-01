@@ -26,7 +26,9 @@ class Playlist(commands.Cog):
         embed.set_author(name=author.display_name, icon_url=author.display_avatar.url)
         embed.set_thumbnail(url=thumbnail_icon_url)
         embed.set_footer(text=footer_text, icon_url=footer_icon_url)
-
+        log(embed)
+        log(type(embed))
+        await get_log_channel.send(embed=embed)
         return embed
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
