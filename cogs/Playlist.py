@@ -74,6 +74,14 @@ class Playlist(commands.Cog):
     async def _createplaylist(self, ctx:commands.Context, playlist_name:str, music_url:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
+        print('before log function')
+        log_channel = get_log_channel()
+        print(log_channel)
+        timestamp = get_timestamp()
+        print(timestamp)
+        print('before log variable')
+        print(lc)
+        print(tss)
         await log_channel.send('initialized template')
         # initial attributes
         title          = 'Playlist title'

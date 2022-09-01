@@ -179,3 +179,6 @@ def get_log_channel():
 
 def get_timestamp():
     return str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
+lc = bot.get_channel(809527650955296848)
+tss = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
