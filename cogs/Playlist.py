@@ -1,6 +1,9 @@
 from globalImport import *
 import urllib.request
 
+log_channel = bot.get_channel(809527650955296848)
+timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
