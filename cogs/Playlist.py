@@ -4,6 +4,12 @@ import urllib.request
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    def create_embed():
+        '''
+        return default embed with default values
+        '''
+        pass
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
     #@commands.cooldown(1, 600, commands.BucketType.user)
@@ -40,10 +46,6 @@ class Playlist(commands.Cog):
     async def _createplaylist(self, ctx:commands.Context, desc:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
-
-        # log channel in FBenI
-        log_channel = bot.get_channel(809527650955296848)
-        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
 
         await log_channel.send('initialized template')
         # initial attributes
@@ -100,19 +102,6 @@ class Playlist(commands.Cog):
         if not pattern.match(music_url):
             await ctx.send_followup('Youtube URL only')
         else:
-            #change to yours VideoID or change url inparams
-
-            '''if 'watch?v=' in music_url:
-                VideoID = music_url.split('watch?v=')[1]
-            elif '.com/v/' in music_url:
-                VideoID = music_url.split('.com/v/')[1]
-            elif '.com/embed/' in music_url:
-                VideoID = music_url.split('.com/embed/')[1]
-            elif 'tu.be/' in music_url:
-                VideoID = music_url.split('tu.be/')[1]'''
-            print('in else')
-
-            # Retrieve Video ID
             VideoID = pattern.search(music_url)
             for i in range(30):
                 try:
@@ -131,16 +120,11 @@ class Playlist(commands.Cog):
             query_string = urllib.parse.urlencode(params)
             url = url + "?" + query_string
 
-            print(f'VideoID: {VideoID}')
-            print(f'url: {url}')
-            print('before urllib')
             with urllib.request.urlopen(url) as response:
                 data = json.loads(response.read().decode())
                 print(f"{data}")
                 print(f"{data['title']}")
                 template.description = f"{playlist_name} | {str(data['title'])}"
-
-            print('after urllib')
 
             await log_channel.send(f'Successful insertplaylist validation\n{timestamp}')
             await ctx.send_followup(embed=template)
