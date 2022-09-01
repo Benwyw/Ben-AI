@@ -72,7 +72,7 @@ class Playlist(commands.Cog):
         log_channel = get_log_channel()
         timestamp = get_timestamp()
         print('before log')
-        log('initialized template')
+        await log('initialized template')
         print('after log')
         # initial attributes
         title          = 'Playlist title'
@@ -109,7 +109,7 @@ class Playlist(commands.Cog):
                 except Exception as e:
                     pass
                     
-            log(f'Result: {VideoID}')
+            await log(f'Result: {VideoID}')
 
             params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
             url = "https://www.youtube.com/oembed"
@@ -118,11 +118,11 @@ class Playlist(commands.Cog):
 
             with urllib.request.urlopen(url) as response:
                 data = json.loads(response.read().decode())
-                log(print(f"{data}"))
-                log(f"{data['title']}")
+                await log(print(f"{data}"))
+                await log(f"{data['title']}")
                 template.description = f"{playlist_name} | {str(data['title'])}"
 
-            log(f'Successful insertplaylist validation\n{timestamp}')
+            await log(f'Successful insertplaylist validation')
             await ctx.send_followup(embed=template)
 
 def setup(
