@@ -138,7 +138,7 @@ class Playlist(commands.Cog):
                 data = json.loads(response.read().decode())
                 print(f"{data}")
                 print(f"{data['title']}")
-                template.description = f"{playlist_name} | str({data['title']})"
+                template.description = f"{playlist_name} | {str(data['title'])}"
 
             print('after urllib')
 
