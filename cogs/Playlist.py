@@ -46,11 +46,7 @@ class Playlist(commands.Cog):
     async def _createplaylist(self, ctx:commands.Context, desc:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
-
-        log_channel = get_log_channel()
-        timestamp = get_timestamp()
-
-        await log_channel.send('initialized template')
+        log('initialized template')
         # initial attributes
         title          = 'Playlist title'
         #description    = 'Playlist description' # editable
@@ -66,24 +62,18 @@ class Playlist(commands.Cog):
         template.set_author(name=author.display_name, icon_url=author.display_avatar.url)
         template.set_thumbnail(url=url)
         template.set_footer(text=footer_text, icon_url=footer_icon_url)
-        
-        await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
+
         await ctx.send_followup(embed=template)
 
     @slash_command(guild_ids=guild_ids, name='insertplaylist', description='Insert music into existing playlist', description_localizations={"zh-TW": "將音樂加入播放清單"})
     async def _createplaylist(self, ctx:commands.Context, playlist_name:str, music_url:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
-        print('before log function')
         log_channel = get_log_channel()
-        print(log_channel)
         timestamp = get_timestamp()
-        print(timestamp)
-        print('before log variable')
-        print(lc)
-        await lc.send('test lc')
-        print(tss)
-        await log_channel.send('initialized template')
+        print('before log')
+        log('initialized template')
+        print('after log')
         # initial attributes
         title          = 'Playlist title'
         #description    = 'Playlist description' # editable
@@ -119,8 +109,7 @@ class Playlist(commands.Cog):
                 except Exception as e:
                     pass
                     
-            print(f'Result: {VideoID}')
-            print('after sub')
+            log(f'Result: {VideoID}')
 
             params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
             url = "https://www.youtube.com/oembed"
@@ -129,11 +118,11 @@ class Playlist(commands.Cog):
 
             with urllib.request.urlopen(url) as response:
                 data = json.loads(response.read().decode())
-                print(f"{data}")
-                print(f"{data['title']}")
+                log(print(f"{data}"))
+                log(f"{data['title']}")
                 template.description = f"{playlist_name} | {str(data['title'])}"
 
-            await log_channel.send(f'Successful insertplaylist validation\n{timestamp}')
+            log(f'Successful insertplaylist validation\n{timestamp}')
             await ctx.send_followup(embed=template)
 
 def setup(
