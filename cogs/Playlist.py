@@ -26,9 +26,7 @@ class Playlist(commands.Cog):
         embed.set_author(name=author.display_name, icon_url=author.display_avatar.url)
         embed.set_thumbnail(url=thumbnail_icon_url)
         embed.set_footer(text=footer_text, icon_url=footer_icon_url)
-        log(embed)
-        log(type(embed))
-        await get_log_channel.send(embed=embed)
+        
         return embed
         
     @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
@@ -113,8 +111,7 @@ class Playlist(commands.Cog):
                 await log(f"{data['title']}")
                 desc = str(data['title'])
             await log(f'before final sending follow up line')
-            embed = self.create_embed(ctx, f'已加入播放清單 {playlist_name}', f'{desc}')
-            await log(embed)
+            embed = await self.create_embed(ctx, f'已加入播放清單 {playlist_name}', f'{desc}')
             await ctx.send_followup(embed=embed)
             await log(f'Successful insertplaylist validation')
 
