@@ -111,7 +111,17 @@ class Playlist(commands.Cog):
             elif 'tu.be/' in music_url:
                 VideoID = music_url.split('tu.be/')[1]'''
             print('in else')
-            VideoID = re.sub(regex_code, '', music_url)
+            # Retrieve Video ID
+            for i in range(30):
+                try:
+                    print(VideoID.group(i))
+                    if 'watch?v=' in VideoID.group(i) and 'https' not in VideoID.group(i):
+                        VideoID = VideoID.group(i+1)
+                        break
+                except Exception as e:
+                    pass
+                    
+            print(f'Result: {VideoID}')
             print('after sub')
 
             params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
