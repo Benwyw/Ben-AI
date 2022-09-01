@@ -71,11 +71,6 @@ class Playlist(commands.Cog):
     async def _createplaylist(self, ctx:commands.Context, playlist_name:str, music_url:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
-
-        # log channel in FBenI
-        log_channel = bot.get_channel(809527650955296848)
-        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-
         await log_channel.send('initialized template')
         # initial attributes
         title          = 'Playlist title'
