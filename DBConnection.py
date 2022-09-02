@@ -346,26 +346,26 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query =  """select p.playlist_name
                     from user_music_playlist ump
-                    inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
+                    inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1 and p.owner_user_id = :1
                     where ump.userid = :1"""
-        data = (playlist_id, userid)
+        data = (playlist_id, userid, userid)
         DBCursor.execute(query, data)
         return DBCursor.fetchall()
 
     # get playlist
     @classmethod
-    def getPlaylist(cls, userid: str, playlist_name: str):
+    def getPlaylist(cls, userid: str = None, playlist_id: int = None):
         botDB, DBCursor = cls.connection()
 
         # get all playlist globally
-        if userid is None and playlist_name is None:
+        if userid is None and playlist_id is None:
             query =  """select *
                         from playlist"""
             DBCursor.execute(query)
             return DBCursor.fetchall()
 
         # get all playlist of specific user
-        elif userid is not None and playlist_name is None:
+        elif userid is not None and playlist_id is None:
             query =  """select p.*
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id
@@ -377,9 +377,9 @@ class DBConnection:
         else:
             query =  """select p.*
                         from user_music_playlist ump
-                        inner join playlist p on ump.playlist_id = p.playlist_id
+                        inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
                         where userid = :1"""
-            data = (userid,)
+            data = (playlist_id, userid)
             DBCursor.execute(query, data)
             return DBCursor.fetchall()
 
@@ -413,4 +413,26 @@ class DBConnection:
                 VALUES (:1, :1, :1, :1) """
         dataTuple = (playlist_id, music_name, music_uploader, video_id)
         DBCursor.execute(query, dataTuple)
+        botDB.commit()
+
+    # delete owning playlist
+    @classmethod
+    def deletePlaylist(cls, playlist_id: str):
+        botDB, DBCursor = cls.connection()
+
+        query = """DELETE FROM user_music_playlist
+                WHERE playlist_id=:1 """
+        data = (playlist_id,)
+        DBCursor.execute(query, data)
+
+        query = """DELETE FROM music_playlist
+                WHERE playlist_id=:1 """
+        data = (playlist_id,)
+        DBCursor.execute(query, data)
+
+        query = """DELETE FROM playlist
+                WHERE playlist_id=:1 """
+        data = (playlist_id,)
+        DBCursor.execute(query, data)
+
         botDB.commit()

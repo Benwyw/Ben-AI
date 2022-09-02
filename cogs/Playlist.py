@@ -77,16 +77,14 @@ class Playlist(commands.Cog):
         try:
             await log(f'start insertplaylist {playlist_id}')
 
-            desc = f'{playlist_id} | {music_url}'
-
             regex_code = "^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
-
             pattern = re.compile(regex_code)
+
             if not pattern.match(music_url):
                 await ctx.send_followup('Youtube URL only')
             else:
                 # check playlist exists & owned by user
-                playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
+                playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)[0][0]
 
                 if playlist_name is None:
                     await ctx.send_followup("播放清單不存在或你非清單擁有者")
@@ -114,10 +112,13 @@ class Playlist(commands.Cog):
                         await log(f"{data['title']}")
                         vid_info_title = str(data['title'])
                         vid_info_author = str(data['author_name'])
+                        vid_info_thumbnail = str(data['thumbnail_url'])
 
                     # TODO db operations
                     DBConnection.insertPlaylist(playlist_id, vid_info_title, vid_info_author, VideoID)
                     embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'{vid_info_title}')
+                    embed.add_field(name="上傳者", value=f'{vid_info_author}', inline=False)
+                    embed.set_thumbnail(url=vid_info_thumbnail)
                     await ctx.send_followup(embed=embed)
 
             await log(f'end insertplaylist {playlist_id}')
@@ -125,7 +126,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error occured during insertplaylist {playlist_id}:\n\n{e}')
 
-    @slash_command(guild_ids=guild_ids, name='setplaylistthumbnail', description='Update playlist thumbnail', description_localizations={"zh-TW": "更新播放清單圖象"})
+    '''@slash_command(guild_ids=guild_ids, name='setplaylistthumbnail', description='Update playlist thumbnail', description_localizations={"zh-TW": "更新播放清單圖象"})
     async def _setplaylistthumbnail(self, ctx:commands.Context, playlist_name:str, thumbnail_url:str):
         await ctx.defer()
         try:
@@ -138,41 +139,46 @@ class Playlist(commands.Cog):
             await log(f'end setplaylistthumbnail {playlist_name}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
-            await log(f'error ocured during setplaylistthumbnail {playlist_name}:\n\n{e}')
+            await log(f'error ocured during setplaylistthumbnail {playlist_name}:\n\n{e}')'''
 
     @slash_command(guild_ids=guild_ids, name='myplaylist', description='Retrieve all my playlist', description_localizations={"zh-TW": "查閱所有我的播放清單"})
     async def _myplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        await ctx.send_followup('Completed myplaylist')
+        await ctx.send_followup(DBConnection.getPlaylist(ctx.author.id))
 
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
-    async def _getplaylist(self, ctx:commands.Context):
+    async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
         await ctx.defer()
-        await ctx.send_followup('Completed getplaylist')
+        await ctx.send_followup(DBConnection.getPlaylist(ctx.author.id, playlist_id))
 
     @slash_command(guild_ids=guild_ids, name='listallplaylist', description='List all playlist', description_localizations={"zh-TW": "查閱全域播放清單"})
     async def _listallplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        await ctx.send_followup('Completed listallplaylist')
+        await ctx.send_followup(DBConnection.getPlaylist())
 
-    @slash_command(guild_ids=guild_ids, name='copytomyplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})
-    async def _copytomyplaylist(self, ctx:commands.Context):
+    @slash_command(guild_ids=guild_ids, name='linkplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})
+    async def _linkplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        await ctx.send_followup('Completed copytomyplaylist')
+        await ctx.send_followup('Completed linkplaylist')
 
     @slash_command(guild_ids=guild_ids, name='deleteplaylist', description='Delete specific playlist from my list', description_localizations={"zh-TW": "從我的播放清單刪除特定播放清單"})
-    async def _deleteplaylist(self, ctx:commands.Context, playlist_name):
+    async def _deleteplaylist(self, ctx:commands.Context, playlist_id):
         await ctx.defer()
         try:
-            await log(f'start deleteplaylist {playlist_name}')
+            await log(f'start deleteplaylist {playlist_id}')
 
             # TODO db operations
-
-            await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除播放清單 {playlist_name}', ''))
-            await log(f'end deleteplaylist {playlist_name}')
+            playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)[0][0]
+            if playlist_name is None:
+                ctx.send_followup("請用 `/unlinkplaylist` 因你非清單擁有者。")
+            else:
+                DBConnection.deletePlaylist(playlist_id)
+                await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除播放清單 {playlist_id}', ''))
+                
+            await log(f'end deleteplaylist {playlist_id}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
-            await log(f'error ocured during deleteplaylist {playlist_name}:\n\n{e}')
+            await log(f'error ocured during deleteplaylist {playlist_id}:\n\n{e}')
 
 
 def setup(
