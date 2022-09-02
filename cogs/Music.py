@@ -293,7 +293,7 @@ class Music(commands.Cog):
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'])
-    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int):
+    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random: str=None):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
         如果未提供URL，此指令將自動從各個站點搜索。
@@ -319,6 +319,8 @@ class Music(commands.Cog):
 
             async with ctx.typing():
                 try:
+                    if random is not None:
+                        random.shuffle(playlist)
                     for pl in playlist:
                         try:
                             sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
