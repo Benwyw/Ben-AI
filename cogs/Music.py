@@ -303,23 +303,22 @@ class Music(commands.Cog):
         #ctx.voice_stats.voice --> ctx.voice_client
         #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
         await ctx.defer()
-
-        if not ctx.voice_client:
-            #await commands.Context.invoke('join2', self._join2, ctx)
-            destination = ctx.author.voice.channel
-            if ctx.voice_state.voice:
-                await ctx.voice_state.voice.move_to(destination)
-                return
-
-            ctx.voice_state.voice = await destination.connect()
-
-        async with ctx.typing():
-            try:
-                playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
-                if not playlist:
-                    await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
+        
+        playlist = DBConnection.getPlaylist(None, playlist_id)
+        if not playlist or playlist is None:
+            await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
+        else:
+            if not ctx.voice_client:
+                #await commands.Context.invoke('join2', self._join2, ctx)
+                destination = ctx.author.voice.channel
+                if ctx.voice_state.voice:
+                    await ctx.voice_state.voice.move_to(destination)
                     return
-                else:
+
+                ctx.voice_state.voice = await destination.connect()
+
+            async with ctx.typing():
+                try:
                     for pl in playlist:
                         try:
                             sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
@@ -343,8 +342,8 @@ class Music(commands.Cog):
                                 except Exception as e:
                                     BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                                     await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
-            except Exception as e:
-                await log(f'{e}')
+                except Exception as e:
+                        await log(f'{e}')
 
     @_join.before_invoke
     @_play.before_invoke

@@ -375,6 +375,16 @@ class DBConnection:
             data = (userid,)
             DBCursor.execute(query, data)
             return DBCursor.fetchall()
+        
+        elif userid is None and playlist_id is not None:
+            query =  """select mp.*, p.playlist_name, p.owner_user_id
+                        from user_music_playlist ump
+                        inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
+                        inner join music_playlist mp on mp.playlist_id = p.playlist_id
+                        order by mp.id"""
+            data = (playlist_id,)
+            DBCursor.execute(query, data)
+            return DBCursor.fetchall()
 
         else:
             query =  """select mp.*, p.playlist_name, p.owner_user_id
