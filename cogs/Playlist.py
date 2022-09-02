@@ -112,11 +112,12 @@ class Playlist(commands.Cog):
                         data = json.loads(response.read().decode())
                         await log(data)
                         await log(f"{data['title']}")
-                        desc = str(data['title'])
+                        vid_info_title = str(data['title'])
+                        vid_info_author = str(data['author_name'])
 
                     # TODO db operations
-                    DBConnection.insertPlaylist(playlist_id, desc, )
-                    embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'{desc}')
+                    DBConnection.insertPlaylist(playlist_id, vid_info_title, vid_info_author, VideoID)
+                    embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'{vid_info_title}')
                     await ctx.send_followup(embed=embed)
 
             await log(f'end insertplaylist {playlist_id}')
