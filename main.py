@@ -1116,6 +1116,7 @@ async def on_message(message):
         seedCategory = randrange(3)
         seed = randrange(6)
 
+        img = None
         if seedCategory == 0:
             if seed == 0:
                 img = "https://i.imgur.com/CWOMg81.jpg"
@@ -1195,7 +1196,10 @@ async def on_message(message):
                 img == "https://i.imgur.com/vElML0o.gif"
                 msg = "Strong"
 
-        e.set_image(url=img)
+        if img is None:
+            await log(f'img is None when\nseedCategory: {seedCategory}\nseed: {seed}')
+        else:
+            e.set_image(url=img)
         e.set_footer(text=msg)
         await message.channel.send(embed=e)
 

@@ -112,6 +112,7 @@ class Playlist(commands.Cog):
                         await log(f"{data['title']}")
                         vid_info_title = str(data['title'])
                         vid_info_author = str(data['author_name'])
+                        #vid_info_author_url = str(data['author_url'])
                         vid_info_thumbnail = str(data['thumbnail_url'])
 
                     # TODO db operations
@@ -174,7 +175,7 @@ class Playlist(commands.Cog):
             else:
                 DBConnection.deletePlaylist(playlist_id)
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除播放清單 {playlist_id}', ''))
-                
+
             await log(f'end deleteplaylist {playlist_id}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
