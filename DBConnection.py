@@ -384,28 +384,6 @@ class DBConnection:
             DBCursor.execute(query, data)
             return DBCursor.fetchall()
 
-        # insert into playlist
-        query = """INSERT INTO playlist (playlist_name) 
-                VALUES (:1) """
-        dataTuple = (playlist_name,)
-        DBCursor.execute(query, dataTuple)
-
-        # get playlist id
-        query =  """select playlist_id
-                    from playlist
-                    where playlist_name = :1"""
-        data = (playlist_name,)
-        DBCursor.execute(query, data)
-        playlist_id = DBCursor.fetchall()[0][0]
-
-        # insert into user_music_playlist
-        query = """INSERT INTO user_music_playlist (userid, playlist_id) 
-                VALUES (:1, :1) """
-        dataTuple = (userid, playlist_id)
-        DBCursor.execute(query, dataTuple)
-
-        botDB.commit()
-
     # insert music into existing playlist
     @classmethod
     def insertPlaylist(cls, playlist_id: int, music_name: str, music_uploader: str, video_id: str):
