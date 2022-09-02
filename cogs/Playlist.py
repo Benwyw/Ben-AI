@@ -204,7 +204,9 @@ class Playlist(commands.Cog):
                 else:
                     music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
                 
-            embed.add_field(name='曲目', value=music_list, inline=True)
+            await log(music_list)
+            embed.add_field(name='曲目', value=str(music_list), inline=True)
+            await log('before end of getplaylist')
 
             await ctx.send_followup(embed=embed)
 
