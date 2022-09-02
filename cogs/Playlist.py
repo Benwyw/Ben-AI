@@ -147,12 +147,15 @@ class Playlist(commands.Cog):
         await ctx.defer()
         playlist = DBConnection.getPlaylist(ctx.author.id)[0]
 
+        await ctx.send_followup('150')
         embed = await self.create_embed(ctx, '我的播放清單')
+        await ctx.send_followup('152')
         owned_list_desc = ''
         linked_list_desc = ''
         owned_list = 0
         linked_list = 0
         for pl in playlist:
+            await ctx.send_followup('158')
             if pl[2] == ctx.author.id:
                 if owned_list_desc != '':
                     owned_list_desc += f'\n{pl[0]} | {pl[1]}'
@@ -165,12 +168,12 @@ class Playlist(commands.Cog):
                 else:
                     linked_list_desc += f'{pl[0]} | {pl[1]} | *非擁有者*'
                 linked_list += 1
-
+        await ctx.send_followup('171')
         embed.description = f'__ID | 命名__\n{owned_list_desc}\n{linked_list_desc}'
         embed.add_field(name="擁有清單", value=f'{owned_list}', inline=True)
         embed.add_field(name="連結清單", value=f'{owned_list}', inline=True)
-            
-        await ctx.send_followup(DBConnection.getPlaylist(ctx.author.id))
+        await ctx.send_followup('175')
+        await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
     async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
