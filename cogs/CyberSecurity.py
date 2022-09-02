@@ -66,7 +66,7 @@ class CyberSecurity(commands.Cog):
                     if thumbnail_image_url == suspicious_image_url:
                         color = 0xffff00
                         
-                    if ctx.guild.id in (guild_BenKaChu, guild_BrianLeeGaming): #chi
+                    if ctx.guild.id in (guild_BenKaChu, guild_BrianLeeGaming, guild_BrianLeeGaming): #chi
                         chi_embed = discord.Embed(title = "防毒Ben件", color=color, description = f"使用與{total_vendor_count}位防毒供應商合作的VirusTotal。")
                         chi_embed.set_author(name='VirusTotal', url=f"https://www.virustotal.com/gui/url/{id}?nocache=1", icon_url="https://i.imgur.com/E7cIWC1.png")
                         chi_embed.set_thumbnail(url=f"{thumbnail_image_url}")
