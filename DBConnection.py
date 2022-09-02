@@ -311,3 +311,106 @@ class DBConnection:
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
+
+    # create playlist with playlist_name and userid across 2 tables
+    @classmethod
+    def createPlaylist(cls, userid: str, playlist_name: str):
+        botDB, DBCursor = cls.connection()
+
+        # insert into playlist
+        query = """INSERT INTO playlist (playlist_name) 
+                VALUES (:1) """
+        dataTuple = (playlist_name,)
+        DBCursor.execute(query, dataTuple)
+
+        # get playlist id
+        query =  """select playlist_id
+                    from playlist
+                    where playlist_name = :1"""
+        data = (playlist_name,)
+        DBCursor.execute(query, data)
+        playlist_id = DBCursor.fetchall()[0][0]
+
+        # insert into user_music_playlist
+        query = """INSERT INTO user_music_playlist (userid, playlist_id) 
+                VALUES (:1, :1) """
+        dataTuple = (userid, playlist_id)
+        DBCursor.execute(query, dataTuple)
+
+        botDB.commit()
+
+    # get playlist id and check if user owns it
+    # get playlist
+    @classmethod
+    def getPlaylistAndCheckIfUserOwns(cls, userid: str, playlist_id: str):
+        botDB, DBCursor = cls.connection()
+        query =  """select p.playlist_name
+                    from user_music_playlist ump
+                    inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
+                    where ump.userid = :1"""
+        data = (playlist_id, userid)
+        DBCursor.execute(query, data)
+        return DBCursor.fetchall()
+
+    # get playlist
+    @classmethod
+    def getPlaylist(cls, userid: str, playlist_name: str):
+        botDB, DBCursor = cls.connection()
+
+        # get all playlist globally
+        if userid is None and playlist_name is None:
+            query =  """select *
+                        from playlist"""
+            DBCursor.execute(query)
+            return DBCursor.fetchall()
+
+        # get all playlist of specific user
+        elif userid is not None and playlist_name is None:
+            query =  """select p.*
+                        from user_music_playlist ump
+                        inner join playlist p on ump.playlist_id = p.playlist_id
+                        where userid = :1"""
+            data = (userid,)
+            DBCursor.execute(query, data)
+            return DBCursor.fetchall()
+
+        else:
+            query =  """select p.*
+                        from user_music_playlist ump
+                        inner join playlist p on ump.playlist_id = p.playlist_id
+                        where userid = :1"""
+            data = (userid,)
+            DBCursor.execute(query, data)
+            return DBCursor.fetchall()
+
+        # insert into playlist
+        query = """INSERT INTO playlist (playlist_name) 
+                VALUES (:1) """
+        dataTuple = (playlist_name,)
+        DBCursor.execute(query, dataTuple)
+
+        # get playlist id
+        query =  """select playlist_id
+                    from playlist
+                    where playlist_name = :1"""
+        data = (playlist_name,)
+        DBCursor.execute(query, data)
+        playlist_id = DBCursor.fetchall()[0][0]
+
+        # insert into user_music_playlist
+        query = """INSERT INTO user_music_playlist (userid, playlist_id) 
+                VALUES (:1, :1) """
+        dataTuple = (userid, playlist_id)
+        DBCursor.execute(query, dataTuple)
+
+        botDB.commit()
+
+    # insert music into existing playlist
+    @classmethod
+    def insertPlaylist(cls, playlist_id: int, music_name: str, music_uploader: str, video_id: str):
+        botDB, DBCursor = cls.connection()
+        query = """INSERT INTO music_playlist (playlist_id, music_name, music_uploader, video_id) 
+                VALUES (:1, :1, :1, :1) """
+        dataTuple = (playlist_id, music_name, music_uploader, video_id)
+        DBCursor.execute(query, dataTuple)
+        botDB.commit()

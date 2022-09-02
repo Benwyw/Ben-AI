@@ -52,7 +52,7 @@ class Playlist(commands.Cog):
         await log_channel.send(f'testtplaylist\nbefore send_followup\n\n{timestamp}')
         await ctx.send_followup(embed=template)
     '''
-    
+
     @slash_command(guild_ids=guild_ids, name='createplaylist', description='Create playlist', description_localizations={"zh-TW": "建立播放清單"})
     async def _createplaylist(self, ctx:commands.Context, playlist_name:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
@@ -60,22 +60,24 @@ class Playlist(commands.Cog):
         try:
             await log(f'start createplaylist {playlist_name}')
 
-            # TODO db operations
-
-            await ctx.send_followup(embed=await self.create_embed(ctx, f'已建立播放清單 {playlist_name}', ''))
+            if (len(playlist_name)) > 30:
+                ctx.send_followup('播放清單名稱限30字元內。')
+            else:
+                DBConnection.createPlaylist(ctx.author.id, playlist_name)
+                await ctx.send_followup(embed=await self.create_embed(ctx, f'已建立播放清單 {playlist_name}', ''))
             await log(f'end createplaylist {playlist_name}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during createplaylist {playlist_name}:\n\n{e}')
 
     @slash_command(guild_ids=guild_ids, name='insertplaylist', description='Insert music into existing playlist', description_localizations={"zh-TW": "將音樂加入播放清單"})
-    async def _insertplaylist(self, ctx:commands.Context, playlist_name:str, music_url:str):
+    async def _insertplaylist(self, ctx:commands.Context, playlist_id:int, music_url:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
         try:
-            await log(f'start insertplaylist {playlist_name}')
+            await log(f'start insertplaylist {playlist_id}')
 
-            desc = f'{playlist_name} | {music_url}'
+            desc = f'{playlist_id} | {music_url}'
 
             regex_code = "^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
 
@@ -83,37 +85,44 @@ class Playlist(commands.Cog):
             if not pattern.match(music_url):
                 await ctx.send_followup('Youtube URL only')
             else:
-                VideoID = pattern.search(music_url)
-                for i in range(30):
-                    try:
-                        await log(VideoID.group(i))
-                        if 'watch?v=' in VideoID.group(i) and 'https' not in VideoID.group(i):
-                            VideoID = VideoID.group(i+1)
-                            break
-                    except Exception as e:
-                        pass
-                        
-                await log(f'Result: {VideoID}')
+                # check playlist exists & owned by user
+                playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
 
-                params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
-                url = "https://www.youtube.com/oembed"
-                query_string = urllib.parse.urlencode(params)
-                url = url + "?" + query_string
+                if playlist_name is None:
+                    await ctx.send_followup("播放清單不存在或你非清單擁有者")
+                else:
+                    VideoID = pattern.search(music_url)
+                    for i in range(30):
+                        try:
+                            await log(VideoID.group(i))
+                            if 'watch?v=' in VideoID.group(i) and 'https' not in VideoID.group(i):
+                                VideoID = VideoID.group(i+1)
+                                break
+                        except Exception as e:
+                            pass
+                            
+                    await log(f'Result: {VideoID}')
 
-                with urllib.request.urlopen(url) as response:
-                    data = json.loads(response.read().decode())
-                    await log(data)
-                    await log(f"{data['title']}")
-                    desc = str(data['title'])
+                    params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
+                    url = "https://www.youtube.com/oembed"
+                    query_string = urllib.parse.urlencode(params)
+                    url = url + "?" + query_string
 
-                # TODO db operations
+                    with urllib.request.urlopen(url) as response:
+                        data = json.loads(response.read().decode())
+                        await log(data)
+                        await log(f"{data['title']}")
+                        desc = str(data['title'])
 
-                embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'{desc}')
-                await ctx.send_followup(embed=embed)
-                await log(f'end insertplaylist {playlist_name}')
+                    # TODO db operations
+                    DBConnection.insertPlaylist(playlist_id, desc, )
+                    embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'{desc}')
+                    await ctx.send_followup(embed=embed)
+
+            await log(f'end insertplaylist {playlist_id}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
-            await log(f'error occured during insertplaylist {playlist_name}:\n\n{e}')
+            await log(f'error occured during insertplaylist {playlist_id}:\n\n{e}')
 
     @slash_command(guild_ids=guild_ids, name='setplaylistthumbnail', description='Update playlist thumbnail', description_localizations={"zh-TW": "更新播放清單圖象"})
     async def _setplaylistthumbnail(self, ctx:commands.Context, playlist_name:str, thumbnail_url:str):
