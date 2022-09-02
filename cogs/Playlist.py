@@ -12,7 +12,7 @@ class Playlist(commands.Cog):
         await log('inside create_embed')
         # initial attributes
         #title          = title
-        #description    = 'Playlist description' # editable
+        desc    = '' # editable
         #url            = 'https://i.imgur.com/i5OEMRD.png'
         color          = 0xFF0000
         author         = ctx.author
