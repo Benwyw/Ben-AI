@@ -9,6 +9,7 @@ class Playlist(commands.Cog):
         '''
         return default embed with default values
         '''
+        await log('inside create embed')
         # initial attributes
         #title          = title
         #desc    = '' # editable
@@ -193,8 +194,11 @@ class Playlist(commands.Cog):
         if playlist is None:
             await ctx.send_followup('指定之播放清單不存在。')
         else:
+            await log('inside else, before embed')
             embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
-            pl_owner = bot.get_user(playlist[0][6])
+            await log('before get user')
+            pl_owner = bot.get_user(int(playlist[0][6]))
+            await log('after get user')
             embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
 
             music_list = None
