@@ -23,6 +23,8 @@ class Playlist(commands.Cog):
         footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
 
         embed = discord.Embed(title=title, description=desc, color=color) #url=url,
+        await log(author.display_name)
+        await log(author.display_avatar.url)
         embed.set_author(name=author.display_name, icon_url=author.display_avatar.url)
         embed.set_thumbnail(url=thumbnail_icon_url)
         embed.set_footer(text=footer_text, icon_url=footer_icon_url)
