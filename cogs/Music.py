@@ -293,7 +293,7 @@ class Music(commands.Cog):
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'])
-    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random_shuffle: str=None):
+    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random_shuffle: bool=False):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
         如果未提供URL，此指令將自動從各個站點搜索。
@@ -319,7 +319,7 @@ class Music(commands.Cog):
 
             async with ctx.typing():
                 try:
-                    if random_shuffle is not None:
+                    if random_shuffle:
                         random.shuffle(playlist)
                     for pl in playlist:
                         try:
