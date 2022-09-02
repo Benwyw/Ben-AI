@@ -253,6 +253,25 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during deletemusicfromplaylist {playlist_id}:\n\n{e}')
             
+    @slash_command(guild_ids=guild_ids, name='updatemyplaylistname', description='Update my playlist name', description_localizations={"zh-TW": "更改播放清單名"})
+    async def _updatemyplaylistname(self, ctx:commands.Context, playlist_id, playlist_new_name):
+        await ctx.defer()
+        try:
+            await log(f'start updatemyplaylistname {playlist_id}')
+            
+            playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
+            if not playlist_name:
+                await ctx.send_followup("指定之播放清單不存 或 你非清單擁有者。")
+            else:
+                playlist_name = playlist_name[0][0]
+                playlist_new_name_confirmed = DBConnection.updateMyPlaylistName(playlist_id, playlist_new_name)[0][0]
+                await ctx.send_followup(embed=await self.create_embed(ctx, f'已更改播放清單名稱至 __{playlist_new_name_confirmed}__', ''))
+
+            await log(f'end updatemyplaylistname {playlist_name} {playlist_new_name_confirmed}')
+        except Exception as e:
+            await ctx.send_followup('Error occured.')
+            await log(f'error ocured during updatemyplaylistname {playlist_id}:\n\n{e}')
+            
 def setup(
     bot: commands.Bot
 ) -> None:

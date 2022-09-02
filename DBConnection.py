@@ -439,3 +439,18 @@ class DBConnection:
         botDB.commit()
         
         return music_name
+    
+    # update owning playlist name
+    @classmethod
+    def updateMyPlaylistName(cls, playlist_id: int, playlist_new_name: str):
+        botDB, DBCursor = cls.connection()
+
+        query = """UPDATE playlist
+                SET playlist_name = :1
+                WHERE playlist_id=:1"""
+        data = (playlist_new_name,playlist_id)
+        DBCursor.execute(query, data)
+
+        botDB.commit()
+        
+        return playlist_new_name
