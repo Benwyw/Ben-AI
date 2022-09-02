@@ -145,42 +145,60 @@ class Playlist(commands.Cog):
     @slash_command(guild_ids=guild_ids, name='myplaylist', description='Retrieve all my playlist', description_localizations={"zh-TW": "查閱所有我的播放清單"})
     async def _myplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        playlist = DBConnection.getPlaylist(ctx.author.id)
 
-        await ctx.send_followup('150')
-        embed = await self.create_embed(ctx, '我的播放清單', '')
-        await ctx.send_followup('152')
-        owned_list_desc = ''
-        linked_list_desc = ''
-        owned_list = 0
-        linked_list = 0
-        await ctx.send_followup(playlist)
-        for pl in playlist:
-            await ctx.send_followup('158')
-            await ctx.send_followup(pl)
-            if pl[2] == ctx.author.id:
-                if owned_list_desc != '':
-                    owned_list_desc += f'\n{pl[0]} | {pl[1]}'
+        playlist = DBConnection.getPlaylist(ctx.author.id)
+        
+        if playlist is None:
+            await ctx.send_followup('你沒有播放清單。')
+        else:
+            embed = await self.create_embed(ctx, '我的播放清單', '')
+
+            owned_list_desc = ''
+            linked_list_desc = ''
+            owned_list = 0
+            linked_list = 0
+
+            for pl in playlist:
+                await ctx.send_followup('158')
+                await ctx.send_followup(pl)
+                if pl[2] == ctx.author.id:
+                    if owned_list_desc != '':
+                        owned_list_desc += f'\n{pl[0]} | {pl[1]}'
+                    else:
+                        owned_list_desc += f'{pl[0]} | {pl[1]}'
+                    owned_list += 1
                 else:
-                    owned_list_desc += f'{pl[0]} | {pl[1]}'
-                owned_list += 1
-            else:
-                if linked_list_desc != '':
-                    linked_list_desc += f'\n{pl[0]} | {pl[1]} | *非擁有者*'
-                else:
-                    linked_list_desc += f'{pl[0]} | {pl[1]} | *非擁有者*'
-                linked_list += 1
-        await ctx.send_followup('171')
-        embed.description = f'__ID | 命名__\n{owned_list_desc}\n{linked_list_desc}'
-        embed.add_field(name="擁有清單", value=f'{owned_list}', inline=True)
-        embed.add_field(name="連結清單", value=f'{owned_list}', inline=True)
-        await ctx.send_followup('175')
-        await ctx.send_followup(embed=embed)
+                    if linked_list_desc != '':
+                        linked_list_desc += f'\n{pl[0]} | {pl[1]}'
+                    else:
+                        linked_list_desc += f'{pl[0]} | {pl[1]}'
+                    linked_list += 1
+
+            embed.description = f'__ID | 命名__'
+            embed.add_field(name=f"擁有清單({owned_list})", value=f'{owned_list_desc}', inline=True)
+            embed.add_field(name=f"連結清單{linked_list}", value=f'{linked_list_desc}', inline=True)
+
+            await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
     async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
         await ctx.defer()
-        await ctx.send_followup(DBConnection.getPlaylist(ctx.author.id, playlist_id))
+        playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
+        
+        embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
+        pl_owner = bot.get_user(playlist[0][6])
+        embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
+
+        music_list = None
+        for pl in playlist:
+            if music_list is None:
+                music_list = f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+            else:
+                music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+            
+        embed.add_field(name='曲目', value=music_list, inline=True)
+
+        await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='listallplaylist', description='List all playlist', description_localizations={"zh-TW": "查閱全域播放清單"})
     async def _listallplaylist(self, ctx:commands.Context):
