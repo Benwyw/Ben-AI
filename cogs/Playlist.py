@@ -9,7 +9,6 @@ class Playlist(commands.Cog):
         '''
         return default embed with default values
         '''
-        await log('inside create embed')
         # initial attributes
         #title          = title
         #desc    = '' # editable
