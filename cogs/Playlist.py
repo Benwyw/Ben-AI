@@ -161,7 +161,7 @@ class Playlist(commands.Cog):
             for pl in playlist:
                 await ctx.send_followup('158')
                 await ctx.send_followup(pl)
-                if pl[2] == ctx.author.id:
+                if pl[2] == str(ctx.author.id):
                     if owned_list_desc != '':
                         owned_list_desc += f'\n{pl[0]} | {pl[1]}'
                     else:
