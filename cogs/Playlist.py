@@ -164,19 +164,19 @@ class Playlist(commands.Cog):
                     if owned_list_desc != '':
                         owned_list_desc += f'\n{pl[0]} | {pl[1]}'
                     else:
-                        owned_list_desc += f'{pl[0]} | {pl[1]}'
+                        owned_list_desc = f'{pl[0]} | {pl[1]}'
                     owned_list += 1
                 else:
                     if linked_list_desc != '':
                         linked_list_desc += f'\n{pl[0]} | {pl[1]}'
                     else:
-                        linked_list_desc += f'{pl[0]} | {pl[1]}'
+                        linked_list_desc = f'{pl[0]} | {pl[1]}'
                     linked_list += 1
-
+            await log('after for loop')
             embed.description = f'__ID | 命名__'
             embed.add_field(name=f"擁有清單({owned_list})", value=f'{owned_list_desc}', inline=True)
             embed.add_field(name=f"連結清單{linked_list}", value=f'{linked_list_desc}', inline=True)
-
+            await log('before ending')
             await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
