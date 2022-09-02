@@ -5,14 +5,14 @@ class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    async def create_embed(self, ctx, title, desc:None):
+    async def create_embed(self, ctx, title, desc):
         '''
         return default embed with default values
         '''
         await log('inside create_embed')
         # initial attributes
         #title          = title
-        desc    = '' # editable
+        #desc    = '' # editable
         #url            = 'https://i.imgur.com/i5OEMRD.png'
         color          = 0xFF0000
         author         = ctx.author
@@ -148,7 +148,9 @@ class Playlist(commands.Cog):
         playlist = DBConnection.getPlaylist(ctx.author.id)[0]
 
         await ctx.send_followup('150')
-        embed = await self.create_embed(ctx, '我的播放清單')
+        print('1')
+        embed = await self.create_embed(ctx, '我的播放清單', '')
+        print('2')
         await ctx.send_followup('152')
         owned_list_desc = ''
         linked_list_desc = ''
