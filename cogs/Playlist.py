@@ -145,7 +145,7 @@ class Playlist(commands.Cog):
     @slash_command(guild_ids=guild_ids, name='myplaylist', description='Retrieve all my playlist', description_localizations={"zh-TW": "查閱所有我的播放清單"})
     async def _myplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        playlist = DBConnection.getPlaylist(ctx.author.id)[0]
+        playlist = DBConnection.getPlaylist(ctx.author.id)
 
         await ctx.send_followup('150')
         print('1')
