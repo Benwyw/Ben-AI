@@ -198,11 +198,16 @@ class Playlist(commands.Cog):
             embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
 
             music_list = None
+            await log(music_list)
             for pl in playlist:
+                await log(pl)
+                await log(music_list)
                 if music_list is None:
                     music_list = f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                    await log(music_list)
                 else:
                     music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                    await log(music_list)
                 
             await log(music_list)
             embed.add_field(name='曲目', value=str(music_list), inline=True)
