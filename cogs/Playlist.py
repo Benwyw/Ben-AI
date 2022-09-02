@@ -148,9 +148,7 @@ class Playlist(commands.Cog):
         playlist = DBConnection.getPlaylist(ctx.author.id)
 
         await ctx.send_followup('150')
-        print('1')
         embed = await self.create_embed(ctx, '我的播放清單', '')
-        print('2')
         await ctx.send_followup('152')
         owned_list_desc = ''
         linked_list_desc = ''
