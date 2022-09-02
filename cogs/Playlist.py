@@ -187,35 +187,23 @@ class Playlist(commands.Cog):
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
     async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
         await ctx.defer()
-        await log('begin getplaylist')
         playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
-        await log(playlist)
         
         if playlist is None:
             await ctx.send_followup('指定之播放清單不存在。')
         else:
-            await log('inside else, before embed')
             embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
-            await log('before get user')
-            pl_owner = bot.get_user(int(playlist[0][6]))
-            await log('after get user')
+            pl_owner = getUserById(playlist[0][6])
             embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
 
             music_list = None
-            await log(music_list)
             for pl in playlist:
-                await log(pl)
-                await log(music_list)
                 if music_list is None:
                     music_list = f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
-                    await log(music_list)
                 else:
                     music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
-                    await log(music_list)
                 
-            await log(music_list)
             embed.add_field(name='曲目', value=str(music_list), inline=True)
-            await log('before end of getplaylist')
 
             await ctx.send_followup(embed=embed)
 
