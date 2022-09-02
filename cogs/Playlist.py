@@ -152,6 +152,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('你沒有播放清單。')
         else:
             embed = await self.create_embed(ctx, '我的播放清單', '')
+            await ctx.send_followup(embed=embed)
 
             owned_list_desc = ''
             linked_list_desc = ''
@@ -173,8 +174,11 @@ class Playlist(commands.Cog):
                         linked_list_desc = f'{pl[0]} | {pl[1]}'
                     linked_list += 1
             await log('after for loop')
+            await ctx.send_followup(embed=embed)
             embed.description = f'__ID | 命名__'
+            await ctx.send_followup(embed=embed)
             embed.add_field(name=f"擁有清單({owned_list})", value=f'{owned_list_desc}', inline=True)
+            await ctx.send_followup(embed=embed)
             embed.add_field(name=f"連結清單{linked_list}", value=f'{linked_list_desc}', inline=True)
             await log('before ending')
             await ctx.send_followup(embed=embed)
