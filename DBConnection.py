@@ -375,9 +375,10 @@ class DBConnection:
             return DBCursor.fetchall()
 
         else:
-            query =  """select p.*
+            query =  """select mp.*
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
+                        inner join music_playlist mp on mp.playlist_id = p.playlist_id
                         where userid = :1"""
             data = (playlist_id, userid)
             DBCursor.execute(query, data)
