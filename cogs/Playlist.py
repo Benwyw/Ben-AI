@@ -186,7 +186,7 @@ class Playlist(commands.Cog):
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
     async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
         await ctx.defer()
-        playlist = DBConnection.getPlaylist(playlist_id, ctx.author.id)
+        playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
         
         if playlist is None:
             await ctx.send_followup('指定之播放清單不存在。')
