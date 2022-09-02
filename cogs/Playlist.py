@@ -193,7 +193,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('指定之播放清單不存在。')
         else:
             embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
-            pl_owner = getUserById(playlist[0][6])
+            pl_owner = await getUserById(playlist[0][6])
             embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
 
             music_list = None
