@@ -344,7 +344,7 @@ class Music(commands.Cog):
                                     BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                                     await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
             except Exception as e:
-                await log('e')
+                await log(f'{e}')
 
     @_join.before_invoke
     @_play.before_invoke
