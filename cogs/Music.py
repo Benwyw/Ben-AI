@@ -247,7 +247,7 @@ class Music(commands.Cog):
         elif not ctx.voice_state.loop:
             await ctx.respond('❎')
 
-    @slash_command(guild_ids=guild_ids, name='play', aliases=['p'])
+    @slash_command(guild_ids=guild_ids, name='play', aliases=['p'], description='Play music', description_localizations={"zh-TW": "播放音樂"})
     async def _play(self, ctx: commands.Context, *, search: str):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
@@ -292,7 +292,7 @@ class Music(commands.Cog):
                         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
-    @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'])
+    @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist', description_localizations={"zh-TW": "播放播放清單"})
     async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random_shuffle: bool=False):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
