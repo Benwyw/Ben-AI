@@ -112,13 +112,13 @@ class Playlist(commands.Cog):
                         await log(f"{data['title']}")
                         vid_info_title = str(data['title'])
                         vid_info_author = str(data['author_name'])
-                        #vid_info_author_url = str(data['author_url'])
+                        vid_info_author_url = str(data['author_url'])
                         vid_info_thumbnail = str(data['thumbnail_url'])
 
                     # TODO db operations
                     DBConnection.insertPlaylist(playlist_id, vid_info_title, vid_info_author, VideoID)
-                    embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'{vid_info_title}')
-                    embed.add_field(name="上傳者", value=f'{vid_info_author}', inline=False)
+                    embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'[{vid_info_title}]({music_url})')
+                    embed.add_field(name="上傳者", value=f'[{vid_info_author}]({vid_info_author_url})', inline=False)
                     embed.set_thumbnail(url=vid_info_thumbnail)
                     await ctx.send_followup(embed=embed)
 
@@ -148,39 +148,19 @@ class Playlist(commands.Cog):
 
         playlist = DBConnection.getPlaylist(ctx.author.id)
         
-        if playlist is None:
+        if not playlist:
             await ctx.send_followup('你沒有播放清單。')
         else:
             embed = await self.create_embed(ctx, '我的播放清單', '')
 
-            owned_list_desc = None
-            linked_list_desc = None
-            owned_list = 0
-            linked_list = 0
-
             for pl in playlist:
                 await log(pl)
                 if pl[2] == str(ctx.author.id):
-                    if owned_list_desc is None:
-                        owned_list_desc = f'{pl[0]} | {pl[1]}'
-                        
-                    else:
-                        owned_list_desc += f'\n{pl[0]} | {pl[1]}'
-                    owned_list += 1
+                    embed.add_field(name=f"{pl[0]}", value=f'{pl[1]}', inline=False)
                 else:
-                    if linked_list_desc is None:
-                        linked_list_desc = f'{pl[0]} | {pl[1]}'
-                        
-                    else:
-                        linked_list_desc += f'\n{pl[0]} | {pl[1]}'
-                    linked_list += 1
+                    embed.add_field(name=f"{pl[0]} (連結)", value=f'{pl[1]}', inline=False)
 
-
-            embed.description = f'__ID | 命名__'
-            if owned_list_desc is not None:
-                embed.add_field(name=f"擁有清單({owned_list})", value=f'{owned_list_desc}', inline=True)
-            if linked_list_desc is not None:
-                embed.add_field(name=f"連結清單{linked_list}", value=f'{linked_list_desc}', inline=True)
+            embed.description = f'ID, 命名'
 
             await ctx.send_followup(embed=embed)
 
@@ -189,54 +169,90 @@ class Playlist(commands.Cog):
         await ctx.defer()
         playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
         
-        if playlist is None:
-            await ctx.send_followup('指定之播放清單不存在。')
+        if not playlist:
+            await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
         else:
             embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
             pl_owner = await getUserById(playlist[0][6])
             embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
 
-            music_list = None
+            #music_list = None
             for pl in playlist:
+                '''
                 if music_list is None:
-                    music_list = f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                    music_list = f'{pl[0]} | [{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
                 else:
-                    music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                    music_list += f'\n{pl[0]} | [{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                '''
+                embed.add_field(name=f'{pl[0]}', value=f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})', inline=False)
                 
-            embed.add_field(name='曲目', value=str(music_list), inline=True)
+            #embed.add_field(name='曲目', value=str(music_list), inline=True)
 
             await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='listallplaylist', description='List all playlist', description_localizations={"zh-TW": "查閱全域播放清單"})
     async def _listallplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        await ctx.send_followup(DBConnection.getPlaylist())
+        playlist = DBConnection.getPlaylist()
+        
+        if not playlist:
+            await ctx.send_followup('沒有任何播放清單。')
+        else:
+            embed = await self.create_embed(ctx, f'查閱全域播放清單', '')
+            
+            pl_count = 0
+            for pl in playlist:
+                pl_owner = await getUserById(pl[2])
+                embed.add_field(name=f'{pl[0]}', value=f'{pl[1]}\n擁有者: {pl_owner.display_name}', inline=False)
+                pl_count += 1
+                
+            embed.description = f'全域共有 __{pl_count}__ 張播放清單'
 
-    @slash_command(guild_ids=guild_ids, name='linkplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})
+            await ctx.send_followup(embed=embed)
+
+    '''@slash_command(guild_ids=guild_ids, name='linkplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})
     async def _linkplaylist(self, ctx:commands.Context):
         await ctx.defer()
-        await ctx.send_followup('Completed linkplaylist')
+        await ctx.send_followup('Completed linkplaylist')'''
 
     @slash_command(guild_ids=guild_ids, name='deleteplaylist', description='Delete specific playlist from my list', description_localizations={"zh-TW": "從我的播放清單刪除特定播放清單"})
     async def _deleteplaylist(self, ctx:commands.Context, playlist_id):
         await ctx.defer()
         try:
             await log(f'start deleteplaylist {playlist_id}')
-
-            # TODO db operations
-            playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)[0][0]
-            if playlist_name is None:
-                ctx.send_followup("請用 `/unlinkplaylist` 因你非清單擁有者。")
+            
+            playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
+            if not playlist_name:
+                await ctx.send_followup("指定之播放清單不存 或 你非清單擁有者(請使用`/unlinkplaylist`)。")
             else:
+                playlist_name = playlist_name[0][0]
                 DBConnection.deletePlaylist(playlist_id)
-                await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除播放清單 {playlist_id}', ''))
+                await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除播放清單 {playlist_name}', ''))
 
-            await log(f'end deleteplaylist {playlist_id}')
+            await log(f'end deleteplaylist {playlist_name}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during deleteplaylist {playlist_id}:\n\n{e}')
+            
+    @slash_command(guild_ids=guild_ids, name='deletemusicfromplaylist', description='Delete specific music from my playlist', description_localizations={"zh-TW": "從我的特定播放清單刪除特定曲目"})
+    async def _deletemusicfromplaylist(self, ctx:commands.Context, playlist_id, music_id):
+        await ctx.defer()
+        try:
+            await log(f'start deletemusicfromplaylist {playlist_id}')
+            
+            playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
+            if not playlist_name:
+                await ctx.send_followup("指定之播放清單不存 或 你非清單擁有者。")
+            else:
+                playlist_name = playlist_name[0][0]
+                music_name = DBConnection.deleteMusicFromPlaylist(playlist_id, music_id)[0][0]
+                await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除從播放清單 __{playlist_name}__\n刪除曲目 {music_name}', ''))
 
-
+            await log(f'end deletemusicfromplaylist {playlist_name}')
+        except Exception as e:
+            await ctx.send_followup('Error occured.')
+            await log(f'error ocured during deletemusicfromplaylist {playlist_id}:\n\n{e}')
+            
 def setup(
     bot: commands.Bot
 ) -> None:

@@ -1,3 +1,5 @@
+from locale import strcoll
+from pickletools import string1
 from globalImport import *
 from lib.music.VoiceState import VoiceState
 from lib.music.YTDLSource import YTDLSource
@@ -289,6 +291,60 @@ class Music(commands.Cog):
                     except Exception as e:
                         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
+
+    @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'])
+    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int):
+        """播放歌曲。
+        如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
+        如果未提供URL，此指令將自動從各個站點搜索。
+        個站點的列表可以喺呢到揾到：https://rg3.github.io/youtube-dl/supportedsites.html
+        """
+
+        #ctx.voice_stats.voice --> ctx.voice_client
+        #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
+        await ctx.defer()
+
+        if not ctx.voice_client:
+            #await commands.Context.invoke('join2', self._join2, ctx)
+            destination = ctx.author.voice.channel
+            if ctx.voice_state.voice:
+                await ctx.voice_state.voice.move_to(destination)
+                return
+
+            ctx.voice_state.voice = await destination.connect()
+
+        async with ctx.typing():
+            try:
+                playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
+                if not playlist:
+                    await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
+                    return
+                else:
+                    for pl in playlist:
+                        try:
+                            sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
+                        #except YTDLError as e:
+                        except asyncio.TimeoutError:
+                            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+                            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                            await BDS_Log_Channel.send('{}\n\n__TimeoutError__ occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                            await ctx.send_followup('處理此請求時發生錯誤: 處理時間過長 (3分鐘以上)')
+                        except Exception as e:
+                            timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+                            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                            await BDS_Log_Channel.send('{}\n\nError occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                            await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
+                        else:
+                            for source in sourceList:
+                                try:
+                                    song = Song(source)
+                                    await ctx.voice_state.songs.put(song)
+                                    await ctx.send_followup('加咗首 {}'.format(str(source)))
+                                except Exception as e:
+                                    BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                                    await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
+            except Exception as e:
+                await log('e')
 
     @_join.before_invoke
     @_play.before_invoke

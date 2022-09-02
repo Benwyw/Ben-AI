@@ -318,9 +318,9 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
 
         # insert into playlist
-        query = """INSERT INTO playlist (playlist_name) 
-                VALUES (:1) """
-        dataTuple = (playlist_name,)
+        query = """INSERT INTO playlist (playlist_name, owner_user_id) 
+                VALUES (:1, :1) """
+        dataTuple = (playlist_name,userid)
         DBCursor.execute(query, dataTuple)
 
         # get playlist id
@@ -360,7 +360,8 @@ class DBConnection:
         # get all playlist globally
         if userid is None and playlist_id is None:
             query =  """select *
-                        from playlist"""
+                        from playlist
+                        order by playlist_id"""
             DBCursor.execute(query)
             return DBCursor.fetchall()
 
@@ -369,7 +370,8 @@ class DBConnection:
             query =  """select p.*
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id
-                        where userid = :1"""
+                        where userid = :1
+                        order by p.playlist_id"""
             data = (userid,)
             DBCursor.execute(query, data)
             return DBCursor.fetchall()
@@ -379,7 +381,8 @@ class DBConnection:
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
                         inner join music_playlist mp on mp.playlist_id = p.playlist_id
-                        where userid = :1"""
+                        where userid = :1
+                        order by mp.id"""
             data = (playlist_id, userid)
             DBCursor.execute(query, data)
             return DBCursor.fetchall()
@@ -396,7 +399,7 @@ class DBConnection:
 
     # delete owning playlist
     @classmethod
-    def deletePlaylist(cls, playlist_id: str):
+    def deletePlaylist(cls, playlist_id: int):
         botDB, DBCursor = cls.connection()
 
         query = """DELETE FROM user_music_playlist
@@ -415,3 +418,24 @@ class DBConnection:
         DBCursor.execute(query, data)
 
         botDB.commit()
+        
+    # delete music from owning playlist
+    @classmethod
+    def deleteMusicFromPlaylist(cls, playlist_id: int, music_id: int):
+        botDB, DBCursor = cls.connection()
+        
+        query =  """select music_name
+                    from music_playlist
+                    where id = :1"""
+        data = (music_id,)
+        DBCursor.execute(query, data)
+        music_name = DBCursor.fetchall()
+
+        query = """DELETE FROM music_playlist
+                WHERE playlist_id=:1 and id=:1"""
+        data = (playlist_id,music_id)
+        DBCursor.execute(query, data)
+
+        botDB.commit()
+        
+        return music_name
