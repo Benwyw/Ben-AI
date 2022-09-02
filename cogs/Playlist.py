@@ -5,7 +5,7 @@ class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    async def create_embed(self, ctx, title, desc):
+    async def create_embed(self, ctx, title, desc:None):
         '''
         return default embed with default values
         '''
