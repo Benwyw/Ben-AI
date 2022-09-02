@@ -9,7 +9,6 @@ class Playlist(commands.Cog):
         '''
         return default embed with default values
         '''
-        await log('inside create_embed')
         # initial attributes
         #title          = title
         #desc    = '' # editable
@@ -23,8 +22,6 @@ class Playlist(commands.Cog):
         footer_icon_url = 'https://i.imgur.com/i5OEMRD.png'
 
         embed = discord.Embed(title=title, description=desc, color=color) #url=url,
-        await log(author.display_name)
-        await log(author.display_avatar.url)
         embed.set_author(name=author.display_name, icon_url=author.display_avatar.url)
         embed.set_thumbnail(url=thumbnail_icon_url)
         embed.set_footer(text=footer_text, icon_url=footer_icon_url)
@@ -154,56 +151,60 @@ class Playlist(commands.Cog):
             await ctx.send_followup('你沒有播放清單。')
         else:
             embed = await self.create_embed(ctx, '我的播放清單', '')
-            await ctx.send_followup(embed=embed)
 
-            owned_list_desc = ''
-            linked_list_desc = ''
+            owned_list_desc = None
+            linked_list_desc = None
             owned_list = 0
             linked_list = 0
 
             for pl in playlist:
                 await log(pl)
                 if pl[2] == str(ctx.author.id):
-                    if owned_list_desc != '':
-                        owned_list_desc += f'\n{pl[0]} | {pl[1]}'
-                    else:
+                    if owned_list_desc is None:
                         owned_list_desc = f'{pl[0]} | {pl[1]}'
+                        
+                    else:
+                        owned_list_desc += f'\n{pl[0]} | {pl[1]}'
                     owned_list += 1
                 else:
-                    if linked_list_desc != '':
-                        linked_list_desc += f'\n{pl[0]} | {pl[1]}'
-                    else:
+                    if linked_list_desc is None:
                         linked_list_desc = f'{pl[0]} | {pl[1]}'
+                        
+                    else:
+                        linked_list_desc += f'\n{pl[0]} | {pl[1]}'
                     linked_list += 1
-            await log('after for loop')
-            await ctx.send_followup(embed=embed)
+
+
             embed.description = f'__ID | 命名__'
-            await ctx.send_followup(embed=embed)
-            embed.add_field(name=f"擁有清單({owned_list})", value=f'{owned_list_desc}', inline=True)
-            await ctx.send_followup(embed=embed)
-            embed.add_field(name=f"連結清單{linked_list}", value=f'{linked_list_desc}', inline=True)
-            await log('before ending')
+            if owned_list_desc is not None:
+                embed.add_field(name=f"擁有清單({owned_list})", value=f'{owned_list_desc}', inline=True)
+            if linked_list_desc is not None:
+                embed.add_field(name=f"連結清單{linked_list}", value=f'{linked_list_desc}', inline=True)
+
             await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
     async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
         await ctx.defer()
-        playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
+        playlist = DBConnection.getPlaylist(playlist_id, ctx.author.id)
         
-        embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
-        pl_owner = bot.get_user(playlist[0][6])
-        embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
+        if playlist is None:
+            await ctx.send_followup('指定之播放清單不存在。')
+        else:
+            embed = await self.create_embed(ctx, f'查閱播放清單 __{playlist[0][5]}__', f'清單ID: {playlist[0][1]}')
+            pl_owner = bot.get_user(playlist[0][6])
+            embed.set_author(name=f'{pl_owner.display_name}', icon_url=f'{pl_owner.display_avatar.url}')
 
-        music_list = None
-        for pl in playlist:
-            if music_list is None:
-                music_list = f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
-            else:
-                music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
-            
-        embed.add_field(name='曲目', value=music_list, inline=True)
+            music_list = None
+            for pl in playlist:
+                if music_list is None:
+                    music_list = f'[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                else:
+                    music_list += f'\n[{pl[2]}](https://www.youtube.com/watch?v={pl[4]})'
+                
+            embed.add_field(name='曲目', value=music_list, inline=True)
 
-        await ctx.send_followup(embed=embed)
+            await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='listallplaylist', description='List all playlist', description_localizations={"zh-TW": "查閱全域播放清單"})
     async def _listallplaylist(self, ctx:commands.Context):
