@@ -159,8 +159,7 @@ class Playlist(commands.Cog):
             linked_list = 0
 
             for pl in playlist:
-                await ctx.send_followup('158')
-                await ctx.send_followup(pl)
+                await log(pl)
                 if pl[2] == str(ctx.author.id):
                     if owned_list_desc != '':
                         owned_list_desc += f'\n{pl[0]} | {pl[1]}'
