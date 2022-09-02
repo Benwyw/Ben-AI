@@ -264,7 +264,7 @@ class Playlist(commands.Cog):
                 await ctx.send_followup("指定之播放清單不存 或 你非清單擁有者。")
             else:
                 playlist_name = playlist_name[0][0]
-                playlist_new_name_confirmed = DBConnection.updateMyPlaylistName(playlist_id, playlist_new_name)[0][0]
+                playlist_new_name_confirmed = DBConnection.updateMyPlaylistName(playlist_id, playlist_new_name)
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已更改播放清單名稱至 __{playlist_new_name_confirmed}__', ''))
 
             await log(f'end updatemyplaylistname {playlist_name} {playlist_new_name_confirmed}')
