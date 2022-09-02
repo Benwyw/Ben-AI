@@ -315,7 +315,7 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                playlist = DBConnection.getPlaylist(None, playlist_id)
+                playlist = DBConnection.getPlaylist(ctx.author.id, playlist_id)
                 if not playlist:
                     await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
                     return
