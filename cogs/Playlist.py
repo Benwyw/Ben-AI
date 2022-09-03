@@ -205,7 +205,7 @@ class Playlist(commands.Cog):
 
             await ctx.send_followup(embed=embed)
 
-    @playlist.command(guild_ids=guild_ids, name='listall', description='List all playlist', description_localizations={"zh-TW": "播放清單 查閱所有人"})
+    @playlist.command(guild_ids=guild_ids, name='list', description='List all playlist', description_localizations={"zh-TW": "播放清單 查閱所有人"})
     async def _listallplaylist(self, ctx:commands.Context):
         await ctx.defer()
         playlist = DBConnection.getPlaylist()
