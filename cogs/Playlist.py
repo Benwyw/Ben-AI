@@ -222,7 +222,6 @@ class Playlist(commands.Cog):
                 pl_count += 1
                 
             embed.description = f'全域共有 __{pl_count}__ 張播放清單'
-
             await ctx.send_followup(embed=embed)
 
     '''@playlist.command(guild_ids=guild_ids, name='linkplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})

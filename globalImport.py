@@ -186,4 +186,7 @@ async def log(content):
     await log_channel.send(f'{str(content)}\n\n`{timestamp}`')
 
 async def getUserById(userid):
-    return bot.get_user(int(userid))
+    result = bot.get_user(int(userid))
+    if result is None:
+        result = await bot.fetch_user(int(userid))
+    return result
