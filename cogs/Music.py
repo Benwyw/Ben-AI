@@ -326,6 +326,8 @@ class Music(commands.Cog):
                             if start_id is not None:
                                 if int(pl[0]) >= start_id:
                                     sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
+                                else:
+                                    continue
                             else:
                                 sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
                         #except YTDLError as e:
@@ -340,14 +342,15 @@ class Music(commands.Cog):
                             await BDS_Log_Channel.send('{}\n\nError occured in YTDLSource.create_source\n{}'.format(e,timestamp))
                             await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
                         else:
-                            for source in sourceList:
-                                try:
-                                    song = Song(source)
-                                    await ctx.voice_state.songs.put(song)
-                                    await ctx.send_followup('加咗首 {}'.format(str(source)))
-                                except Exception as e:
-                                    BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                                    await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
+                            if sourceList:
+                                for source in sourceList:
+                                    try:
+                                        song = Song(source)
+                                        await ctx.voice_state.songs.put(song)
+                                        await ctx.send_followup('加咗首 {}'.format(str(source)))
+                                    except Exception as e:
+                                        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+                                        await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
                 except Exception as e:
                         await log(f'{e}')
 
