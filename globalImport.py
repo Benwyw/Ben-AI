@@ -12,7 +12,7 @@ import yt_dlp
 import pandas as pd
 import MinecraftServer as mc
 
-from discord import slash_command, Option, OptionChoice
+from discord import slash_command, Option, OptionChoice, SlashCommandGroup
 from discord.ext import commands, pages
 from discord.ui import InputText, Modal
 

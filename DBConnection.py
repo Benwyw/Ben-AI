@@ -464,3 +464,14 @@ class DBConnection:
         botDB.commit()
         
         return playlist_new_name
+    
+    # TODO
+    @classmethod
+    def selectAllPlaylistId(cls):
+        botDB, DBCursor = cls.connection()
+        query =  """select playlist_id
+                    from playlist
+                    order by playlist_id"""
+        DBCursor.execute(query)
+        playlist_ids = DBCursor.fetchall()
+        return playlist_ids

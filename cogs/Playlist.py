@@ -4,6 +4,8 @@ import urllib.request
 class Playlist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        
+    playlist = SlashCommandGroup(guild_ids=guild_ids, name="playlist", description='Playlist', description_localizations={"zh-TW": "播放清單"})
 
     async def create_embed(self, ctx, title, desc):
         '''
@@ -27,9 +29,19 @@ class Playlist(commands.Cog):
         embed.set_footer(text=footer_text, icon_url=footer_icon_url)
 
         return embed
+    
+    # TODO
+    async def get_next_playlistid(self):
+        # TODO get all current IDs
+        playlist_ids = DBConnection.selectAllPlaylistId()[0]
+        
+        # TODO for loop get num from min
+        for i in range(1000000):
+            if i not in playlist_ids:
+                return i
 
     '''    
-    @slash_command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
+    @playlist.command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
     #@commands.cooldown(1, 600, commands.BucketType.user)
     #cooldown=commands.CooldownMapping.from_cooldown(2, 60, commands.BucketType.default),
     async def _testplaylist(self, ctx:commands.Context, desc:str):
@@ -52,7 +64,7 @@ class Playlist(commands.Cog):
         await ctx.send_followup(embed=template)
     '''
 
-    @slash_command(guild_ids=guild_ids, name='createplaylist', description='Create playlist', description_localizations={"zh-TW": "建立播放清單"})
+    @playlist.command(guild_ids=guild_ids, name='create', description='Create playlist', description_localizations={"zh-TW": "播放清單 建立"})
     async def _createplaylist(self, ctx:commands.Context, playlist_name:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
@@ -62,6 +74,10 @@ class Playlist(commands.Cog):
             if (len(playlist_name)) > 30:
                 ctx.send_followup('播放清單名稱限30字元內。')
             else:
+                # TODO remove identity column, custom generate seq num
+                #next_playlist_id = self.get_next_playlistid()
+                #DBConnection.createPlaylist(next_playlist_id, ctx.author.id, playlist_name)
+                
                 DBConnection.createPlaylist(ctx.author.id, playlist_name)
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已建立播放清單 {playlist_name}', ''))
             await log(f'end createplaylist {playlist_name}')
@@ -69,7 +85,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during createplaylist {playlist_name}:\n\n{e}')
 
-    @slash_command(guild_ids=guild_ids, name='insertplaylist', description='Insert music into existing playlist', description_localizations={"zh-TW": "將音樂加入播放清單"})
+    @playlist.command(guild_ids=guild_ids, name='insert', description='Insert music into existing playlist', description_localizations={"zh-TW": "播放清單 加入 音樂"})
     async def _insertplaylist(self, ctx:commands.Context, playlist_id:int, music_url:str):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
@@ -126,7 +142,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error occured during insertplaylist {playlist_id}:\n\n{e}')
 
-    '''@slash_command(guild_ids=guild_ids, name='setplaylistthumbnail', description='Update playlist thumbnail', description_localizations={"zh-TW": "更新播放清單圖象"})
+    '''@playlist.command(guild_ids=guild_ids, name='setplaylistthumbnail', description='Update playlist thumbnail', description_localizations={"zh-TW": "更新播放清單圖象"})
     async def _setplaylistthumbnail(self, ctx:commands.Context, playlist_name:str, thumbnail_url:str):
         await ctx.defer()
         try:
@@ -141,7 +157,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during setplaylistthumbnail {playlist_name}:\n\n{e}')'''
 
-    @slash_command(guild_ids=guild_ids, name='myplaylist', description='Retrieve all my playlist', description_localizations={"zh-TW": "查閱所有我的播放清單"})
+    @playlist.command(guild_ids=guild_ids, name='my', description='Retrieve all my playlist', description_localizations={"zh-TW": "播放清單 查閱擁有"})
     async def _myplaylist(self, ctx:commands.Context):
         await ctx.defer()
 
@@ -163,7 +179,7 @@ class Playlist(commands.Cog):
 
             await ctx.send_followup(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, name='getplaylist', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "查閱特定播放清單的曲目"})
+    @playlist.command(guild_ids=guild_ids, name='get', description='Retrieve details of a specific playlist', description_localizations={"zh-TW": "播放清單 查閱曲目"})
     async def _getplaylist(self, ctx:commands.Context, playlist_id: int):
         await ctx.defer()
         playlist = DBConnection.getPlaylist(None, playlist_id)
@@ -189,7 +205,7 @@ class Playlist(commands.Cog):
 
             await ctx.send_followup(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, name='listallplaylist', description='List all playlist', description_localizations={"zh-TW": "查閱全域播放清單"})
+    @playlist.command(guild_ids=guild_ids, name='listall', description='List all playlist', description_localizations={"zh-TW": "播放清單 查閱所有人"})
     async def _listallplaylist(self, ctx:commands.Context):
         await ctx.defer()
         playlist = DBConnection.getPlaylist()
@@ -209,12 +225,12 @@ class Playlist(commands.Cog):
 
             await ctx.send_followup(embed=embed)
 
-    '''@slash_command(guild_ids=guild_ids, name='linkplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})
+    '''@playlist.command(guild_ids=guild_ids, name='linkplaylist', description='Copy specific playlist to my playlist', description_localizations={"zh-TW": "複製特定播放清單至我的播放清單"})
     async def _linkplaylist(self, ctx:commands.Context):
         await ctx.defer()
         await ctx.send_followup('Completed linkplaylist')'''
 
-    @slash_command(guild_ids=guild_ids, name='deleteplaylist', description='Delete specific playlist from my list', description_localizations={"zh-TW": "從我的播放清單刪除特定播放清單"})
+    @playlist.command(guild_ids=guild_ids, name='delete', description='Delete specific playlist from my list', description_localizations={"zh-TW": "播放清單 刪除"})
     async def _deleteplaylist(self, ctx:commands.Context, playlist_id):
         await ctx.defer()
         try:
@@ -233,7 +249,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during deleteplaylist {playlist_id}:\n\n{e}')
             
-    @slash_command(guild_ids=guild_ids, name='deletemusicfromplaylist', description='Delete specific music from my playlist', description_localizations={"zh-TW": "從我的特定播放清單刪除特定曲目"})
+    @playlist.command(guild_ids=guild_ids, name='deletemusic', description='Delete specific music from my playlist', description_localizations={"zh-TW": "播放清單 刪除曲目"})
     async def _deletemusicfromplaylist(self, ctx:commands.Context, playlist_id, music_id):
         await ctx.defer()
         try:
@@ -252,7 +268,7 @@ class Playlist(commands.Cog):
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during deletemusicfromplaylist {playlist_id}:\n\n{e}')
             
-    @slash_command(guild_ids=guild_ids, name='updatemyplaylistname', description='Update my playlist name', description_localizations={"zh-TW": "更改播放清單名"})
+    @playlist.command(guild_ids=guild_ids, name='rename', description='Rename my playlist', description_localizations={"zh-TW": "播放清單 改名"})
     async def _updatemyplaylistname(self, ctx:commands.Context, playlist_id, playlist_new_name):
         await ctx.defer()
         try:
