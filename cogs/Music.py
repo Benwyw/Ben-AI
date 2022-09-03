@@ -293,7 +293,7 @@ class Music(commands.Cog):
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
     @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist', description_localizations={"zh-TW": "播放播放清單"})
-    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random_shuffle: bool=False):
+    async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random_shuffle: bool=False, start_id: int=None):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
         如果未提供URL，此指令將自動從各個站點搜索。
@@ -323,7 +323,11 @@ class Music(commands.Cog):
                         random.shuffle(playlist)
                     for pl in playlist:
                         try:
-                            sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
+                            if start_id is not None:
+                                if int(pl[0]) >= start_id:
+                                    sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
+                            else:
+                                sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
                         #except YTDLError as e:
                         except asyncio.TimeoutError:
                             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
