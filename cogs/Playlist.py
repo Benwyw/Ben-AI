@@ -131,7 +131,7 @@ class Playlist(commands.Cog):
                         vid_info_thumbnail = str(data['thumbnail_url'])
 
                     # TODO db operations
-                    DBConnection.insertPlaylist(playlist_id, vid_info_title, vid_info_author, VideoID)
+                    DBConnection.insertPlaylist(playlist_id, vid_info_title.substring[0,50], vid_info_author, VideoID)
                     embed = await self.create_embed(ctx, f'已加入播放清單 __{playlist_name}__', f'[{vid_info_title}]({music_url})')
                     embed.add_field(name="上傳者", value=f'[{vid_info_author}]({vid_info_author_url})', inline=False)
                     embed.set_thumbnail(url=vid_info_thumbnail)
