@@ -9,3 +9,9 @@ guild_BenKaChu = 671654280985313282
 guild_Cave = 490302069425700864
 guild_Manny = 982965069535150140
 guild_Minecraft = 965588726778585111
+
+channel_BenDiscordBot_PublicDemo = 927850362776461333
+channel_BrianLee_Satellite = 815568098001813555
+channel_BenKaChu_OffTopic = 772038210057535488
+
+Economy_imgUrl = "https://i.imgur.com/ydS4u8P.png"

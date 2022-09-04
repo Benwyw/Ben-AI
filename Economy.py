@@ -10,6 +10,7 @@ from globalImport import *
 imgUrl = "https://i.imgur.com/ydS4u8P.png"
 
 class Economy(commands.Cog):
+    
     @slash_command(guild_ids=guild_ids, description="Check user balance.",
                       brief="Check user balance",
                       name="bal",
@@ -25,7 +26,7 @@ class Economy(commands.Cog):
         money = DBConnection.fetchUserData("userBalance", str(user.id))
         embed = discord.Embed(title="用戶餘額", color=0x00ff00)
         embed.set_author(name=user.display_name, icon_url=user.display_avatar.url)
-        embed.set_thumbnail(url=imgUrl)
+        embed.set_thumbnail(url=Economy_imgUrl)
         embed.description = "$" + str(money)
         await ctx.send_followup(embed=embed)
 
@@ -34,50 +35,9 @@ class Economy(commands.Cog):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title="Command Error", color=0x00ff00)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            embed.set_thumbnail(url=imgUrl)
+            embed.set_thumbnail(url=Economy_imgUrl)
             embed.description = "Invalid user provided."
             embed.set_footer(text="Mention a user to check their balance.")
-            await ctx.send(embed=embed)
-
-    @slash_command(guild_ids=guild_ids, description="Set money for user. Requires administrator permissions.",
-                      brief="Set money for user",
-                      name="setbal",
-                      help="Set the balance of a user to a specified value. Requires administrator permissions for use. Mention a user to"
-                           " set their balance. Format is $setbal <mention user> <balance amount>.",
-                      pass_context=True)
-    @commands.is_owner()
-    #@commands.check_any(commands.has_permissions(administrator=True), commands.is_owner())
-    async def setbal(self, ctx, user: discord.Member = None, amount: float = None):
-        await ctx.defer()
-        embed = discord.Embed(title="Set User Balance", color=0x00ff00)
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=imgUrl)
-
-        if amount is None or user is None:
-            embed.description = "指令格式無效。 嘗試 $setbal <提及用戶> <金額>。"
-            await ctx.send(embed=embed)
-            return
-
-        DBConnection.updateUserBalance(str(user.id), amount)
-
-        embed.description = user.display_name + " 的餘額已設置為 $" + str(amount) + "."
-        await ctx.send_followup(embed=embed)
-
-    @setbal.error
-    async def setbal_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            embed = discord.Embed(title="Command Error",
-                                  description="Invalid arguments detected for command 'setbal'. Check $help setbal for more details.",
-                                  color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            embed.set_thumbnail(url=imgUrl)
-            await ctx.send(embed=embed)
-        elif isinstance(error, commands.MissingPermissions):
-            embed = discord.Embed(title="權限錯誤",
-                                  description="您無權使用此指令。",
-                                  color=0x00ff00)
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            embed.set_thumbnail(url=imgUrl)
             await ctx.send(embed=embed)
 
     @slash_command(guild_ids=guild_ids, description="Pay a user.",
@@ -90,7 +50,7 @@ class Economy(commands.Cog):
         await ctx.defer()
         embed = discord.Embed(title="支付", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed.set_thumbnail(url=imgUrl)
+        embed.set_thumbnail(url=Economy_imgUrl)
         if user is None:
             embed.description = "沒有提供收款人。"
             await ctx.send_followup(embed=embed)
@@ -135,7 +95,7 @@ class Economy(commands.Cog):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title="指令錯誤", color=0x00ff00)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            embed.set_thumbnail(url=imgUrl)
+            embed.set_thumbnail(url=Economy_imgUrl)
             embed.description = "檢測到指令為 \'pay\' 的無效參數。 嘗試 $pay <提及用戶> <金額>"
             await ctx.send(embed=embed)
 

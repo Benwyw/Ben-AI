@@ -30,7 +30,7 @@ class DBConnection:
     def connection(cls):
         #if DBConnection.botDB.is_connected():
         try:
-            if DBConnection.botDB.ping() is None:
+            if DBConnection.botDB.is_healthy(): #DBConnection.botDB.ping() is None:
                 pass
             else:
                 raise ValueError('DB connection is not alive')

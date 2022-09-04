@@ -108,6 +108,10 @@ class Music(commands.Cog):
             return await ctx.respond('未連接到任何語音通道。')
 
         await ctx.voice_state.stop()
+        try:
+            await ctx.guild.voice_client.disconnect()
+        except Exception as e:
+            pass
         del self.voice_states[ctx.guild.id]
         await ctx.respond(':middle_finger:')
 

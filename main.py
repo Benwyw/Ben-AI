@@ -498,7 +498,7 @@ async def hypebeastLoop():
 
                 await BDS_PD_Channel.send(embed=embed)
                 await BLG_ST_Channel.send(embed=embed)
-                await BMS_OT_Channel.send(embed=embed)
+                #await BMS_OT_Channel.send(embed=embed)
 
             break
     except Exception as e:
@@ -583,9 +583,9 @@ async def gamesLoop():
                         url = url1 +'/'+ url2
                     embed.url = url
 
-                BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
-                BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+                BDS_PD_Channel = bot.get_channel(channel_BenDiscordBot_PublicDemo) #Ben Discord Bot - public demo
+                BLG_ST_Channel = bot.get_channel(channel_BrianLee_Satellite) #BrianLee Server - satellie
+                BMS_OT_Channel = bot.get_channel(channel_BenKaChu_OffTopic) #Ben's Minecraft Server - off topic
 
                 await BDS_PD_Channel.send(embed=embed)
                 await BLG_ST_Channel.send(embed=embed)
@@ -602,18 +602,18 @@ async def newsLoop():
     for newsId in newsList:
         embed = await getNewsEmbed(newsId)
         if embed is not None:
-            BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-            BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
-            BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+            BDS_PD_Channel = bot.get_channel(channel_BenDiscordBot_PublicDemo) #Ben Discord Bot - public demo
+            BLG_ST_Channel = bot.get_channel(channel_BrianLee_Satellite) #BrianLee Server - satellie
+            BMS_OT_Channel = bot.get_channel(channel_BenKaChu_OffTopic) #Ben's Minecraft Server - off topic
 
             await BDS_PD_Channel.send(embed=embed)
-            await BLG_ST_Channel.send(embed=embed)
-            await BMS_OT_Channel.send(embed=embed)
+            #await BMS_OT_Channel.send(embed=embed)
             
             if newsId in ['Bloomberg', 'IGN']:
                 Cave_Channel = bot.get_channel(965809908970819614) #Cave - ben-ai
-                
                 await Cave_Channel.send(embed=embed)
+            else:
+                await BLG_ST_Channel.send(embed=embed)
 
 @loop(minutes=15)
 async def covLoop():
@@ -709,7 +709,7 @@ async def covLoop():
 
             await BDS_PD_Channel.send(embed=embed)
             await BLG_ST_Channel.send(embed=embed)
-            await BMS_OT_Channel.send(embed=embed)
+            #await BMS_OT_Channel.send(embed=embed)
 
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
@@ -729,6 +729,7 @@ bot.load_extension('cogs.General') #bot.add_cog(General(bot))
 bot.load_extension('cogs.Game') #bot.add_cog(Game(bot))
 bot.load_extension('cogs.CyberSecurity')
 bot.load_extension('cogs.Playlist')
+bot.load_extension('cogs.Admin')
 
 '''@bot.slash_command(name="modaltest1", guild_ids=guild_ids)
 async def modal_slash(ctx):
