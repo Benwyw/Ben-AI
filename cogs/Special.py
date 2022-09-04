@@ -112,7 +112,7 @@ class Special(commands.Cog):
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e,timestamp))
 
-    @slash_command(guild_ids=guild_ids, name='log')
+    @mc.command(guild_ids=guild_ids, name='log')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     async def log(self, ctx: commands.Context, message):
         '''Change log release'''
@@ -641,7 +641,7 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
 
-    @slash_command(guild_ids=guild_ids, name='blocklist')
+    @mc.command(guild_ids=guild_ids, name='blocklist')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _blklist(self, ctx: commands.Context):
@@ -671,7 +671,7 @@ class Special(commands.Cog):
         else:
             await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')
 
-    @slash_command(guild_ids=guild_ids, name='dm')
+    @mc.command(guild_ids=guild_ids, name='dm')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _dm(self, ctx: commands.Context, target, content):
@@ -724,7 +724,7 @@ class Special(commands.Cog):
         else:
             await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')
 
-    @slash_command(guild_ids=guild_ids, name='ver')
+    @mc.command(guild_ids=guild_ids, name='ver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _ver(self, ctx: commands.Context, message):
@@ -764,7 +764,7 @@ class Special(commands.Cog):
         else:
             await ctx.respond('請去 <#878538264762527744> 或 <#692466531447210105>')
 
-    @slash_command(guild_ids=guild_ids, name='discver')
+    @mc.command(guild_ids=guild_ids, name='discver')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _discver(self, ctx: commands.Context, message):

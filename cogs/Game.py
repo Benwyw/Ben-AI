@@ -240,7 +240,9 @@ def sortHand(user: discord.Member, HAND):
     return h
 
 class Game(commands.Cog):
-    @slash_command(guild_ids=guild_ids, description="遊戲幫助指令。",
+    game = SlashCommandGroup(guild_ids=guild_ids, name="game", description='Game', description_localizations={"zh-TW": "遊戲"})
+    
+    @game.command(guild_ids=guild_ids, description="遊戲幫助指令。",
                       name="cmd",
                       help="顯示遊戲指令表",
                       pass_context=True)
@@ -325,7 +327,7 @@ class Game(commands.Cog):
             embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
             await ctx.send(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, description="生成隨機卡。 可能會出現重複項。",
+    @game.command(guild_ids=guild_ids, description="生成隨機卡。 可能會出現重複項。",
                       name="rc",
                     brief="生成隨機卡",
                     help="該命令從52張卡組中生成一張隨機卡。 格式為 /rc。 不需要任何參數。",
@@ -363,7 +365,7 @@ class Game(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    '''@slash_command(guild_ids=guild_ids, description="從卡組中拉出許多隨機卡。",
+    '''@game.command(guild_ids=guild_ids, description="從卡組中拉出許多隨機卡。",
                       name="draw",
                     brief="從牌組中抽出若干張牌",
                     help="從卡組中拉出一些指定的隨機卡。\n"
@@ -409,7 +411,7 @@ class Game(commands.Cog):
         await ctx.send(file=file, embed=embed)'''
 
 
-    @slash_command(guild_ids=guild_ids, description="查看您的手。",
+    @game.command(guild_ids=guild_ids, description="查看您的手。",
                       name="hand",
                     brief="查看你的手",
                     help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 /hand，不帶任何參數。",
@@ -434,7 +436,7 @@ class Game(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    @slash_command(guild_ids=guild_ids, description="Set sorting type. 'p' for (3 low, 2 high), 'd' for (A low, K high), 's' for (diamonds - spades).",
+    @game.command(guild_ids=guild_ids, description="Set sorting type. 'p' for (3 low, 2 high), 'd' for (A low, K high), 's' for (diamonds - spades).",
                       name="setsort",
                     brief="Set sorting type",
                     aliases=['ss'],
@@ -473,7 +475,7 @@ class Game(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @slash_command(guild_ids=guild_ids, description="開始遊戲。",
+    @game.command(guild_ids=guild_ids, description="開始遊戲。",
                       name="game",
                     brief="開始遊戲",
                     aliases=['5card'],
@@ -548,7 +550,7 @@ class Game(commands.Cog):
                 await ctx.send(embed=embed)'''
 
 
-    @slash_command(guild_ids=guild_ids, description="使用6位數字id參加遊戲。",
+    @game.command(guild_ids=guild_ids, description="使用6位數字id參加遊戲。",
                       name="in",
                     brief="加入遊戲。",
                     help="使用其6位數字id加入現有遊戲。 此命令的格式為 /in <6位數id>。",
@@ -600,7 +602,7 @@ class Game(commands.Cog):
         await ctx.respond(embed=embed)
 
 
-    @slash_command(guild_ids=guild_ids, description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
+    @game.command(guild_ids=guild_ids, description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
                       name="out",
                     brief="離開您加入的遊戲，如果該遊戲已經在進行中，則放棄任何下注",
                     help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 /out，不帶任何參數。",
@@ -629,7 +631,7 @@ class Game(commands.Cog):
         await ctx.respond(embed=embed)
 
 
-    @slash_command(guild_ids=guild_ids, description="開始遊戲。",
+    @game.command(guild_ids=guild_ids, description="開始遊戲。",
                       name="start",
                     brief="開始遊戲",
                     help="如果您還沒有開始遊戲，請先開始。 格式為 /start，不帶任何參數。",
@@ -664,7 +666,7 @@ class Game(commands.Cog):
         await GAME.startGame()
 
 
-    @slash_command(guild_ids=guild_ids, description="使用十六進制代碼為您的手設置自定義顏色。",
+    @game.command(guild_ids=guild_ids, description="使用十六進制代碼為您的手設置自定義顏色。",
                       name="setcolor",
                     brief="為您的手設置自定義顏色",
                     aliases=['sc', 'setColour'],
