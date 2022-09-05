@@ -923,7 +923,7 @@ class Special(commands.Cog):
         
         target_user_msg = await target_user.send(embed=embed_to_target_user)
         channel_msg = await ctx.send_followup(embed=embed_to_target_user)
-        channel_msg.add_reaction('📧')
+        await channel_msg.add_reaction('📧')
         await ctx.send_followup('正等待回覆...')
 
         confirmEmoji = '👍'
