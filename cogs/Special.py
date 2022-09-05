@@ -937,8 +937,8 @@ class Special(commands.Cog):
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
         OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"})
     ]
-    @ask.command(guild_ids=guild_ids, name='aram', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
-    async def _aram(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
+    @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
+    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
         await ctx.defer()
         
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose)
@@ -965,23 +965,23 @@ class Special(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
         except asyncio.TimeoutError:
-            status = f"__{purpose}__邀請已過期"
-            await target_user.send(status)
-            await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
+            desc_embed = await self.create_desc_embed(target_user, f"__{purpose}__邀請已過期")
+            await target_user.send(embed=desc_embed)
+            await ctx.send_followup(embed=desc_embed)
             return
         else:
             if str(rxn[0].emoji) == confirmEmoji:
-                status = f"已接受__{purpose}__邀請"
+                desc_embed = await self.create_desc_embed(target_user, f"已接受__{purpose}__邀請")
 
-                await target_user.send(status)
+                await target_user.send(embed=desc_embed)
                 await channel_msg.add_reaction(confirmEmoji)
-                await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
+                await ctx.send_followup(embed=desc_embed)
             elif str(rxn[0].emoji) == quitEmoji:
-                status = f"已拒絕__{purpose}__邀請"
+                desc_embed = await self.create_desc_embed(target_user, f"已拒絕__{purpose}__邀請")
 
-                await target_user.send(status)
+                await target_user.send(embed=desc_embed)
                 await channel_msg.add_reaction(quitEmoji)
-                await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
+                await ctx.send_followup(embed=desc_embed)
 
 def setup(
     bot: commands.Bot
