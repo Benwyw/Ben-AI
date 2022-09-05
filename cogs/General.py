@@ -11,20 +11,6 @@ class General(commands.Cog):
         await ctx.respond("你好呀 "+str(ctx.author.display_name))
         await ctx.send_followup("你好你好")
 
-    @slash_command(guild_ids=guild_ids, name='ping')
-    async def _ping(self, ctx: commands.Context, target):
-        '''Ping爆佢!!!'''
-
-        if '<@' not in target and '>' not in target:
-            await ctx.respond("我唔會Ping: 空氣 / 其他Bot")
-        else:
-            embed = discord.Embed()
-            embed.set_author(name="{} 揾你".format(ctx.author.display_name))
-            await ctx.respond("Ping爆佢!!!")
-            for count in range(10):
-                await ctx.send_followup("{}".format(target))
-                await ctx.send_followup(embed=embed)
-
     @slash_command(guild_ids=guild_ids, name='news')
     async def _news(self, ctx:commands.Context, search=None, language=None):
         """新聞 zh=中文 en=英文 默認中文"""
@@ -145,19 +131,23 @@ class General(commands.Cog):
 
         csv_url="http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_covid_19_chi.csv"
         response = requests.get(csv_url)
+        await log(response)
 
         response.close()
         e = discord.Embed()
-
+        await log('after discord.Embed')
         # Initialize IO
         data_stream = io.BytesIO()
 
         file_object = io.StringIO(response.content.decode('utf-8'))
+        await log(f'file_object: {file_object}')
         pd.set_option('display.max_rows', 60)
         pd.set_option('display.max_columns', None)
         data = pd.read_csv(file_object)
+        await log(f'read_csv: {data}')
 
         data = data.tail(60)
+        await log(f'tail 60: {data}')
 
         try:
             #data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
@@ -205,7 +195,7 @@ class General(commands.Cog):
         latest = data['確診個案'].iloc[-1]
         if latest is None or str(latest) == 'nan':
             latest = data['嚴重急性呼吸綜合症冠狀病毒2的陽性檢測個案'].iloc[-1]
-
+        await log('before send_followup')
         await ctx.send_followup(content='__確診個案__\n最高: {}\n最低: {}\n平均: {}\n中位: {}\n現時: {}'.format(data['確診個案'].max(), data['確診個案'].min(), data['確診個案'].mean(), data['確診個案'].median(), latest), embed=e, file=chart)
 
 def setup(
