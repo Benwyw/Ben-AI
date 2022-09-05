@@ -903,7 +903,7 @@ class Special(commands.Cog):
         await ctx.defer()
         embed_to_target_user = discord.Embed(title='玩唔玩ARAM呀?')
         embed_to_target_user.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed_to_target_user.description = f'{ctx.author} <:arrow_right:1016253447638618183> {target_user}'
+        embed_to_target_user.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
         embed_to_target_user.set_thumbnail(url="https://i.imgur.com/tsJ59Fg.png")
         embed_to_target_user.set_footer(text=get_timestamp)
 
