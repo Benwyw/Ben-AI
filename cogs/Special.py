@@ -967,6 +967,8 @@ class Special(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
         except asyncio.TimeoutError:
+            await target_user_msg.remove_reaction(confirmEmoji, bot.user)
+            await target_user_msg.remove_reaction(quitEmoji, bot.user)
             desc_embed = await self.create_desc_embed(target_user, f"__{purpose}__邀請已過期")
             await target_user.send(embed=desc_embed)
             await ctx.send_followup(embed=desc_embed)
