@@ -939,9 +939,13 @@ class Special(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
         except asyncio.TimeoutError:
-            await target_user_msg.clear_reactions()
-            await target_user_msg.reply('邀請已過期')
-            print('after reply')
+            try:
+                await target_user_msg.clear_reaction(confirmEmoji)
+                await target_user_msg.clear_reaction(quitEmoji)
+                await target_user_msg.reply('邀請已過期')
+                print('after reply')
+            except Exception as e:
+                pass
             embed_timeout = discord.Embed(description=f"<@{target_user.id}> 沒有回應")
             await ctx.send_followup(embed=embed_timeout)
             return
