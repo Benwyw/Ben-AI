@@ -912,8 +912,8 @@ class Special(commands.Cog):
 
         confirmEmoji = '👍'
         quitEmoji = '👎'
-        target_user_msg.add_reaction(confirmEmoji)
-        target_user_msg.add_reaction(quitEmoji)
+        await target_user_msg.add_reaction(confirmEmoji)
+        await target_user_msg.add_reaction(quitEmoji)
 
         def check(reaction, user):
                 global rxn
