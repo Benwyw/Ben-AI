@@ -107,14 +107,11 @@ class Playlist(commands.Cog):
                     VideoID = pattern.search(music_url)
                     for i in range(30):
                         try:
-                            await log(VideoID.group(i))
                             if 'watch?v=' in VideoID.group(i) and 'https' not in VideoID.group(i):
                                 VideoID = VideoID.group(i+1)
                                 break
                         except Exception as e:
                             pass
-                            
-                    await log(f'Result: {VideoID}')
 
                     params = {"format": "json", "url": "https://www.youtube.com/watch?v=%s" % VideoID}
                     url = "https://www.youtube.com/oembed"
@@ -123,8 +120,6 @@ class Playlist(commands.Cog):
 
                     with urllib.request.urlopen(url) as response:
                         data = json.loads(response.read().decode())
-                        await log(data)
-                        await log(f"{data['title']}")
                         vid_info_title = str(data['title'])
                         vid_info_author = str(data['author_name'])
                         vid_info_author_url = str(data['author_url'])
@@ -169,7 +164,6 @@ class Playlist(commands.Cog):
             embed = await self.create_embed(ctx, '我的播放清單', '')
 
             for pl in playlist:
-                await log(pl)
                 if pl[2] == str(ctx.author.id):
                     embed.add_field(name=f"{pl[0]}", value=f'{pl[1]}', inline=False)
                 else:
