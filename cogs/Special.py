@@ -948,15 +948,12 @@ class Special(commands.Cog):
             await ctx.send_followup(embed=embed_timeout)
             return
         else:
-            print('after else')
             if str(rxn[0].emoji) == confirmEmoji:
-                print('after conirmed')
                 await target_user.send('已接受邀請')
                 await channel_msg.add_reaction(confirmEmoji)
                 embed_accept = discord.Embed(description=f"<@{target_user.id}> 已接受邀請")
                 await ctx.send_followup(embed=embed_accept)
             elif str(rxn[0].emoji) == quitEmoji:
-                print('after rejected')
                 await target_user.send('已拒絕邀請')
                 await channel_msg.add_reaction(quitEmoji)
                 embed_reject = discord.Embed(description=f"<@{target_user.id}> 已拒絕邀請")
