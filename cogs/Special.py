@@ -933,7 +933,7 @@ class Special(commands.Cog):
         OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
     ]
-    @ask.command(guild_ids=guild_ids, name='aram', description="Let's play...?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
+    @ask.command(guild_ids=guild_ids, name='aram', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
     async def _aram(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
         await ctx.defer()
         
@@ -961,18 +961,19 @@ class Special(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
         except asyncio.TimeoutError:
-            await target_user.send('邀請已過期')
-            await ctx.send_followup(embed=await self.create_desc_embed(target_user, '沒有回應'))
+            status = f"__{purpose}__邀請已過期"
+            await target_user.send(status)
+            await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
             return
         else:
             if str(rxn[0].emoji) == confirmEmoji:
-                status = "已接受邀請"
+                status = f"已接受__{purpose}__邀請"
 
                 await target_user.send(status)
                 await channel_msg.add_reaction(confirmEmoji)
                 await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
             elif str(rxn[0].emoji) == quitEmoji:
-                status = "已拒絕邀請"
+                status = f"已拒絕__{purpose}__邀請"
 
                 await target_user.send(status)
                 await channel_msg.add_reaction(quitEmoji)
