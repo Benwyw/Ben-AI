@@ -971,11 +971,12 @@ async def on_application_command_error(ctx, error):
 
 @bot.event
 async def on_reaction_add(reaction, user):
-    if reaction.message.guild.id == 351742829254410250 and (('ben' in reaction.message.content.lower() and 'gay' in reaction.message.content.lower()) or ('ben' == reaction.message.content.lower())):
+    pass
+    '''if reaction.message.guild.id == 351742829254410250 and (('ben' in reaction.message.content.lower() and 'gay' in reaction.message.content.lower()) or ('ben' == reaction.message.content.lower())):
         if len(reaction.message.reactions) == 3 and "🇬" in str(reaction.message.reactions) and "🇦" in str(reaction.message.reactions) and "🇾" in str(reaction.message.reactions):
             await reaction.message.add_reaction("🇵")
             await reaction.message.add_reaction("🇴")
-            await reaction.message.add_reaction("🇰")
+            await reaction.message.add_reaction("🇰")'''
 
 @bot.event
 async def on_message(message):
