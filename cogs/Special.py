@@ -896,7 +896,7 @@ class Special(commands.Cog):
         else:
             await ctx.send_followup('Response.status_code != 200. <@{}>'.format(bot.owner_id))
 
-    @ask.commad(guild_ids=guild_ids, name='aram')
+    @ask.command(guild_ids=guild_ids, name='aram')
     async def _aram(self, ctx: commands.Context, target_user: discord.Member):
         """玩唔玩ARAM呀?"""
 
