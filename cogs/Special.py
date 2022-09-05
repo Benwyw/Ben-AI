@@ -921,7 +921,12 @@ class Special(commands.Cog):
         embed_to_target_user.set_thumbnail(url="https://i.imgur.com/tsJ59Fg.png")
         embed_to_target_user.set_footer(text=get_timestamp())
         
-        target_user_msg = await target_user.send(embed=embed_to_target_user)
+        try:
+            target_user_msg = await target_user.send(embed=embed_to_target_user)
+        except Exception as e:
+            embed_except = discord.Embed(description=f"無法傳信息至 <@{target_user.id}>")
+            await ctx.send_followup(embed=embed_except)
+            return
         channel_msg = await ctx.send_followup(embed=embed_to_target_user)
         await ctx.send_followup('正等待回覆...')
 
