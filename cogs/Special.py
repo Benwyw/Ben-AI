@@ -923,6 +923,7 @@ class Special(commands.Cog):
         
         target_user_msg = await target_user.send(embed=embed_to_target_user)
         channel_msg = await ctx.send_followup(embed=embed_to_target_user)
+        channel_msg.add_reaction('📧')
 
         confirmEmoji = '👍'
         quitEmoji = '👎'
@@ -932,13 +933,10 @@ class Special(commands.Cog):
         def check(reaction, user):
                 global rxn
                 rxn = reaction
-                print('935')
                 return user.id == target_user.id and not user.bot
 
         try:
-            await log('in try')
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
-            await log('after rxn try')
         except asyncio.TimeoutError:
             embed_timeout = discord.Embed(description=f"<@{target_user.id}> 沒有回應")
             await ctx.send_followup(embed=embed_timeout)
@@ -946,15 +944,11 @@ class Special(commands.Cog):
             await target_user_msg.reply('邀請已過期')
             return
         else:
-            await log('else')
             if str(rxn[0].emoji) == confirmEmoji:
                 await channel_msg.add_reaction(confirmEmoji)
             elif str(rxn[0].emoji) == quitEmoji:
                 await channel_msg.add_reaction(quitEmoji)
                 return
-        
-        await log('end ARAM')
-
 
 def setup(
     bot: commands.Bot
