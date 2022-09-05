@@ -934,13 +934,13 @@ class Special(commands.Cog):
         embed = discord.Embed(description=f"<@{target_user.id}> {desc}")
         return embed
 
-    askOption = [
+    askGameOption = [
         OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
         OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"})
     ]
     @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
-    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
+    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"})):
         await ctx.defer()
         
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose)
