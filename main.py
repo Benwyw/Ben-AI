@@ -846,12 +846,12 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     load_dotenv()
     if os.getenv('TOKEN')[0:3] == 'ODA':
-        '''gameLoop.start()
+        gameLoop.start()
         covLoop.start()
         newsLoop.start()
         gamesLoop.start()
         hypebeastLoop.start()
-        naLolLoop.start()'''
+        naLolLoop.start()
         #twLolLoop.start() #Server error 500 24/7
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
