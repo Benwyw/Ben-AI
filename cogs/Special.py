@@ -923,7 +923,6 @@ class Special(commands.Cog):
         
         target_user_msg = await target_user.send(embed=embed_to_target_user)
         channel_msg = await ctx.send_followup(embed=embed_to_target_user)
-        await channel_msg.add_reaction('📧')
         await ctx.send_followup('正等待回覆...')
 
         confirmEmoji = '👍'
@@ -939,28 +938,18 @@ class Special(commands.Cog):
         try:
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
         except asyncio.TimeoutError:
-            try:
-                await target_user_msg.clear_reaction(confirmEmoji)
-                await target_user_msg.clear_reaction(quitEmoji)
-                await target_user_msg.reply('邀請已過期')
-                print('after reply')
-            except Exception as e:
-                pass
+            await embed_to_target_user.send('邀請已過期')
             embed_timeout = discord.Embed(description=f"<@{target_user.id}> 沒有回應")
             await ctx.send_followup(embed=embed_timeout)
             return
         else:
             if str(rxn[0].emoji) == confirmEmoji:
-                await target_user_msg.clear_reactions()
-                await target_user_msg.reply('已接受邀請')
-                await channel_msg.clear_reactions()
+                await embed_to_target_user.send('已接受邀請')
                 await channel_msg.add_reaction(confirmEmoji)
                 embed_accept = discord.Embed(description=f"<@{target_user.id}> 已接受邀請")
                 await ctx.send_followup(embed=embed_accept)
             elif str(rxn[0].emoji) == quitEmoji:
-                await target_user_msg.clear_reactions()
-                await target_user_msg.reply('已拒絕邀請')
-                await channel_msg.clear_reactions()
+                await embed_to_target_user.send('已拒絕邀請')
                 await channel_msg.add_reaction(quitEmoji)
                 embed_reject = discord.Embed(description=f"<@{target_user.id}> 已拒絕邀請")
                 await ctx.send_followup(embed=embed_reject)
