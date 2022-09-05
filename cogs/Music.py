@@ -107,9 +107,9 @@ class Music(commands.Cog):
         if not ctx.voice_state.voice:
             return await ctx.respond('未連接到任何語音通道。')
 
-        await ctx.voice_state.stop()
         try:
             await ctx.guild.voice_client.disconnect()
+            await ctx.voice_state.stop()
         except Exception as e:
             pass
         del self.voice_states[ctx.guild.id]
