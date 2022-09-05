@@ -145,10 +145,11 @@ class General(commands.Cog):
 
         csv_url="http://www.chp.gov.hk/files/misc/latest_situation_of_reported_cases_covid_19_chi.csv"
         response = requests.get(csv_url)
+        await log(response)
 
         response.close()
         e = discord.Embed()
-
+        await log('after discord.Embed')
         # Initialize IO
         data_stream = io.BytesIO()
 
@@ -158,6 +159,7 @@ class General(commands.Cog):
         data = pd.read_csv(file_object)
 
         data = data.tail(60)
+        await log(data)
 
         try:
             #data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
@@ -205,7 +207,7 @@ class General(commands.Cog):
         latest = data['確診個案'].iloc[-1]
         if latest is None or str(latest) == 'nan':
             latest = data['嚴重急性呼吸綜合症冠狀病毒2的陽性檢測個案'].iloc[-1]
-
+        await log('before send_followup')
         await ctx.send_followup(content='__確診個案__\n最高: {}\n最低: {}\n平均: {}\n中位: {}\n現時: {}'.format(data['確診個案'].max(), data['確診個案'].min(), data['確診個案'].mean(), data['確診個案'].median(), latest), embed=e, file=chart)
 
 def setup(
