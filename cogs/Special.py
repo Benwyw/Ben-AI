@@ -896,6 +896,20 @@ class Special(commands.Cog):
         else:
             await ctx.send_followup('Response.status_code != 200. <@{}>'.format(bot.owner_id))
 
+    @ask.command(guild_ids=guild_ids, name='ping')
+    async def _ping(self, ctx: commands.Context, target):
+        '''Ping爆佢!!!'''
+
+        if '<@' not in target and '>' not in target:
+            await ctx.respond("我唔會Ping: 空氣 / 其他Bot")
+        else:
+            embed = discord.Embed()
+            embed.set_author(name="{} 揾你".format(ctx.author.display_name))
+            await ctx.respond("Ping爆佢!!!")
+            for count in range(10):
+                await ctx.send_followup("{}".format(target))
+                await ctx.send_followup(embed=embed)
+
     @ask.command(guild_ids=guild_ids, name='aram')
     async def _aram(self, ctx: commands.Context, target_user: discord.Member):
         """玩唔玩ARAM呀?"""

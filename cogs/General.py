@@ -11,20 +11,6 @@ class General(commands.Cog):
         await ctx.respond("你好呀 "+str(ctx.author.display_name))
         await ctx.send_followup("你好你好")
 
-    @slash_command(guild_ids=guild_ids, name='ping')
-    async def _ping(self, ctx: commands.Context, target):
-        '''Ping爆佢!!!'''
-
-        if '<@' not in target and '>' not in target:
-            await ctx.respond("我唔會Ping: 空氣 / 其他Bot")
-        else:
-            embed = discord.Embed()
-            embed.set_author(name="{} 揾你".format(ctx.author.display_name))
-            await ctx.respond("Ping爆佢!!!")
-            for count in range(10):
-                await ctx.send_followup("{}".format(target))
-                await ctx.send_followup(embed=embed)
-
     @slash_command(guild_ids=guild_ids, name='news')
     async def _news(self, ctx:commands.Context, search=None, language=None):
         """新聞 zh=中文 en=英文 默認中文"""
