@@ -910,16 +910,35 @@ class Special(commands.Cog):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
 
+    async def create_ask_embed(self, ctx, target_user, type:str):
+        title = "玩唔玩ARAM呀?"
+        thumbnail_url = "https://i.imgur.com/tsJ59Fg.png"
+        if type == 'Apex':
+            title = "玩唔玩Apex呀?"
+            thumbnail_url = "https://i.imgur.com/0fF6EkT.png"
+
+        embed = discord.Embed(title=title)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        embed.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
+        embed.set_thumbnail(url=thumbnail_url)
+        embed.set_footer(text=get_timestamp())
+
+        return embed
+
+    async def create_desc_embed(self, target_user, desc:str):
+        embed = discord.Embed(description=f"<@{target_user.id}> {desc}")
+        return embed
+
+    askOption = [
+        OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
+        OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
+    ]
     @ask.command(guild_ids=guild_ids, name='aram')
-    async def _aram(self, ctx: commands.Context, target_user: discord.Member):
+    async def _aram(self, ctx: commands.Context, target_user: discord.Member, purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
         """玩唔玩ARAM呀?"""
 
         await ctx.defer()
-        embed_to_target_user = discord.Embed(title='玩唔玩ARAM呀?')
-        embed_to_target_user.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        embed_to_target_user.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
-        embed_to_target_user.set_thumbnail(url="https://i.imgur.com/tsJ59Fg.png")
-        embed_to_target_user.set_footer(text=get_timestamp())
+        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose)
         
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
@@ -944,20 +963,21 @@ class Special(commands.Cog):
             rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
         except asyncio.TimeoutError:
             await target_user.send('邀請已過期')
-            embed_timeout = discord.Embed(description=f"<@{target_user.id}> 沒有回應")
-            await ctx.send_followup(embed=embed_timeout)
+            await ctx.send_followup(embed=await self.create_desc_embed(target_user, '沒有回應'))
             return
         else:
             if str(rxn[0].emoji) == confirmEmoji:
-                await target_user.send('已接受邀請')
+                status = "已接受邀請"
+
+                await target_user.send(status)
                 await channel_msg.add_reaction(confirmEmoji)
-                embed_accept = discord.Embed(description=f"<@{target_user.id}> 已接受邀請")
-                await ctx.send_followup(embed=embed_accept)
+                await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
             elif str(rxn[0].emoji) == quitEmoji:
-                await target_user.send('已拒絕邀請')
+                status = "已拒絕邀請"
+
+                await target_user.send(status)
                 await channel_msg.add_reaction(quitEmoji)
-                embed_reject = discord.Embed(description=f"<@{target_user.id}> 已拒絕邀請")
-                await ctx.send_followup(embed=embed_reject)
+                await ctx.send_followup(embed=await self.create_desc_embed(target_user, status))
 
 def setup(
     bot: commands.Bot
