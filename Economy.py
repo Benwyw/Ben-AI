@@ -10,8 +10,10 @@ from globalImport import *
 imgUrl = "https://i.imgur.com/ydS4u8P.png"
 
 class Economy(commands.Cog):
+
+    eco = SlashCommandGroup(guild_ids=guild_ids, name="eco", description='Economy', description_localizations={"zh-TW": "經濟"})
     
-    @slash_command(guild_ids=guild_ids, description="Check user balance.",
+    @eco.command(guild_ids=guild_ids, description="Check user balance.",
                       brief="Check user balance",
                       name="bal",
                       help="Check a user's balance. Mention a user to check their balance, or none to check your own. Format is $bal <mention user/none>.",
@@ -40,7 +42,7 @@ class Economy(commands.Cog):
             embed.set_footer(text="Mention a user to check their balance.")
             await ctx.send(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, description="Pay a user.",
+    @eco.command(guild_ids=guild_ids, description="Pay a user.",
                       brief="Pay a user",
                       name="pay",
                       help="Pay a user from your own balance. You must have sufficient funds to pay the value you specified. Mention"

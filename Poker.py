@@ -26,7 +26,9 @@ def betCheck(GAME):
 
 
 class Poker(commands.Cog):
-    @slash_command(guild_ids=guild_ids, name="next", description="在德州撲克中抽下一張卡片。",
+    poker = SlashCommandGroup(guild_ids=guild_ids, name="poker", description='Poker', description_localizations={"zh-TW": "撲克"})
+
+    @poker.command(guild_ids=guild_ids, name="next", description="在德州撲克中抽下一張卡片。",
                       brief="在德州撲克中抽下一張卡片",
                       help="在德州撲克遊戲中分發下一張檯上卡片。 您必須參與德州撲克才能使用此指令。",
                       pass_context=True)
@@ -125,7 +127,7 @@ class Poker(commands.Cog):
 
         await ctx.send_followup(file=file, embed=embed)
 
-    @slash_command(guild_ids=guild_ids, name="cards", description="出示檯上卡片。",
+    @poker.command(guild_ids=guild_ids, name="cards", description="出示檯上卡片。",
                       brief="出示檯上卡片",
                       help="顯示德州撲克遊戲的當前已發的檯上卡片。 您必須在德州撲克遊戲中才能使用此指令。",
                       pass_context=True)
