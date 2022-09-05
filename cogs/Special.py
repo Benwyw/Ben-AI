@@ -910,12 +910,15 @@ class Special(commands.Cog):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
 
-    async def create_ask_embed(self, ctx, target_user, type:str):
-        title = "玩唔玩ARAM呀?"
-        thumbnail_url = "https://i.imgur.com/tsJ59Fg.png"
-        if type == 'Apex':
-            title = "玩唔玩Apex呀?"
-            thumbnail_url = "https://i.imgur.com/0fF6EkT.png"
+    async def create_ask_embed(self, ctx, target_user, purpose:str):
+        thumbnail_dict = {
+            "ARAM": "https://i.imgur.com/tsJ59Fg.png",
+            "Apex": "https://i.imgur.com/0fF6EkT.png",
+            "Minecraft": "https://i.imgur.com/Rc6f19X.png"
+        }
+
+        title = f"玩唔玩{purpose}呀?"
+        thumbnail_url = thumbnail_dict[purpose]
 
         embed = discord.Embed(title=title)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -932,6 +935,7 @@ class Special(commands.Cog):
     askOption = [
         OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
+        OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"})
     ]
     @ask.command(guild_ids=guild_ids, name='aram', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
     async def _aram(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
