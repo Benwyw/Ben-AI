@@ -3,6 +3,12 @@ from globalImport import *
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+        self.thumbnail_dict = {
+            "ARAM": "https://i.imgur.com/tsJ59Fg.png",
+            "Apex": "https://i.imgur.com/0fF6EkT.png",
+            "Minecraft": "https://i.imgur.com/Rc6f19X.png"
+        }
     
     mc = SlashCommandGroup(guild_ids=guild_ids, name="mc", description='Minecraft', description_localizations={"zh-TW": "當個創世神"})
     ask = SlashCommandGroup(guild_ids=guild_ids, name="ask", description='Ask', description_localizations={"zh-TW": "問"})
@@ -911,14 +917,10 @@ class Special(commands.Cog):
                 await ctx.send_followup(embed=embed)
 
     async def create_ask_embed(self, ctx, target_user, purpose:str):
-        thumbnail_dict = {
-            "ARAM": "https://i.imgur.com/tsJ59Fg.png",
-            "Apex": "https://i.imgur.com/0fF6EkT.png",
-            "Minecraft": "https://i.imgur.com/Rc6f19X.png"
-        }
+        
 
         title = f"玩唔玩{purpose}呀?"
-        thumbnail_url = thumbnail_dict[purpose]
+        thumbnail_url = self.thumbnail_dict[purpose]
 
         embed = discord.Embed(title=title)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
