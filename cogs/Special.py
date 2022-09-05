@@ -924,6 +924,7 @@ class Special(commands.Cog):
         target_user_msg = await target_user.send(embed=embed_to_target_user)
         channel_msg = await ctx.send_followup(embed=embed_to_target_user)
         channel_msg.add_reaction('📧')
+        await ctx.send_followup('正等待回覆...')
 
         confirmEmoji = '👍'
         quitEmoji = '👎'
@@ -945,9 +946,19 @@ class Special(commands.Cog):
             return
         else:
             if str(rxn[0].emoji) == confirmEmoji:
+                await target_user_msg.clear_reactions()
+                await target_user_msg.reply('已接受邀請')
+                await channel_msg.clear_reactions()
                 await channel_msg.add_reaction(confirmEmoji)
+                embed_accept = discord.Embed(description=f"<@{target_user.id}> 已接受邀請")
+                await ctx.send_followup(embed=embed_accept)
             elif str(rxn[0].emoji) == quitEmoji:
+                await target_user_msg.clear_reactions()
+                await target_user_msg.reply('已拒絕邀請')
+                await channel_msg.clear_reactions()
                 await channel_msg.add_reaction(quitEmoji)
+                embed_reject = discord.Embed(description=f"<@{target_user.id}> 已拒絕邀請")
+                await ctx.send_followup(embed=embed_reject)
                 return
 
 def setup(
