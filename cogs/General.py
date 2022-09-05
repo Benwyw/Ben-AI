@@ -154,12 +154,14 @@ class General(commands.Cog):
         data_stream = io.BytesIO()
 
         file_object = io.StringIO(response.content.decode('utf-8'))
+        await log(f'file_object: {file_object}')
         pd.set_option('display.max_rows', 60)
         pd.set_option('display.max_columns', None)
         data = pd.read_csv(file_object)
+        await log(f'read_csv: {data}')
 
         data = data.tail(60)
-        await log(data)
+        await log(f'tail 60: {data}')
 
         try:
             #data['更新日期'] = data['更新日期'].map(lambda x: datetime.strptime(str(x), '%d/%m/%y'))
