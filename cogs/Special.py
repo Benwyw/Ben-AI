@@ -905,9 +905,37 @@ class Special(commands.Cog):
         embed_to_target_user.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed_to_target_user.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
         embed_to_target_user.set_thumbnail(url="https://i.imgur.com/tsJ59Fg.png")
-        embed_to_target_user.set_footer(text=get_timestamp)
+        embed_to_target_user.set_footer(text=get_timestamp())
+        
+        target_user_msg = await target_user.send(embed=embed_to_target_user)
+        channel_msg = await ctx.send_followup(embed=embed_to_target_user)
 
-        await ctx.send_followup(embed=embed_to_target_user)
+        confirmEmoji = '👍'
+        quitEmoji = '👎'
+        target_user_msg.add_reaction(confirmEmoji)
+        target_user_msg.add_reaction(quitEmoji)
+
+        def check(reaction, user):
+                global rxn
+                rxn = reaction
+                return self.players.count(str(user.id)) > 0 and not user.bot
+
+        try:
+            rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
+        except asyncio.TimeoutError:
+            embed_timeout = discord.Embed(title=f"<@{target_user.id}> 沒有回應")
+            await ctx.send_followup(embed=embed_timeout)
+            await target_user_msg.clear_reactions()
+            await target_user_msg.reply('邀請已過期')
+            return
+        else:
+            if str(rxn[0].emoji) == confirmEmoji:
+                await channel_msg.add_reaction(confirmEmoji)
+            elif str(rxn[0].emoji) == quitEmoji:
+                await channel_msg.add_reaction(quitEmoji)
+                return
+        
+        await log('end ARAM')
 
 
 def setup(
