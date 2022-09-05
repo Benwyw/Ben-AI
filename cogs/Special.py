@@ -933,11 +933,10 @@ class Special(commands.Cog):
         OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
     ]
-    @ask.command(guild_ids=guild_ids, name='aram')
-    async def _aram(self, ctx: commands.Context, target_user: discord.Member, purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
-        """玩唔玩ARAM呀?"""
-
+    @ask.command(guild_ids=guild_ids, name='aram', description="Let's play...?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
+    async def _aram(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askOption, name_localizations={"zh-TW": "目的"})):
         await ctx.defer()
+        
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose)
         
         try:
