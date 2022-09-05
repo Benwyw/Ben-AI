@@ -5,6 +5,7 @@ class Special(commands.Cog):
         self.bot = bot
     
     mc = SlashCommandGroup(guild_ids=guild_ids, name="mc", description='Minecraft', description_localizations={"zh-TW": "當個創世神"})
+    ask = SlashCommandGroup(guild_ids=guild_ids, name="ask", description='Ask', description_localizations={"zh-TW": "問"})
         
     def is_in_guild(guild_id):
         async def predicate(ctx):
@@ -894,6 +895,19 @@ class Special(commands.Cog):
                         await ctx.send_followup("在 {} 找到 {}".format(pdf_url,key))
         else:
             await ctx.send_followup('Response.status_code != 200. <@{}>'.format(bot.owner_id))
+
+    @ask.commad(guild_ids=guild_ids, name='aram')
+    async def _aram(self, ctx: commands.Context, target_user: discord.Member):
+        """玩唔玩ARAM呀?"""
+
+        await ctx.defer()
+        embed_to_target_user = discord.Embed(title='玩唔玩ARAM呀?')
+        embed_to_target_user.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        embed_to_target_user.set_thumbnail(url="https://i.imgur.com/tsJ59Fg.png")
+        embed_to_target_user.set_footer(text=f'{ctx.author.display_name} <:e_mail:1016253360258687036><:arrow_right:1016253447638618183> {target_user.display_name}')
+
+        await ctx.send_followup(embed=embed_to_target_user)
+
 
 def setup(
     bot: commands.Bot
