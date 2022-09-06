@@ -918,20 +918,14 @@ class Special(commands.Cog):
 
     async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail:str=None, ask_type:str=None):
         title = f"玩唔玩{purpose}呀?"
-        await log('before title update')
         if ask_type is not None:
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
-        await log('after title update')
 
         thumbnail_url = thumbnail
-        await log(purpose)
-        await log(self.thumbnail_dict)
         if purpose in self.thumbnail_dict and thumbnail is None:
             thumbnail_url = self.thumbnail_dict[purpose]
-            
-        await log('before set title')
+
         embed = discord.Embed(title=title)
-        await log('after set title')
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
         if thumbnail_url is not None:
@@ -946,9 +940,7 @@ class Special(commands.Cog):
 
     async def process_ask_embed(self, ctx, target_user, purpose, thumbnail=None, ask_type=None):
         await ctx.defer()
-        await log('before embed to target user')
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail, ask_type)
-        await log('after embed to target user')
 
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
