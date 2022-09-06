@@ -1000,7 +1000,10 @@ class Special(commands.Cog):
         OptionChoice(name="試", value="試", name_localizations={"zh-TW": "試"}),
         OptionChoice(name="打", value="打", name_localizations={"zh-TW": "打"}),
         OptionChoice(name="問", value="問", name_localizations={"zh-TW": "問"}),
-        OptionChoice(name="知", value="知", name_localizations={"zh-TW": "知"})
+        OptionChoice(name="知", value="知", name_localizations={"zh-TW": "知"}),
+        OptionChoice(name="食", value="食", name_localizations={"zh-TW": "食"}),
+        OptionChoice(name="飲", value="飲", name_localizations={"zh-TW": "飲"}),
+        OptionChoice(name="睇", value="睇", name_localizations={"zh-TW": "睇"})
     ]
     @ask.command(guild_ids=guild_ids, name='custom', description="_唔_...呀?", description_locationlizations={"zh-TW": "_唔_...呀?"})
     async def _custom(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), ask_type: Option(str, "Ask type", required=True, choices=askCustomOption, name_localizations={"zh-TW": "類別"}), purpose: Option(str, "Purpose", required=True, name_localizations={"zh-TW": "目的"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"}, default=None)):
