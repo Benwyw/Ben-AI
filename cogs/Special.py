@@ -922,6 +922,7 @@ class Special(commands.Cog):
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
 
         if purpose not in self.thumbnail_dict.keys() and thumbnail_url is not None:
+            await log(thumbnail_url)
             thumbnail_url = thumbnail_url
         else:
             thumbnail_url = self.thumbnail_dict[purpose]
@@ -939,10 +940,10 @@ class Special(commands.Cog):
         embed = discord.Embed(description=f"<@{target_user.id}> {desc}")
         return embed
 
-    async def process_ask_embed(self, ctx, target_user, purpose, thumbnail=None):
+    async def process_ask_embed(self, ctx, target_user, purpose, thumbnail=None, ask_type=None):
         await ctx.defer()
 
-        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail)
+        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail, ask_type)
         
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
