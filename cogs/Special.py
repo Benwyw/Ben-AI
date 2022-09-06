@@ -926,7 +926,7 @@ class Special(commands.Cog):
         thumbnail_url = thumbnail
         await log(purpose)
         await log(self.thumbnail_dict)
-        if purpose in self.thumbnail_dict and  thumbnail is None:
+        if purpose in self.thumbnail_dict and thumbnail is None:
             thumbnail_url = self.thumbnail_dict[purpose]
             
         await log('before set title')
