@@ -1,11 +1,11 @@
 # Work with Python 3.6
 # USED IMPORTS
 from discord.ext import commands
-from DBConnection import DBConnection
+from lib.DBConnection import DBConnection
 import discord.ext.commands
 from discord.ext.commands import Bot, has_permissions, CheckFailure
 
-from globalImport import *
+from lib.globalImport import *
 
 imgUrl = "https://i.imgur.com/ydS4u8P.png"
 

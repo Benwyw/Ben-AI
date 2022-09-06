@@ -3,8 +3,8 @@
 import random
 from random import randrange
 import asyncio
-from globalImport import *
-from CardEval import num_pairs, get_pair, hasTriple
+from lib.globalImport import *
+from lib.game.CardEval import num_pairs, get_pair, hasTriple
 from cogs.Game import *
 
 def keyByValue(value, d):

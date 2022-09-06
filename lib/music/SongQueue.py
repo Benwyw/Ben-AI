@@ -1,4 +1,4 @@
-from globalImport import *
+from lib.globalImport import *
 
 class SongQueue(asyncio.Queue):
     def __getitem__(self, item):

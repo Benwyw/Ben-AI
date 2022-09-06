@@ -14,7 +14,7 @@ import io
 from timeit import default_timer as timer
 from PIL import Image, ImageDraw, ImageColor
 
-from globalImport import *
+from lib.globalImport import *
 from cogs.Game import *
 
 def betCheck(GAME):
