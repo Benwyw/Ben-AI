@@ -190,3 +190,64 @@ async def getUserById(userid):
     if result is None:
         result = await bot.fetch_user(int(userid))
     return result
+
+async def getNewsEmbed(source):
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    try:
+        # /v2/top-headlines
+        if source == 'Rthk.hk':
+            top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
+        else:
+            top_headlines = newsapi.get_everything(sources=source, language='en', sort_by='publishedAt')
+
+        selected_top_headline = ''
+        for top_headline in top_headlines['articles']:
+            #if top_headline['author'] == '香港經濟日報HKET':
+            if top_headline['source']['name'] == source:
+                selected_top_headline = top_headline
+                break
+
+        if selected_top_headline == '' or selected_top_headline is None:
+            return
+
+        publishedAt = selected_top_headline['publishedAt']
+        db_published_at = DBConnection.getPublishedAt(source)[0][0]
+
+        if str(publishedAt) == str(db_published_at):
+            return
+        else:
+            DBConnection.updatePublishedAt(publishedAt, source)
+
+            title = selected_top_headline['title']
+            url = selected_top_headline['url']
+            urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and 'http' in selected_top_headline['urlToImage'] and '://' in selected_top_headline['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
+            authorName = selected_top_headline['source']['name']
+            author = selected_top_headline['author']
+            description = selected_top_headline['description']
+            footer = '{}'.format(publishedAt) if author is None else '{}\n{}'.format(author, publishedAt)
+            iurl = str(DBConnection.getRemarks(source, 'Y')[0][0])
+
+            embed = discord.Embed(title=title)
+            #embed.color = 0xb50024
+
+            #url handlings
+            if url is not None and 'http' in url and '://' in url:
+                if source == 'Rthk.hk':
+                    url2 = url.rsplit('/',1)[1]
+                    url1 = url.rsplit('/',1)[0]
+                    if url2 is not None and url2 != '' and not url2.isalnum():
+                        url2 = quote(url2)
+                        url = url1 +'/'+ url2
+                    embed.url = url
+                else:
+                    embed.url = url
+
+            embed.description = description
+            embed.set_author(name=authorName, icon_url=iurl) #News API logo: https://i.imgur.com/UdkSDcb.png
+            embed.set_thumbnail(url=urlToImage)
+            embed.set_footer(text=footer)
+
+            return embed
+    except Exception as e:
+        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        await BDS_Log_Channel.send('{}\n\nError occured in newsLoop({})\n{}'.format(e,source,timestamp))

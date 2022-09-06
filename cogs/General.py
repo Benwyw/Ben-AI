@@ -73,11 +73,11 @@ class General(commands.Cog):
             await ctx.send_followup(embed=embed)
 
     @slash_command(guild_ids=guild_ids, name='stock')
-    async def _stock(self, ctx:commands.Context, stock_name):
+    async def _stock(self, ctx:commands.Context, stock_name:Option(str, "stock_code", required=True, name_localizations={"zh-TW": "美股股票代號"})):
         """股市圖表"""
         await ctx.defer()
 
-        response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteid=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
+        '''response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteid=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
         if response.status_code == 200:
             for line in response.content.decode('utf-8').splitlines():
                 if '<td class="bottomborder">' in line:
@@ -91,7 +91,7 @@ class General(commands.Cog):
             await ctx.send_followup("marketwatch連線失敗！？")
             return
 
-        response.close()
+        response.close()'''
         e = discord.Embed()
 
         # Initialize IO
