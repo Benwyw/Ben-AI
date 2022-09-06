@@ -942,8 +942,9 @@ class Special(commands.Cog):
 
     async def process_ask_embed(self, ctx, target_user, purpose, thumbnail=None, ask_type=None):
         await ctx.defer()
-
+        print(target_user, purpose, thumbnail, ask_type)
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail, ask_type)
+        print(embed_to_target_user)
         
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
