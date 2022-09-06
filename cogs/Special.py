@@ -916,18 +916,19 @@ class Special(commands.Cog):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
 
-    async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail_url:str=None, ask_type:str=None):
+    async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail:str=None, ask_type:str=None):
         title = f"玩唔玩{purpose}呀?"
         await log('before title update')
         if ask_type is not None:
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
         await log('after title update')
-        if purpose not in self.thumbnail_dict and thumbnail_url is not None:
-            await log(thumbnail_url)
-            thumbnail_url = thumbnail_url
-        else:
-            await log(self.thumbnail_dict[purpose])
+
+        thumbnail_url = thumbnail
+        await log(purpose)
+        await log(self.thumbnail_dict)
+        if purpose in self.thumbnail_dict and  thumbnail is None:
             thumbnail_url = self.thumbnail_dict[purpose]
+            
         await log('before set title')
         embed = discord.Embed(title=title)
         await log('after set title')
