@@ -1,4 +1,4 @@
-from globalImport import *
+from lib.globalImport import *
 
 @loop(seconds=1)
 async def gameLoop():

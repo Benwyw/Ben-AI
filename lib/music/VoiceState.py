@@ -1,4 +1,4 @@
-from globalImport import *
+from lib.globalImport import *
 from lib.music.SongQueue import *
 from lib.music.YTDLSource import *
 

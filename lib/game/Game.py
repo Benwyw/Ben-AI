@@ -5,11 +5,11 @@ import asyncio
 import itertools
 
 from abc import abstractmethod
-from DBConnection import DBConnection
-from CardEval import evaluateHand, handType
+from lib.DBConnection import DBConnection
+from lib.game.CardEval import evaluateHand, handType
 #from discord.ext.tasks import loop
 
-from globalImport import *
+from lib.globalImport import *
 from cogs.Game import showHand, gameList, sortHand
 
 DECK_CONST = ["deck/AD.png", "deck/AC.png", "deck/AH.png", "deck/AS.png", "deck/2D.png", "deck/2C.png", "deck/2H.png",

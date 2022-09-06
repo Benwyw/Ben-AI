@@ -10,7 +10,7 @@ import requests
 import discord
 import yt_dlp
 import pandas as pd
-import MinecraftServer as mc
+import lib.MinecraftServer as mc
 
 from discord import slash_command, Option, OptionChoice, SlashCommandGroup
 from discord.ext import commands, pages
@@ -22,8 +22,8 @@ from datetime import datetime
 from tika import parser
 
 import re
-from DBConnection import DBConnection
-from sortingOrders import order, presOrder, pokerOrder, suitOrder
+from lib.DBConnection import DBConnection
+from lib.game.sortingOrders import order, presOrder, pokerOrder, suitOrder
 from io import BytesIO
 from discord.ext.tasks import loop
 from discord.ext import tasks
@@ -33,7 +33,7 @@ BOT_PREFIX = '$'
 bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
 
 # Slash
-from config.GlobalVariables import *
+from lib.GlobalVariables import *
 load_dotenv()
 if os.getenv('TOKEN')[0:3] == 'ODE':
     guild_ids = [guild_BenDiscordBot]
@@ -56,7 +56,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # Game imports
-from Game import Game, TexasHoldEm, President
+from lib.game.Game import Game, TexasHoldEm, President
 
 # Card ordering dictionary
 ORDER = order

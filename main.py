@@ -4,7 +4,7 @@
 pip install -U discord.py pynacl youtube-dl
 Requires FFmpeg in PATH environment variable or bot's directory
 """
-from globalImport import *
+from lib.globalImport import *
 from cogs.Game import gameLoop
 
 #========================News========================
@@ -719,10 +719,10 @@ async def covLoop():
 
 
 
-bot.load_extension('Poker')
-bot.load_extension('Economy')
-bot.load_extension('Betting')
-bot.load_extension('Pres')
+bot.load_extension('lib.game.Poker')
+bot.load_extension('lib.game.Economy')
+bot.load_extension('lib.game.Betting')
+bot.load_extension('lib.game.Pres')
 bot.load_extension('cogs.Music') #bot.add_cog(Music(bot))
 bot.load_extension('cogs.Special') #bot.add_cog(Special(bot))
 bot.load_extension('cogs.General') #bot.add_cog(General(bot))

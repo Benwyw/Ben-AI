@@ -1,4 +1,4 @@
-from globalImport import *
+from lib.globalImport import *
 
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):

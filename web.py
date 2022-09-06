@@ -2,7 +2,7 @@ import os, pytz
 
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from DBConnection import DBConnection
+from lib.DBConnection import DBConnection
 
 from sanic import Sanic
 from sanic.response import text
