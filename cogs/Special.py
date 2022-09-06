@@ -916,10 +916,11 @@ class Special(commands.Cog):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
 
-    async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail_url:str=None):
-        
-
+    async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail_url:str=None, ask_type:str=None):
         title = f"玩唔玩{purpose}呀?"
+        if ask_type is not None:
+            title = f"{ask_type}唔{ask_type}{purpose}呀?"
+
         if purpose not in self.thumbnail_dict.keys() and thumbnail_url is not None:
             thumbnail_url = thumbnail_url
         else:
@@ -938,17 +939,10 @@ class Special(commands.Cog):
         embed = discord.Embed(description=f"<@{target_user.id}> {desc}")
         return embed
 
-    askGameOption = [
-        OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
-        OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
-        OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"}),
-        OptionChoice(name=str)
-    ]
-    @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
-    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"}), thumbnail_url: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"}, default=None)):
+    async def process_ask_embed(self, ctx, target_user, purpose, thumbnail=None):
         await ctx.defer()
-        
-        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail_url)
+
+        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail)
         
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
@@ -991,6 +985,28 @@ class Special(commands.Cog):
                 await target_user.send(embed=desc_embed)
                 await channel_msg.add_reaction(quitEmoji)
                 await ctx.send_followup(embed=desc_embed)
+
+    askGameOption = [
+        OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
+        OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
+        OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"})
+    ]
+    @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
+    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"})):
+        await self.process_ask_embed(ctx,target_user, purpose)
+
+    askCustomOption = [
+        OptionChoice(name="玩", value="玩", name_localizations={"zh-TW": "玩"}),
+        OptionChoice(name="去", value="去", name_localizations={"zh-TW": "去"}),
+        OptionChoice(name="搞", value="搞", name_localizations={"zh-TW": "搞"}),
+        OptionChoice(name="試", value="試", name_localizations={"zh-TW": "試"}),
+        OptionChoice(name="打", value="打", name_localizations={"zh-TW": "打"}),
+        OptionChoice(name="問", value="問", name_localizations={"zh-TW": "問"}),
+        OptionChoice(name="知", value="知", name_localizations={"zh-TW": "知"})
+    ]
+    @ask.command(guild_ids=guild_ids, name='custom', description="_唔_...呀?", description_locationlizations={"zh-TW": "_唔_...呀?"})
+    async def _custom(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), ask_type: Option(str, "Ask type", required=True, choices=askCustomOption, name_localizations={"zh-TW": "類別"}), purpose: Option(str, "Purpose", required=True, name_localizations={"zh-TW": "目的"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"}, default=None)):
+        await self.process_ask_embed(ctx,target_user, purpose, thumbnail, ask_type)
 
 def setup(
     bot: commands.Bot
