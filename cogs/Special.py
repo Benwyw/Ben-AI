@@ -918,16 +918,20 @@ class Special(commands.Cog):
 
     async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail_url:str=None, ask_type:str=None):
         title = f"玩唔玩{purpose}呀?"
+        await log(title)
         if ask_type is not None:
+            await log(title)
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
 
         if purpose not in self.thumbnail_dict.keys() and thumbnail_url is not None:
             await log(thumbnail_url)
             thumbnail_url = thumbnail_url
         else:
+            await log(self.thumbnail_dict[purpose])
             thumbnail_url = self.thumbnail_dict[purpose]
-
+        await log('before set title')
         embed = discord.Embed(title=title)
+        await log('after set title')
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
         if thumbnail_url is not None:
