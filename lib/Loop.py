@@ -1,4 +1,4 @@
-from globalImport import *
+from lib.globalImport import *
 from lib.RiotApi import RiotApi
 
 @loop(minutes=10)
