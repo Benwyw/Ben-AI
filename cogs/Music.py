@@ -12,6 +12,8 @@ class Music(commands.Cog):
         self.voice_states = {}
         self.prevmsg = None
 
+    music = SlashCommandGroup(guild_ids=guild_ids, name="music", description='Music', description_localizations={"zh-TW": "音樂"})
+
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
         if not state:
@@ -53,7 +55,7 @@ class Music(commands.Cog):
         else:
             return
 
-    @slash_command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
+    @music.command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
         """我要進來了。"""
         
@@ -68,7 +70,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
         await ctx.send_followup(':thumbsup:')
 
-    @slash_command(guild_ids=guild_ids, name='join2', aliases=['j2'], invoke_without_subcommand=True)
+    @music.command(guild_ids=guild_ids, name='join2', aliases=['j2'], invoke_without_subcommand=True)
     @commands.has_any_role('Ben AI')
     async def _join2(self, ctx: commands.Context):
         """我要進來了。"""
@@ -80,7 +82,7 @@ class Music(commands.Cog):
 
         ctx.voice_state.voice = await destination.connect()
 
-    @slash_command(guild_ids=guild_ids, name='summon')
+    @music.command(guild_ids=guild_ids, name='summon')
     @commands.has_permissions(manage_guild=True)
     async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
         """召喚我去某個語音頻道。
@@ -99,7 +101,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
         await ctx.respond(':thumbsup:')
 
-    @slash_command(guild_ids=guild_ids, name='leave', aliases=['disconnect'])
+    @music.command(guild_ids=guild_ids, name='leave', aliases=['disconnect'])
     @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
         """清除曲列、解除循環播放，離開語音頻道。"""
@@ -115,7 +117,7 @@ class Music(commands.Cog):
         del self.voice_states[ctx.guild.id]
         await ctx.respond(':middle_finger:')
 
-    @slash_command(guild_ids=guild_ids, name='volume', aliases=['v'])
+    @music.command(guild_ids=guild_ids, name='volume', aliases=['v'])
     async def _volume(self, ctx: commands.Context, *, volume: int):
         """較大細聲。"""
 
@@ -128,13 +130,13 @@ class Music(commands.Cog):
         ctx.voice_state.volume = volume / 100
         await ctx.respond('播放器音量設置為 {}%'.format(volume))
 
-    @slash_command(guild_ids=guild_ids, name='now', aliases=['current', 'playing'])
+    @music.command(guild_ids=guild_ids, name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
         """顯示目前播緊嘅歌。"""
 
         await ctx.respond(embed=ctx.voice_state.current.create_embed())
 
-    @slash_command(guild_ids=guild_ids, name='pause')
+    @music.command(guild_ids=guild_ids, name='pause')
     @commands.has_permissions(manage_guild=True)
     async def _pause(self, ctx: commands.Context):
         """暫停目前播緊嘅歌。"""
@@ -143,7 +145,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.pause()
             await ctx.respond('⏯')
 
-    @slash_command(guild_ids=guild_ids, name='resume', aliases=['r'])
+    @music.command(guild_ids=guild_ids, name='resume', aliases=['r'])
     @commands.has_permissions(manage_guild=True)
     async def _resume(self, ctx: commands.Context):
         """恢復目前播緊嘅歌。"""
@@ -152,7 +154,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.resume()
             await ctx.respond('⏯')
 
-    @slash_command(guild_ids=guild_ids, name='stop', aliases=['st'])
+    @music.command(guild_ids=guild_ids, name='stop', aliases=['st'])
     @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
         """停止播放並清除曲列。"""
@@ -163,7 +165,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.stop()
             await ctx.respond('⏹')
 
-    @slash_command(guild_ids=guild_ids, name='skip', aliases=['s'])
+    @music.command(guild_ids=guild_ids, name='skip', aliases=['s'])
     async def _skip(self, ctx: commands.Context):
         """跳過一首歌。 請求者可以自動跳過。
         要跳過該歌曲，需要3個跳過票。
@@ -192,7 +194,7 @@ class Music(commands.Cog):
         '''
         await ctx.respond('⏭')
         ctx.voice_state.skip()
-    @slash_command(guild_ids=guild_ids, name='queue', aliases=['q'])
+    @music.command(guild_ids=guild_ids, name='queue', aliases=['q'])
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
         """顯示曲列。
         您可以選擇指定要顯示的頁面。 每頁包含10個曲目。
@@ -215,7 +217,7 @@ class Music(commands.Cog):
                  .set_footer(text='頁數 {}/{}'.format(page, pages)))
         await ctx.respond(embed=embed)
 
-    @slash_command(guild_ids=guild_ids, name='shuffle')
+    @music.command(guild_ids=guild_ids, name='shuffle')
     async def _shuffle(self, ctx: commands.Context):
         """洗牌曲列。"""
 
@@ -225,7 +227,7 @@ class Music(commands.Cog):
         ctx.voice_state.songs.shuffle()
         await ctx.respond('✅')
 
-    @slash_command(guild_ids=guild_ids, name='remove', aliases=['rm'])
+    @music.command(guild_ids=guild_ids, name='remove', aliases=['rm'])
     async def _remove(self, ctx: commands.Context, index: int):
         """從曲列中刪除指定索引嘅歌曲。"""
 
@@ -235,7 +237,7 @@ class Music(commands.Cog):
         ctx.voice_state.songs.remove(index - 1)
         await ctx.respond('✅')
 
-    @slash_command(guild_ids=guild_ids, name='loop', aliases=['l'])
+    @music.command(guild_ids=guild_ids, name='loop', aliases=['l'])
     async def _loop(self, ctx: commands.Context):
         """循環播放目前播放的歌曲。
         再次使用此指令以解除循環播放。
@@ -251,7 +253,7 @@ class Music(commands.Cog):
         elif not ctx.voice_state.loop:
             await ctx.respond('❎')
 
-    @slash_command(guild_ids=guild_ids, name='play', aliases=['p'], description='Play music', description_localizations={"zh-TW": "播放音樂"})
+    @music.command(guild_ids=guild_ids, name='play', aliases=['p'], description='Play music', description_localizations={"zh-TW": "播放音樂"})
     async def _play(self, ctx: commands.Context, *, search: str):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
@@ -296,7 +298,7 @@ class Music(commands.Cog):
                         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
-    @slash_command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist', description_localizations={"zh-TW": "播放播放清單"})
+    @music.command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist', description_localizations={"zh-TW": "播放播放清單"})
     async def _playplaylist(self, ctx: commands.Context, *, playlist_id: int, random_shuffle: bool=False, start_id: int=None):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
