@@ -916,16 +916,20 @@ class Special(commands.Cog):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
 
-    async def create_ask_embed(self, ctx, target_user, purpose:str):
+    async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail_url:str=None):
         
 
         title = f"玩唔玩{purpose}呀?"
-        thumbnail_url = self.thumbnail_dict[purpose]
+        if purpose not in self.thumbnail_dict.keys() and thumbnail_url is not None:
+            thumbnail_url = thumbnail_url
+        else:
+            thumbnail_url = self.thumbnail_dict[purpose]
 
         embed = discord.Embed(title=title)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         embed.description = f'<@{ctx.author.id}> <:arrow_right:1016253447638618183> <@{target_user.id}>'
-        embed.set_thumbnail(url=thumbnail_url)
+        if thumbnail_url is not None:
+            embed.set_thumbnail(url=thumbnail_url)
         embed.set_footer(text=get_timestamp())
 
         return embed
@@ -937,13 +941,14 @@ class Special(commands.Cog):
     askGameOption = [
         OptionChoice(name="ARAM", value="ARAM", name_localizations={"zh-TW": "單中"}),
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
-        OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"})
+        OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"}),
+        OptionChoice(name=str)
     ]
     @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
-    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"})):
+    async def _game(self, ctx: commands.Context, target_user: Option(input_type=discord.Member, name="User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(input_type=str, name="Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"}), thumbnail_url: Option(default=None, input_type=discord.Attachment, name="Image", required=False, name_localizations={"zh-TW": "圖片"})):
         await ctx.defer()
         
-        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose)
+        embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail_url)
         
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
