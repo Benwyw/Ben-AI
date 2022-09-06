@@ -922,7 +922,7 @@ class Special(commands.Cog):
         if ask_type is not None:
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
         await log('after title update')
-        if purpose not in self.thumbnail_dict.keys() and thumbnail_url is not None:
+        if purpose not in self.thumbnail_dict and thumbnail_url is not None:
             await log(thumbnail_url)
             thumbnail_url = thumbnail_url
         else:
