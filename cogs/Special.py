@@ -945,7 +945,7 @@ class Special(commands.Cog):
         OptionChoice(name=str)
     ]
     @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
-    async def _game(self, ctx: commands.Context, target_user: Option(input_type=discord.Member, name="User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(input_type=str, name="Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"}), thumbnail_url: Option(default=None, input_type=discord.Attachment, name="Image", required=False, name_localizations={"zh-TW": "圖片"})):
+    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"}), thumbnail_url: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"}, default=None)):
         await ctx.defer()
         
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail_url)
