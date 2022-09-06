@@ -712,7 +712,7 @@ my_background_task.start()'''
 try:
     
     load_dotenv()
-    bot.owner_id = 254517813417476097
+    bot.owner_id = os.getenv('OWNER_ID')
     bot.run(os.getenv('TOKEN'))
 except:
     pass
