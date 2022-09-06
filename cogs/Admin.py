@@ -3,6 +3,8 @@ from globalImport import *
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    guild_ids = guild_ids_FBenI
         
     admin = SlashCommandGroup(guild_ids=guild_ids, name="admin", description='Admin', description_localizations={"zh-TW": "管理員"})
     db = admin.create_subgroup(guild_ids=guild_ids, name="db", description='Database', description_localizations={"zh-TW": "數據庫"})
