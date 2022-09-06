@@ -949,7 +949,7 @@ class Special(commands.Cog):
             await ctx.send_followup(embed=embed_except)
             return
         channel_msg = await ctx.send_followup(embed=embed_to_target_user)
-        await ctx.send_followup('正等待回覆...')
+        await ctx.send_followup('正等待回覆...(1分鐘)')
 
         confirmEmoji = '👍'
         quitEmoji = '👎'
