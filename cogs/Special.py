@@ -962,7 +962,7 @@ class Special(commands.Cog):
                 return user.id == target_user.id and not user.bot
 
         try:
-            rxn = await bot.wait_for('reaction_add', timeout=30.0, check=check)
+            rxn = await bot.wait_for('reaction_add', timeout=60.0, check=check)
         except asyncio.TimeoutError:
             await target_user_msg.remove_reaction(confirmEmoji, bot.user)
             await target_user_msg.remove_reaction(quitEmoji, bot.user)
