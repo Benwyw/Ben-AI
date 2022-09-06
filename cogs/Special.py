@@ -918,11 +918,10 @@ class Special(commands.Cog):
 
     async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail_url:str=None, ask_type:str=None):
         title = f"玩唔玩{purpose}呀?"
-        await log(title)
+        await log('before title update')
         if ask_type is not None:
-            await log(title)
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
-        await log(title)
+        await log('after title update')
         if purpose not in self.thumbnail_dict.keys() and thumbnail_url is not None:
             await log(thumbnail_url)
             thumbnail_url = thumbnail_url
@@ -946,10 +945,10 @@ class Special(commands.Cog):
 
     async def process_ask_embed(self, ctx, target_user, purpose, thumbnail=None, ask_type=None):
         await ctx.defer()
-        await log(target_user, purpose, thumbnail, ask_type)
+        await log('before embed to target user')
         embed_to_target_user = await self.create_ask_embed(ctx, target_user, purpose, thumbnail, ask_type)
-        await log(embed_to_target_user)
-        
+        await log('after embed to target user')
+
         try:
             target_user_msg = await target_user.send(embed=embed_to_target_user)
         except Exception as e:
