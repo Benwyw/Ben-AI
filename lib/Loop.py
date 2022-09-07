@@ -279,7 +279,7 @@ async def naLolLoop():
     except Exception as e:
         await log('{}\n\nError occured in naLolLoop\n{}'.format(e,timestamp))
 
-@loop(minutes=15)
+@loop(minutes=30)
 async def hypebeastLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
@@ -452,7 +452,7 @@ async def gamesLoop():
 
 @loop(hours=1)
 async def newsLoop():
-    newsList = ['Rthk.hk', 'Bloomberg', 'IGN']
+    newsList = ['Rthk.hk'] #, 'Bloomberg', 'IGN']
     for newsId in newsList:
         embed = await getNewsEmbed(newsId)
         if embed is not None:
@@ -463,11 +463,11 @@ async def newsLoop():
             await BDS_PD_Channel.send(embed=embed)
             #await BMS_OT_Channel.send(embed=embed)
             
-            if newsId in ['Bloomberg', 'IGN']:
+            '''if newsId in ['Bloomberg', 'IGN']:
                 Cave_Channel = bot.get_channel(channel_Cave_BenAI) #Cave - ben-ai
                 await Cave_Channel.send(embed=embed)
-            else:
-                await BLG_ST_Channel.send(embed=embed)
+            else:'''
+            await BLG_ST_Channel.send(embed=embed)
 
 @loop(minutes=15)
 async def covLoop():
