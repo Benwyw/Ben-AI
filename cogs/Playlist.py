@@ -1,4 +1,4 @@
-from lib.globalImport import *
+from lib.GlobalImport import *
 import urllib.request
 
 class Playlist(commands.Cog):

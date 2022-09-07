@@ -1,9 +1,8 @@
 # Work with Python 3.6
 # USED IMPORTS
-import random
+from lib.GlobalImport import *
 from random import randrange
 import asyncio
-from lib.globalImport import *
 from lib.game.CardEval import num_pairs, get_pair, hasTriple
 from cogs.Game import *
 

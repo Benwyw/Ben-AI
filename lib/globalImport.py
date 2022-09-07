@@ -10,7 +10,7 @@ import requests
 import discord
 import yt_dlp
 import pandas as pd
-import lib.MinecraftServer as mc
+from lib.MinecraftServer import MinecraftServer as mc
 
 from discord import slash_command, Option, OptionChoice, SlashCommandGroup
 from discord.ext import commands, pages
@@ -23,7 +23,7 @@ from tika import parser
 
 import re
 from lib.DBConnection import DBConnection
-from lib.game.sortingOrders import order, presOrder, pokerOrder, suitOrder
+from lib.game.SortingOrders import order, presOrder, pokerOrder, suitOrder
 from io import BytesIO
 from discord.ext.tasks import loop
 from discord.ext import tasks

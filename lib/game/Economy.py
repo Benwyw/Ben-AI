@@ -5,7 +5,7 @@ from lib.DBConnection import DBConnection
 import discord.ext.commands
 from discord.ext.commands import Bot, has_permissions, CheckFailure
 
-from lib.globalImport import *
+from lib.GlobalImport import *
 
 imgUrl = "https://i.imgur.com/ydS4u8P.png"
 

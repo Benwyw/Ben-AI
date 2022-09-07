@@ -1,6 +1,6 @@
 # Work with Python 3.6
 # USED IMPORTS
-import random
+from lib.GlobalImport import *
 from random import randrange
 import asyncio
 import discord
@@ -14,7 +14,6 @@ import io
 from timeit import default_timer as timer
 from PIL import Image, ImageDraw, ImageColor
 
-from lib.globalImport import *
 from cogs.Game import *
 
 def betCheck(GAME):

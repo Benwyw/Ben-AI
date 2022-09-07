@@ -1,6 +1,6 @@
 from locale import strcoll
 from pickletools import string1
-from lib.globalImport import *
+from lib.GlobalImport import *
 from lib.music.VoiceState import VoiceState
 from lib.music.YTDLSource import YTDLSource
 from lib.music.Song import *

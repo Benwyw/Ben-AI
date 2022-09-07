@@ -1,4 +1,4 @@
-from lib.globalImport import *
+from lib.GlobalImport import *
 
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):

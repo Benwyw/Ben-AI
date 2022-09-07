@@ -1,4 +1,4 @@
-from lib.globalImport import requests
+from lib.GlobalImport import requests
 
 class RiotApi(object):
     def __init__(self, api_key: str, region="na1"):

@@ -1,5 +1,5 @@
 # CARDS BOT
-from lib.globalImport import *
+from lib.GlobalImport import *
 from cogs.Game import checkInGame, getGame, channelCheck, slash_command
 
 #========================Slash========================

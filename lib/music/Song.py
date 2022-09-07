@@ -1,4 +1,4 @@
-from lib.globalImport import *
+from lib.GlobalImport import *
 from lib.music.YTDLSource import YTDLSource
 
 class Song:

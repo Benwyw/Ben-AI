@@ -1,27 +1,24 @@
 import urllib.request, json
 
-def status():
-    with urllib.request.urlopen("https://api.mcsrvstat.us/2/mc.benwyw.com") as url:
-        data = json.loads(url.read().decode())
+class MinecraftServer():
+    def checkStatus(self, seasonal:bool=False):
+        addr = 'mc'
+        if seasonal is True:
+            addr = 'play'
+        with urllib.request.urlopen(f"https://api.mcsrvstat.us/2/{addr}.benwyw.com") as url:
+            data = json.loads(url.read().decode())
 
-        pairs = data.items()
+            pairs = data.items()
 
-        for key, value in pairs:
-            if key == 'debug':
-                if value['ping'] == True:
-                    return 'online'
-                else:
-                    return 'offline'
+            for key, value in pairs:
+                if key == 'debug':
+                    if value['ping'] == True:
+                        return 'online'
+                    else:
+                        return 'offline'
 
-def status_seasonal():
-    with urllib.request.urlopen("https://api.mcsrvstat.us/2/play.benwyw.com") as url:
-        data = json.loads(url.read().decode())
+    def status(self):
+        return self.checkStatus()
 
-        pairs = data.items()
-
-        for key, value in pairs:
-            if key == 'debug':
-                if value['ping'] == True:
-                    return 'online'
-                else:
-                    return 'offline'
+    def status_seasonal(self):
+        return self.checkStatus(True)

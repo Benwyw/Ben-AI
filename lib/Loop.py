@@ -1,4 +1,4 @@
-from lib.globalImport import *
+from lib.GlobalImport import *
 from lib.RiotApi import RiotApi
 
 @loop(minutes=10)
@@ -177,8 +177,7 @@ async def naLolLoop():
             match = riotApi.get_latest_matches_by_name(summonerName)
 
             if match is None:
-                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                await BDS_Log_Channel.send('{}\n\nError occured in lolloop summoner: {} possibly not found\n'.format(timestamp, summonerName))
+                await log('{}\n\nError occured in lolloop summoner: {} possibly not found\n'.format(timestamp, summonerName))
                 continue
 
             matchId = match['metadata']['matchId']
@@ -264,7 +263,7 @@ async def naLolLoop():
                 embed.set_footer(text=dt)
 
                 #BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                BLG_ST_Channel = bot.get_channel(channel_BrianLee_Satellite) #BrianLee Server - satellie
                 #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
                 #await BDS_PD_Channel.send(embed=embed)
@@ -278,8 +277,7 @@ async def naLolLoop():
                     kills: {}\ndeaths: {}\nassists: {}\n \
                     doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
     except Exception as e:
-        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in naLolLoop\n{}'.format(e,timestamp))
+        await log('{}\n\nError occured in naLolLoop\n{}'.format(e,timestamp))
 
 @loop(minutes=15)
 async def hypebeastLoop():
@@ -350,8 +348,8 @@ async def hypebeastLoop():
                         url = url1 +'/'+ url2
                     embed.url = url
 
-                BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                BDS_PD_Channel = bot.get_channel(channel_BenDiscordBot_PublicDemo) #Ben Discord Bot - public demo
+                BLG_ST_Channel = bot.get_channel(channel_BrianLee_Satellite) #BrianLee Server - satellie
                 BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
                 await BDS_PD_Channel.send(embed=embed)
@@ -360,8 +358,7 @@ async def hypebeastLoop():
 
             break
     except Exception as e:
-        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in hypebeastLoop\n{}'.format(e,timestamp))
+        await log('{}\n\nError occured in hypebeastLoop\n{}'.format(e,timestamp))
 
 @loop(hours=1)
 async def gamesLoop():
@@ -451,8 +448,7 @@ async def gamesLoop():
 
             break
     except Exception as e:
-        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in gamesLoop\n{}'.format(e,timestamp))
+        await log('{}\n\nError occured in gamesLoop\n{}'.format(e,timestamp))
 
 @loop(hours=1)
 async def newsLoop():
@@ -468,7 +464,7 @@ async def newsLoop():
             #await BMS_OT_Channel.send(embed=embed)
             
             if newsId in ['Bloomberg', 'IGN']:
-                Cave_Channel = bot.get_channel(965809908970819614) #Cave - ben-ai
+                Cave_Channel = bot.get_channel(channel_Cave_BenAI) #Cave - ben-ai
                 await Cave_Channel.send(embed=embed)
             else:
                 await BLG_ST_Channel.send(embed=embed)
@@ -532,8 +528,8 @@ async def covLoop():
             
             embed.set_footer(text='{}'.format(timestamp))
 
-            BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-            BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+            BDS_PD_Channel = bot.get_channel(channel_BenDiscordBot_PublicDemo) #Ben Discord Bot - public demo
+            BLG_ST_Channel = bot.get_channel(channel_BrianLee_Satellite) #BrianLee Server - satellie
             BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
             #Google Map
@@ -570,5 +566,4 @@ async def covLoop():
             #await BMS_OT_Channel.send(embed=embed)
 
     except Exception as e:
-        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))
+        await log('{}\n\nError occured in covLoop\n{}'.format(e,timestamp))

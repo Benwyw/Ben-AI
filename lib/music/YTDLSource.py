@@ -1,4 +1,4 @@
-from lib.globalImport import *
+from lib.GlobalImport import *
 
 class YTDLSource(discord.PCMVolumeTransformer):
     YTDL_OPTIONS = {
