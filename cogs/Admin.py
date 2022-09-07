@@ -178,11 +178,9 @@ class Admin(commands.Cog):
             
     # --- Database ---
     
-    @db.command(guild_ids=guild_ids, name='scanusers')
+    @db.command(guild_ids=guild_ids, name='scanusers', desription='Automatically search and add missing user to DB', description_localizations={"zh-TW": "自動搜索並將丟失的用戶添加至數據庫"})
     @commands.is_owner()
     async def _autocheckdbusers(self, ctx: commands.Context):
-        '''Automatically search and add missing user to DB'''
-
         await ctx.defer()
 
         counter = 0
