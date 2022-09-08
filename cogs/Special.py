@@ -534,14 +534,17 @@ class Special(commands.Cog):
             binded = True
 
         if binded is True:
-            if mc.status() == 'online':
+            '''if mc.status() == 'online':
+                await log('inside mc status')
                 await console_channel.send("eco give {} {}".format(mc_Username, money))
                 await serverchat_channel.send("{} received ${} from per-10 mins lucky draw '/draw'!".format(mc_Username, money))
                 mc_content_1 = "\n{}得到了 ${}".format(mc_Username,money)
+                await log(mc_content_1)
                 if mc.status_seasonal() == 'online':
+                    await log('inside seasonal')
                     await console_seasonal_channel.send("!cmd say {} received ${} from per-10 mins lucky draw '/draw'!".format(mc_Username, money))
-            else:
-                mc_content_1 = "\nServer is offline"
+            else:'''
+            mc_content_1 = "\nServer is offline"
         else:
             mc_content_1 = "\n尚未綁定伺服器 /bind"
 
