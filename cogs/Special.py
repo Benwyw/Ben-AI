@@ -133,7 +133,6 @@ class Special(commands.Cog):
 
             #channels
             changelog_channel = bot.get_channel(903541645411237889)
-            logs_channel = bot.get_channel(809527650955296848)
 
             #changelog embed
             embed_changelog = discord.Embed()
@@ -148,7 +147,7 @@ class Special(commands.Cog):
                 await changelog_channel.send(embed=embed_changelog)
             except Exception as e:
                 await ctx.respond("Unable to send message to change-log channel")
-                await logs_channel.send(str(e))
+                await log(str(e))
                 return
 
             #response embed
@@ -160,7 +159,7 @@ class Special(commands.Cog):
 
             #send reponse
             await ctx.respond(embed=embed)
-            await logs_channel.send("Changelog: {} --> {}".format(ctx.author,message))
+            await log("Changelog: {} --> {}".format(ctx.author,message))
         else:
             await ctx.respond("請去 <#692466531447210105>")
 
@@ -175,18 +174,6 @@ class Special(commands.Cog):
         remarks = ""
         password = ""
         status = ""
-        baroUserList = [254517813417476097, 346518519015407626, 270781455678832641, 49924747686969344, 372395366986940416, 363347146080256001, 313613491816890369]
-        #254517813417476097 Ben
-        #346518519015407626 Pok
-        #270781455678832641 Daniel
-        #349924747686969344 Chest
-        #372395366986940416 Nelson
-        #363347146080256001 Kei
-        #313613491816890369 keith   Pok's friend
-        terrariaUserList = [254517813417476097, 232833713648435200, 311425525732212736]
-        #232833713648435200 Sheep
-        #311425525732212736 Willy
-
 
         embed = discord.Embed(title="Private server info | 私人伺服器資訊", color=0x00ff00)
         embed.description = "IP: `play.benwyw.com`"
@@ -492,6 +479,13 @@ class Special(commands.Cog):
         seed = random.choices(chanceList, weights=(1.5, 5.5, 15, 33, 45), k=1)
         seed = int(str(seed).replace("[","").replace("]",""))
 
+        '''print(draw_List[seed])
+        print(draw_List[seed][0])
+        print(draw_List[seed][1])
+        print(draw_List[seed][2])
+        img = draw_List[seed][0]
+        end= draw_List[seed][1]
+        money = draw_List[seed][2]'''
         if seed == 4:
             img = "https://i.imgur.com/IfZS8xe.gif"
             end = "星蛋 $100~300區間"
@@ -540,14 +534,17 @@ class Special(commands.Cog):
             binded = True
 
         if binded is True:
-            if mc.status() == 'online':
+            '''if mc.status() == 'online':
+                await log('inside mc status')
                 await console_channel.send("eco give {} {}".format(mc_Username, money))
                 await serverchat_channel.send("{} received ${} from per-10 mins lucky draw '/draw'!".format(mc_Username, money))
                 mc_content_1 = "\n{}得到了 ${}".format(mc_Username,money)
+                await log(mc_content_1)
                 if mc.status_seasonal() == 'online':
+                    await log('inside seasonal')
                     await console_seasonal_channel.send("!cmd say {} received ${} from per-10 mins lucky draw '/draw'!".format(mc_Username, money))
-            else:
-                mc_content_1 = "\nServer is offline"
+            else:'''
+            mc_content_1 = "\nServer is offline"
         else:
             mc_content_1 = "\n尚未綁定伺服器 /bind"
 
