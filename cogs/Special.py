@@ -1034,11 +1034,11 @@ class Special(commands.Cog):
             await ctx.send_followup(embed=embed_except)
             return
         
-    @report.command(guild_ids=guild_ids, name='bug', description="Bug report", description_locationlizations={"zh-TW": "漏洞回饋"})
+    @report.command(guild_ids=guild_ids, name='bug', description="Bug report", cooldown=commands.CooldownMapping.from_cooldown(3, 60, commands.BucketType.default), description_locationlizations={"zh-TW": "漏洞回饋"})
     async def _bug(self, ctx: commands.Context, content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"})):
         await self.process_report_embed(ctx, content, thumbnail, "Bug")
         
-    @report.command(guild_ids=guild_ids, name='suggest', description="Suggestion report", description_locationlizations={"zh-TW": "建議回饋"})
+    @report.command(guild_ids=guild_ids, name='suggest', description="Suggestion report", cooldown=commands.CooldownMapping.from_cooldown(3, 60, commands.BucketType.default), description_locationlizations={"zh-TW": "建議回饋"})
     async def _suggest(self, ctx: commands.Context, content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"})):
         await self.process_report_embed(ctx, content, thumbnail, "Suggest")
 
