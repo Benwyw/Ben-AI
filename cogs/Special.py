@@ -12,6 +12,7 @@ class Special(commands.Cog):
     
     mc = SlashCommandGroup(guild_ids=guild_ids, name="mc", description='Minecraft', description_localizations={"zh-TW": "當個創世神"})
     ask = SlashCommandGroup(guild_ids=guild_ids, name="ask", description='Ask', description_localizations={"zh-TW": "問"})
+    report = SlashCommandGroup(guild_ids=guild_ids, name="report", description='Report', description_localizations={"zh-TW": "報告"})
         
     def is_in_guild(guild_id):
         async def predicate(ctx):
@@ -1005,6 +1006,41 @@ class Special(commands.Cog):
     @ask.command(guild_ids=guild_ids, name='custom', description="_唔_...呀?", description_locationlizations={"zh-TW": "_唔_...呀?"})
     async def _custom(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), ask_type: Option(str, "Ask type", required=True, choices=askCustomOption, name_localizations={"zh-TW": "類別"}), purpose: Option(str, "Purpose", required=True, name_localizations={"zh-TW": "目的"}), thumbnail: Option(discord.Attachment, "Image", required=True, name_localizations={"zh-TW": "圖片"})):
         await self.process_ask_embed(ctx,target_user, purpose, thumbnail, ask_type)
+        
+    async def create_report_embed(self, ctx, content=str, thumbnail:str=None, report_type=str):
+        title = "Bug report" if report_type == 'Bug' else "Suggestion report"
+        thumbnail_url = thumbnail
+
+        embed = discord.Embed(title=title)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        embed.description = f'<@{ctx.author.id}> <:e_mail:1018530503344787477> __FBenI Headquarter__\n\n{content}'
+        if thumbnail_url is not None:
+            embed.set_thumbnail(url=thumbnail_url)
+        embed.set_footer(text=get_timestamp())
+
+        return embed
+        
+    async def process_report_embed(self, ctx, content=str, thumbnail=None, report_type=str):
+        await ctx.defer()
+        embed_report = await self.create_report_embed(ctx, content, thumbnail, report_type)
+        
+        channel_target = channel_BenDiscordBot_BugReport if report_type == 'Bug' else channel_BenDiscordBot_SuggestionReport
+
+        try:
+            await bot.get_channel(channel_target).send(embed=embed_report)
+            await ctx.send_followup(embed=embed_report)
+        except Exception as e:
+            embed_except = discord.Embed(description=f"無法傳信息至 <@{ctx.channel}>")
+            await ctx.send_followup(embed=embed_except)
+            return
+        
+    @report.command(guild_ids=guild_ids, name='bug', description="Bug report", description_locationlizations={"zh-TW": "漏洞回饋"})
+    async def _bug(self, ctx: commands.Context, content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"})):
+        await self.process_report_embed(ctx, content, thumbnail, "Bug")
+        
+    @report.command(guild_ids=guild_ids, name='suggest', description="Suggestion report", description_locationlizations={"zh-TW": "建議回饋"})
+    async def _suggest(self, ctx: commands.Context, content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"})):
+        await self.process_report_embed(ctx, content, thumbnail, "Suggest")
 
 def setup(
     bot: commands.Bot
