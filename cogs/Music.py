@@ -45,10 +45,18 @@ class Music(commands.Cog):
         if voice_state is not None and len(voice_state.channel.members) == 1 or member == bot.user and after.channel is None:
             # You should also check if the song is still playing
             try:
+                voice_state.stop()
+            except:
+                pass
+            try:
                 await voice_state.disconnect()
                 '''for task in asyncio.Task.all_tasks(bot.loop):
                     await task.cancel()'''
                 #self.voice_states.get(member.guild.id).audio_player.cancel()
+                
+            except:
+                pass
+            try:
                 del self.voice_states[member.guild.id]
             except:
                 pass
@@ -106,15 +114,22 @@ class Music(commands.Cog):
     async def _leave(self, ctx: commands.Context):
         """清除曲列、解除循環播放，離開語音頻道。"""
 
-        if not ctx.guild.voice_client.voice: #if not ctx.voice_state.voice:
+        if not ctx.guild.voice_client: #if not ctx.voice_state.voice:
             return await ctx.respond('未連接到任何語音通道。')
 
         try:
-            await ctx.guild.voice_client.disconnect()
-            await ctx.guild.voice_client.stop() #await ctx.voice_state.stop()
+            ctx.guild.voice_client.stop() #await ctx.voice_state.stop()
         except Exception as e:
-            pass
-        del self.voice_states[ctx.guild.id]
+            await log(f'`/music leave`\nctx.guild.voice_client.stop()\n{e}')
+        try:
+            await ctx.guild.voice_client.disconnect()
+        except Exception as e:
+            await log(f'`/music leave`\nawait ctx.guild.voice_client.disconnect()\n{e}')
+        try:
+            del self.voice_states[ctx.guild.id]
+        except Exception as e:
+            await log(f'`/music leave`\ndel self.voice_states[ctx.guild.id]\n{e}')
+            
         await ctx.respond(':middle_finger:')
 
     @music.command(guild_ids=guild_ids, name='volume', aliases=['v'])
