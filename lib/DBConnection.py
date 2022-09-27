@@ -23,25 +23,25 @@ password = os.getenv('ORACLE_DB_PASSWORD') #os.getenv('DBPW')
 class DBConnection:
     #botDB = mysql.connector.connect(host=host, user=user,
                                     #password=password, database=database)
-    botDB = oracledb.connect(user=user, password=password,
-                               dsn=dsnStr)
+    #botDB = oracledb.connect(user=user, password=password,
+                               #dsn=dsnStr)
+    botDB = oracledb.SessionPool(user=user, password=password,
+                               dsn=dsnStr, min=10, max=10, increment=0)
 
     @classmethod
     def connection(cls):
         #if DBConnection.botDB.is_connected():
+        connection = None
         try:
-            if DBConnection.botDB.is_healthy(): #DBConnection.botDB.ping() is None:
-                pass
-            else:
-                raise ValueError('DB connection is not alive')
+            connection = DBConnection.botDB.acquire() #DBConnection.botDB.is_healthy(): #DBConnection.botDB.ping() is None:
         #else:
         except Exception as e:
             print('DB connection is not alive')
-            DBConnection.botDB = oracledb.connect(user=user, password=password,
-                               dsn=dsnStr)
+            DBConnection.botDB = oracledb.SessionPool(user=user, password=password,
+                               dsn=dsnStr, min=10, max=10, increment=0)
+            connection = DBConnection.botDB.acquire()
         finally:
-            DBCursor = DBConnection.botDB.cursor()
-            return (DBConnection.botDB, DBCursor)
+            return (connection, connection.cursor())
 
     @classmethod
     def fetchUserData(cls, dataType: str, userID: str):

@@ -639,11 +639,19 @@ try:
     bot.owner_id = os.getenv('OWNER_ID')
     bot.run(os.getenv('TOKEN'))
 except:
-    pass
-finally:
     try:
-        if DBConnection.botDB.is_connected():
-            DBConnection.DBCursor.close()
-            DBConnection.botDB.close()
+        DBConnection.DBCursor.close()
     except:
         pass
+    try:
+        DBConnection.botDB.close()
+    except:
+        pass
+'''
+finally:
+    try:
+        DBConnection.DBCursor.close()
+        DBConnection.botDB.close()
+    except:
+        pass
+'''
