@@ -250,4 +250,7 @@ async def getNewsEmbed(source):
             return embed
     except Exception as e:
         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-        await BDS_Log_Channel.send('{}\n\nError occured in newsLoop({})\n{}'.format(e,source,timestamp))
+        if 'DPY-4011' in str(e):
+            await BDS_Log_Channel.send('<@{}>\n{}\n\nError occured in newsLoop({})\n{}'.format(bot.owner_id,e,source,timestamp))
+        else:
+            await BDS_Log_Channel.send('{}\n\nError occured in newsLoop({})\n{}'.format(e,source,timestamp))
