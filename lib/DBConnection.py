@@ -37,9 +37,13 @@ class DBConnection:
         #else:
         except Exception as e:
             print('DB connection is not alive')
-            DBConnection.botDB = oracledb.SessionPool(user=user, password=password,
-                               dsn=dsnStr, min=10, max=10, increment=0)
-            connection = DBConnection.botDB.acquire()
+            try:
+                DBConnection.botDB = oracledb.SessionPool(user=user, password=password,
+                                dsn=dsnStr, min=10, max=10, increment=0)
+                connection = DBConnection.botDB.acquire()
+            except Exception as e:
+                print('DB connection is not alive, second attempt failed, abort')
+                return
         finally:
             return (connection, connection.cursor())
 
