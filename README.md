@@ -17,6 +17,7 @@
       <a href="#Features">Features</a>
       <ul>
         <li><a href="#music">Music</a></li>
+        <li><a href="#luckydraw">Luck draw</a></li>
         <li><a href="#news">News</a></li>
         <li><a href="#stock">Stock</a></li>
         <li><a href="#antivirus">Anti-virus</a></li>
