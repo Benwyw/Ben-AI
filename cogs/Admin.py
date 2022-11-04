@@ -48,6 +48,9 @@ class Admin(commands.Cog):
         await logs_channel.send("Announced: {}".format(message))
         await ctx.message.delete()
         '''
+        #loading
+        await ctx.defer()
+        
         if ctx.channel.id == 810511993449742347:
             #timezone
             tz = pytz.timezone('Asia/Hong_Kong')
@@ -74,9 +77,7 @@ class Admin(commands.Cog):
 
             #preview
             #await ctx.respond(embed=embed_botupdates)
-
-            #loading
-            await ctx.defer()
+            
 
             #send botupdates
             try:
