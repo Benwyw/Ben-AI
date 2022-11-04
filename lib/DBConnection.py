@@ -5,31 +5,45 @@ from dotenv import load_dotenv
 #import mysql.connector
 import oracledb
 
-if str(sys.platform).startswith('win'):
-    print('Windows local test begin')
-    oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
-#else:
-    #cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
-    
+global enable_db
+enable_db = False
+
+if enable_db:
+    if str(sys.platform).startswith('win'):
+        print('Windows local test begin')
+        oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
+    #else:
+        #cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
+        
 
 
-load_dotenv()
-dsnStr = os.getenv('DSNSTR')
-#host = os.getenv('HOST')
-user = os.getenv('ORACLE_DB_USER') #os.getenv('DBUSER')
-password = os.getenv('ORACLE_DB_PASSWORD') #os.getenv('DBPW')
-#database = os.getenv('DATABASE')
+    load_dotenv()
+    dsnStr = os.getenv('DSNSTR')
+    #host = os.getenv('HOST')
+    user = os.getenv('ORACLE_DB_USER') #os.getenv('DBUSER')
+    password = os.getenv('ORACLE_DB_PASSWORD') #os.getenv('DBPW')
+    #database = os.getenv('DATABASE')
+
+class DBDisabled(Exception):
+    pass
 
 class DBConnection:
-    #botDB = mysql.connector.connect(host=host, user=user,
-                                    #password=password, database=database)
-    #botDB = oracledb.connect(user=user, password=password,
-                               #dsn=dsnStr)
-    botDB = oracledb.SessionPool(user=user, password=password,
-                               dsn=dsnStr, min=10, max=10, increment=0)
+    if enable_db:
+        #botDB = mysql.connector.connect(host=host, user=user,
+                                        #password=password, database=database)
+        #botDB = oracledb.connect(user=user, password=password,
+                                #dsn=dsnStr)
+        botDB = oracledb.SessionPool(user=user, password=password,
+                                dsn=dsnStr, min=10, max=10, increment=0)
+
+    @classmethod
+    def enableDBOrElseRaise(cls):
+        if not enable_db:
+            raise DBDisabled("DB connection is disabled.")
 
     @classmethod
     def connection(cls):
+        cls.enableDBOrElseRaise()
         #if DBConnection.botDB.is_connected():
         connection = None
         try:
@@ -49,6 +63,7 @@ class DBConnection:
 
     @classmethod
     def fetchUserData(cls, dataType: str, userID: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (userID, )
         sqlQuery = 'select * from userData where userID = :1'
@@ -68,6 +83,7 @@ class DBConnection:
 
     @classmethod
     def fetchUserMcName(cls, userID: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (userID, )
         sqlQuery = 'select mcName from userData where userID = :1'
@@ -77,6 +93,7 @@ class DBConnection:
 
     @classmethod
     def fetchAllRankData(cls):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         sqlQuery = 'select userID, userWin from userData order by userWin desc'
         DBCursor.execute(sqlQuery)
@@ -87,6 +104,7 @@ class DBConnection:
 
     @classmethod
     def fetchAllMoneyData(cls):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         sqlQuery = 'select userID, userBalance from userData order by userBalance desc'
         DBCursor.execute(sqlQuery)
@@ -95,6 +113,7 @@ class DBConnection:
 
     @classmethod
     def updateUserBalance(cls, userID: str, balance: int):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (balance, userID)
         sqlQuery = 'update userData set userBalance = :1 where userID = :1'
@@ -105,6 +124,7 @@ class DBConnection:
 
     @classmethod
     def updateUserWin(cls, userID: str, win: int):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (win, userID)
         sqlQuery = 'update userData set userWin = :1 where userID = :1'
@@ -115,6 +135,7 @@ class DBConnection:
 
     @classmethod
     def updateUserSortPref(cls, userID: str, sortPref: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (sortPref, userID)
         sqlQuery = 'update userData set sortPref = :1 where userID = :1'
@@ -125,6 +146,7 @@ class DBConnection:
 
     @classmethod
     def updateUserHandColor(cls, userID: str, color: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (color, userID)
         sqlQuery = 'update userData set colorPref = :1 where userID = :1'
@@ -135,6 +157,7 @@ class DBConnection:
 
     @classmethod
     def updateUserMcName(cls, userID: str, mcName: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (mcName, userID)
         sqlQuery = 'update userData set mcName = :1 where userID = :1'
@@ -143,6 +166,7 @@ class DBConnection:
 
     @classmethod
     def checkUserInDB(cls, userID: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         DBCursor.execute("select * from userData where userID = " + userID)
         result = DBCursor.fetchall()
@@ -152,6 +176,7 @@ class DBConnection:
 
     @classmethod
     def addUserToDB(cls, userID: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO userData (userID, userBalance, colorPref, sortPref, userWin) 
                 VALUES (:1, :1, :1, :1, :1) """
@@ -163,6 +188,7 @@ class DBConnection:
 
     @classmethod
     def createServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO serverlist (id, pw, game, port, remarks) 
                 VALUES (:1, :1, :1, :1, :1) """
@@ -172,6 +198,7 @@ class DBConnection:
 
     @classmethod
     def updateServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """UPDATE serverlist
                 SET pw=:1, game=:1, port=:1, remarks=:1
@@ -182,6 +209,7 @@ class DBConnection:
 
     @classmethod
     def updateServerPw(cls, id: str, pw: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """UPDATE serverlist
                 SET pw=:1
@@ -192,6 +220,7 @@ class DBConnection:
 
     @classmethod
     def deleteServer(cls, id: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """DELETE FROM serverlist
                 WHERE id=:1 """
@@ -201,6 +230,7 @@ class DBConnection:
 
     @classmethod
     def selectServer(cls, id: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         vals = (id, )
         sqlQuery = """SELECT id, pw, game, port, remarks
@@ -211,6 +241,7 @@ class DBConnection:
 
     @classmethod
     def selectAllServer(cls):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         sqlQuery = 'select id, pw, game, port, remarks from serverlist order by game, remarks'
         DBCursor.execute(sqlQuery)
@@ -219,6 +250,7 @@ class DBConnection:
 
     @classmethod
     def getCaseNo(cls):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         sqlQuery = 'select case_no from CovLocate fetch first 1 row only'
         DBCursor.execute(sqlQuery)
@@ -227,6 +259,7 @@ class DBConnection:
 
     @classmethod
     def updateCaseNo(cls, case_no: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """UPDATE CovLocate
                 SET case_no=:1"""
@@ -236,6 +269,7 @@ class DBConnection:
 
     @classmethod
     def getPublishedAt(cls, pointType: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query =  """select publishedAt
                     from Points
@@ -247,6 +281,7 @@ class DBConnection:
 
     @classmethod
     def updatePublishedAt(cls, publishedAt: str, pointType: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """UPDATE Points
                 SET publishedAt=:1
@@ -257,6 +292,7 @@ class DBConnection:
 
     @classmethod
     def insertLol(cls, region: str, remarks: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO Points (type, remarks) 
                 VALUES (:1, :1) """
@@ -266,6 +302,7 @@ class DBConnection:
 
     @classmethod
     def deleteLol(cls, region: str, remarks: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """DELETE FROM Points
                 WHERE type=:1 and remarks=:1 """
@@ -275,6 +312,7 @@ class DBConnection:
 
     @classmethod
     def getLolPublishedAt(cls, region: str, remarks: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query =  """select publishedAt
                     from Points
@@ -286,6 +324,7 @@ class DBConnection:
 
     @classmethod
     def updateLolPublishedAt(cls, region: str, publishedAt: str, remarks: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """UPDATE Points
                 SET publishedAt=:1
@@ -296,6 +335,7 @@ class DBConnection:
 
     @classmethod
     def getLolSummonerNames(cls, region: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
@@ -307,6 +347,7 @@ class DBConnection:
 
     @classmethod
     def getRemarks(cls, type: str, active: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
@@ -319,6 +360,7 @@ class DBConnection:
     # create playlist with playlist_name and userid across 2 tables
     @classmethod
     def createPlaylist(cls, userid: str, playlist_name: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
 
         # insert into playlist
@@ -347,6 +389,7 @@ class DBConnection:
     # get playlist
     @classmethod
     def getPlaylistAndCheckIfUserOwns(cls, userid: str, playlist_id: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query =  """select p.playlist_name
                     from user_music_playlist ump
@@ -359,6 +402,7 @@ class DBConnection:
     # get playlist
     @classmethod
     def getPlaylist(cls, userid: str = None, playlist_id: int = None):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
 
         # get all playlist globally
@@ -404,6 +448,7 @@ class DBConnection:
     # insert music into existing playlist
     @classmethod
     def insertPlaylist(cls, playlist_id: int, music_name: str, music_uploader: str, video_id: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query = """INSERT INTO music_playlist (playlist_id, music_name, music_uploader, video_id) 
                 VALUES (:1, :1, :1, :1) """
@@ -414,6 +459,7 @@ class DBConnection:
     # delete owning playlist
     @classmethod
     def deletePlaylist(cls, playlist_id: int):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
 
         query = """DELETE FROM user_music_playlist
@@ -436,6 +482,7 @@ class DBConnection:
     # delete music from owning playlist
     @classmethod
     def deleteMusicFromPlaylist(cls, playlist_id: int, music_id: int):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         
         query =  """select music_name
@@ -457,6 +504,7 @@ class DBConnection:
     # update owning playlist name
     @classmethod
     def updateMyPlaylistName(cls, playlist_id: int, playlist_new_name: str):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
 
         query = """UPDATE playlist
@@ -472,6 +520,7 @@ class DBConnection:
     # TODO
     @classmethod
     def selectAllPlaylistId(cls):
+        cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
         query =  """select playlist_id
                     from playlist
