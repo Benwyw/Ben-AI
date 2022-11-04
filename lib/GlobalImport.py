@@ -1,3 +1,8 @@
+import ctypes
+import ctypes.util
+find_opus = ctypes.util.find_library('opus')
+discord.opus.load_opus(find_opus)
+
 import asyncio
 import functools
 import itertools
