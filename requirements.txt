@@ -1,7 +1,7 @@
 pip
 yt-dlp
 python-dotenv
-py-cord==2.2.2
+git+https://github.com/Pycord-Development/pycord
 ffmpeg
 PyNaCl
 alpha-vantage
