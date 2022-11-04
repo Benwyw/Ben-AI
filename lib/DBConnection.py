@@ -48,6 +48,8 @@ class DBConnection:
         connection = None
         try:
             connection = DBConnection.botDB.acquire() #DBConnection.botDB.is_healthy(): #DBConnection.botDB.ping() is None:
+            if connection is None:
+                raise
         #else:
         except Exception as e:
             print('DB connection is not alive')
