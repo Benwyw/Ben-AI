@@ -310,6 +310,7 @@ class Music(commands.Cog):
                         await ctx.voice_state.songs.put(song)
                         await ctx.send_followup('加咗首 {}'.format(str(source)))
                     except Exception as e:
+                        timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
                         BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 

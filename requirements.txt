@@ -1,7 +1,6 @@
 pip
 yt-dlp
 python-dotenv
-py-cord==2.2.2
 ffmpeg
 PyNaCl
 alpha-vantage
@@ -20,4 +19,5 @@ newsapi-python
 urllib3
 lxml
 beautifulsoup4
+py-cord==2.2.2
 oracledb
