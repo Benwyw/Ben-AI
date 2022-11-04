@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import oracledb
 
 global enable_db
-enable_db = False
+enable_db = True
 
 if enable_db:
     if str(sys.platform).startswith('win'):
