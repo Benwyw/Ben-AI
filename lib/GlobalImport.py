@@ -1,7 +1,5 @@
 import ctypes
 import ctypes.util
-find_opus = ctypes.util.find_library('opus')
-discord.opus.load_opus(find_opus)
 
 import asyncio
 import functools
@@ -20,6 +18,9 @@ from lib.MinecraftServer import MinecraftServer as mc
 from discord import slash_command, Option, OptionChoice, SlashCommandGroup
 from discord.ext import commands, pages
 from discord.ui import InputText, Modal
+
+find_opus = ctypes.util.find_library('opus')
+discord.opus.load_opus(find_opus)
 
 from dotenv import load_dotenv
 from random import randrange
