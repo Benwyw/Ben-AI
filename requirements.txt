@@ -21,3 +21,4 @@ urllib3
 lxml
 beautifulsoup4
 oracledb
+pyoracleclient
