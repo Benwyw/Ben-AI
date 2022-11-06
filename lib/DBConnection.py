@@ -38,17 +38,17 @@ class DBConnection:
     if enable_db:
         #botDB = mysql.connector.connect(host=host, user=user,
                                         #password=password, database=database)
-        #botDB = oracledb.connect(user=user, password=password,
-                                #dsn=dsnStr)
-        botDB = oracledb.SessionPool(user=user, password=password,
-                                dsn=dsnStr, min=3, max=10, increment=1)
+        botDB = oracledb.connect(user=user, password=password,
+                                dsn=dsnStr)
+        #botDB = oracledb.SessionPool(user=user, password=password,
+                                #dsn=dsnStr, min=5, max=5, increment=0)
 
     @classmethod
     def enableDBOrElseRaise(cls):
         if not enable_db:
             raise DBDisabled("DB connection is disabled.")
 
-    @classmethod
+    '''@classmethod
     def connection(cls):
         cls.enableDBOrElseRaise()
         #if DBConnection.botDB.is_connected():
@@ -64,6 +64,27 @@ class DBConnection:
                 DBConnection.botDB = oracledb.SessionPool(user=user, password=password,
                                 dsn=dsnStr, min=10, max=10, increment=0)
                 connection = DBConnection.botDB.acquire()
+            except Exception as e:
+                print('DB connection is not alive, second attempt failed, abort')
+                return
+        finally:
+            return (connection, connection.cursor())'''
+        
+    @classmethod
+    def connection(cls):
+        cls.enableDBOrElseRaise()
+        #if DBConnection.botDB.is_connected():
+        connection = DBConnection.botDB
+        try:
+            #DBConnection.botDB.is_healthy(): 
+            connection.ping()
+        #else:
+        except Exception as e:
+            print('DB connection is not alive')
+            try:
+                DBConnection.botDB = oracledb.connect(user=user, password=password,
+                                dsn=dsnStr)
+                connection = DBConnection.botDB
             except Exception as e:
                 print('DB connection is not alive, second attempt failed, abort')
                 return
