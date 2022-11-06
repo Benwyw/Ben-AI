@@ -17,7 +17,7 @@ if enable_db:
         import pyoracleclient as pyoc
         pyoc.get_client(version='21.8.0.0.0', sys='linux', url=None)
         load_dotenv()
-        pyoc._delete_all_tns()
+        pyoc.delete_all_tns()
         pyoc.add_custom_tns(os.getenv('DSNSTR'))
         #cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
         
