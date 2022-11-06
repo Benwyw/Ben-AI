@@ -41,7 +41,7 @@ class DBConnection:
         #botDB = oracledb.connect(user=user, password=password,
                                 #dsn=dsnStr)
         botDB = oracledb.SessionPool(user=user, password=password,
-                                dsn=dsnStr, min=5, max=5, increment=0)
+                                dsn=dsnStr, min=3, max=10, increment=1)
 
     @classmethod
     def enableDBOrElseRaise(cls):
