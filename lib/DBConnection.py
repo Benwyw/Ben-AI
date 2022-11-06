@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import oracledb
 
 global enable_db
-enable_db = True
+enable_db = False
 
 if enable_db:
     
@@ -14,11 +14,11 @@ if enable_db:
         print('Windows local test begin')
         oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
     else:
-        import pyoracleclient as pyoc
+        '''import pyoracleclient as pyoc
         pyoc.get_client(version='21.8.0.0.0', sys='linux', url=None)
         load_dotenv()
-        pyoc.delete_all_tns()
-        pyoc.add_custom_tns(os.getenv('DSNSTR'))
+        pyoc.add_custom_tns(os.getenv('DSNSTR'))'''
+        
         #cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
         
 
