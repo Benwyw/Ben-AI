@@ -37,7 +37,7 @@ from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 BOT_PREFIX = '$'
 bot = commands.Bot(BOT_PREFIX, description='使用Python的Ben AI，比由Java而成的Ben Kaneki更有效率。', guild_subscriptions=True, intents=discord.Intents.all())
-
+bot.owner_id = os.getenv('OWNER_ID')
 # Slash
 from lib.GlobalVariables import *
 load_dotenv()
@@ -260,3 +260,9 @@ async def getNewsEmbed(source):
             await BDS_Log_Channel.send('<@{}>\n{}\n\nError occured in newsLoop({})\n{}'.format(bot.owner_id,e,source,timestamp))
         else:
             await BDS_Log_Channel.send('{}\n\nError occured in newsLoop({})\n{}'.format(e,source,timestamp))
+
+async def is_owner(ctx):
+    if str(ctx.author.id) == str(bot.owner_id):
+        return True
+    else:
+        return await ctx.send_followup('This command is for owner use only.')

@@ -120,10 +120,9 @@ class Special(commands.Cog):
             BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
             await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e,timestamp))
 
-    @mc.command(guild_ids=guild_ids, name='log')
+    '''@mc.command(guild_ids=guild_ids, name='log', description='Change log release')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     async def log(self, ctx: commands.Context, message):
-        '''Change log release'''
         
         if ctx.channel.id == 692466531447210105:
 
@@ -162,7 +161,7 @@ class Special(commands.Cog):
             await ctx.respond(embed=embed)
             await log("Changelog: {} --> {}".format(ctx.author,message))
         else:
-            await ctx.respond("請去 <#692466531447210105>")
+            await ctx.respond("請去 <#692466531447210105>")'''
 
     @slash_command(guild_ids=guild_ids, name='getserver')
     async def _getserver(self, ctx: commands.Context, code):
@@ -558,11 +557,10 @@ class Special(commands.Cog):
 
         await ctx.send_followup(embed=e)
 
-    @slash_command(guild_ids=guild_ids, name='block')
+    '''@slash_command(guild_ids=guild_ids, name='block', description='特別指令。Temp block verification request。')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _tempblk(self, ctx: commands.Context, message):
-        '''特別指令。Temp block verification request。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             await ctx.respond('Request processed.')
 
@@ -599,13 +597,12 @@ class Special(commands.Cog):
             req_ver_embed_to_staff.add_field(name="臨時封鎖驗證名單", value=str(temp_blocked_list_names), inline=True)
             req_ver_embed_to_staff.add_field(name="執行者", value=ctx.author.display_name, inline=True)
 
-            await req_ver_channel.send(embed=req_ver_embed_to_staff)
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)'''
 
-    @slash_command(guild_ids=guild_ids, name='unblock')
+    '''@slash_command(guild_ids=guild_ids, name='unblock', description='特別指令。Unblock verification request。')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _unblk(self, ctx: commands.Context, message):
-        '''特別指令。Unblock verification request。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             await ctx.respond('Request processed.')
 
@@ -644,13 +641,12 @@ class Special(commands.Cog):
             req_ver_embed_to_staff.add_field(name="臨時封鎖驗證名單", value=str(temp_blocked_list_names), inline=True)
             req_ver_embed_to_staff.add_field(name="執行者", value=ctx.author.display_name, inline=True)
 
-            await req_ver_channel.send(embed=req_ver_embed_to_staff)
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)'''
 
-    @mc.command(guild_ids=guild_ids, name='blocklist')
+    '''@mc.command(guild_ids=guild_ids, name='blocklist', description='特別指令。Unblock verification request。')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _blklist(self, ctx: commands.Context):
-        '''特別指令。Unblock verification request。'''
         await ctx.defer()
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             await ctx.send_followup('Request processed.')
@@ -674,13 +670,12 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
         else:
-            await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')
+            await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')'''
 
-    @mc.command(guild_ids=guild_ids, name='dm')
+    '''@mc.command(guild_ids=guild_ids, name='dm', description='特別指令。Bot DM for Minecraft Staff usage。')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _dm(self, ctx: commands.Context, target, content):
-        """特別指令。Bot DM for Minecraft Staff usage。"""
         await ctx.defer()
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             req_ver_channel = bot.get_channel(878538264762527744)
@@ -727,13 +722,12 @@ class Special(commands.Cog):
             else:
                 await ctx.send_followup("成功傳訊至: "+str(person))
         else:
-            await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')
+            await ctx.send_followup('請去 <#878538264762527744> 或 <#692466531447210105>')'''
 
-    @mc.command(guild_ids=guild_ids, name='ver')
+    '''@mc.command(guild_ids=guild_ids, name='ver', description='特別指令。驗證玩家Minecraft。')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _ver(self, ctx: commands.Context, message):
-        '''特別指令。驗證玩家Minecraft。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             await ctx.respond('Request processed.')
 
@@ -767,13 +761,12 @@ class Special(commands.Cog):
 
             await req_ver_channel.send(embed=req_ver_embed_to_staff)
         else:
-            await ctx.respond('請去 <#878538264762527744> 或 <#692466531447210105>')
+            await ctx.respond('請去 <#878538264762527744> 或 <#692466531447210105>')'''
 
-    @mc.command(guild_ids=guild_ids, name='discver')
+    '''@mc.command(guild_ids=guild_ids, name='discver', description='特別指令。驗證玩家Discord。')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
     @is_in_guild(671654280985313282)
     async def _discver(self, ctx: commands.Context, message):
-        '''特別指令。驗證玩家Discord。'''
         if ctx.channel.id == 878538264762527744 or ctx.channel.id == 692466531447210105:
             await ctx.respond('Request processed.')
 
@@ -820,7 +813,7 @@ class Special(commands.Cog):
                 req_ver_embed_to_staff.description = "{} 已驗證".format(str(user))
                 req_ver_embed_to_staff.color = 0xff0000
 
-            await req_ver_channel.send(embed=req_ver_embed_to_staff)
+            await req_ver_channel.send(embed=req_ver_embed_to_staff)'''
 
     @slash_command(guild_ids=guild_ids, name='menu')
     async def _menu(self, ctx: commands.Context):
