@@ -6,14 +6,15 @@ from dotenv import load_dotenv
 import oracledb
 
 global enable_db
-enable_db = False
+enable_db = True
 
 if enable_db:
     
     if str(sys.platform).startswith('win'):
         print('Windows local test begin')
         oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
-    else:
+    #else:
+        # pyoracleclient (removed from requirements.txt)
         '''import pyoracleclient as pyoc
         pyoc.get_client(version='21.8.0.0.0', sys='linux', url=None)
         load_dotenv()
