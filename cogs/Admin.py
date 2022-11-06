@@ -13,10 +13,8 @@ class Admin(commands.Cog):
 
     # --- Action ---
     
-    @admin.command(guild_ids=guild_ids, name='announce')
+    @admin.command(guild_ids=guild_ids, name='announce', description="Announcement", description_locationlizations={"zh-TW": "特別指令。公告。"})
     async def _announce(self, ctx: commands.Context, message):
-        '''特別指令。公告。'''
-
         #client.get_channel("182583972662")
         '''
         logs_channel = bot.get_channel(809527650955296848)

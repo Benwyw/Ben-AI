@@ -16,7 +16,7 @@ import pandas as pd
 from lib.MinecraftServer import MinecraftServer as mc
 
 from discord import slash_command, Option, OptionChoice, SlashCommandGroup
-from discord.ext import commands, pages
+from discord.ext import commands, pages, tasks
 from discord.ui import InputText, Modal
 
 #find_opus = ctypes.util.find_library('opus')
@@ -32,7 +32,6 @@ from lib.DBConnection import DBConnection
 from lib.game.SortingOrders import order, presOrder, pokerOrder, suitOrder
 from io import BytesIO
 from discord.ext.tasks import loop
-from discord.ext import tasks
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 
 BOT_PREFIX = '$'
@@ -46,15 +45,11 @@ if os.getenv('TOKEN')[0:3] == 'ODE':
 
 #from main import bot
 
-from io import BytesIO
-from PIL import Image, ImageDraw, ImageColor, ImageFont
-import requests
-from datetime import datetime
-import pytz
-
 # News API
 from newsapi import NewsApiClient
-from urllib.parse import quote
+
+# URL Validator
+from urllib.parse import quote, urlparse
 
 # Alpha Vantage
 from alpha_vantage.timeseries import TimeSeries
@@ -73,9 +68,6 @@ from bs4 import BeautifulSoup
 # Cov Locate
 from urllib.request import Request, urlopen
 import json
-
-# URL Validator
-from urllib.parse import urlparse
 
 # for URL encode base64
 import base64
