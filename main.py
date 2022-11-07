@@ -158,15 +158,15 @@ async def on_command_error(ctx, error):
         elif seed == 1:
             msg = "**NANI！？** `/`"
         elif seed == 2:
-            msg = "**What 7 command is this ah, use** `/` **la 7 head**"
+            msg = "**What command is this ah, use** `/` **la**"
         elif seed == 3:
-            msg = "**JM9? 試下睇下個** `/`"
+            msg = "** 做咩? 試下睇下個** `/`"
         elif seed == 4:
-            msg = "**Kys, u need some** `/`"
+            msg = "**Wrong command, u need some** `/`"
         elif seed == 5:
             msg = "**打咩！！** `/` **！！**"
         elif seed == 6:
-            msg = "**Trash... use** `/` **la**"
+            msg = "**Yo... use** `/` **la**"
         elif seed == 7:
             msg = "**都冇呢個指令！！！！！！！ 用** `/` **啦！！！！！！！**"
 
@@ -184,11 +184,11 @@ async def on_command_error(ctx, error):
         if seed == 1:
             msg = "**你漏咗...個腦**"
         if seed == 2:
-            msg = "**乜你唔覺得怪怪dick?**"
+            msg = "**乜你唔覺得怪怪的?**"
         if seed == 3:
-            msg = "**「行返屋企」，你只係打咗「行返」，我點lung知行返去邊？**"
+            msg = "**「行返屋企」，你只係打咗「行返」，我點知行返去邊？**"
         if seed == 4:
-            msg = "**你食飯未呀？Sor9完全無興趣知，我只知你打漏咗野呀。**"
+            msg = "**你食飯未呀？Sor完全無興趣知，我只知你打漏咗野呀。**"
         if seed == 5:
             msg = "**你係想我fill in the blanks? 填充題？？**"
 
@@ -196,9 +196,9 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         seed = randrange(2)
         if seed == 0:
-            msg = "**Sor9弱小的你冇權限用呢個指令:angry:**"
+            msg = "**Sor弱小的你冇權限用呢個指令:angry:**"
         elif seed == 1:
-            msg = "**你確定你有lung力用呢個指令？**"
+            msg = "**你確定你有能力用呢個指令？**"
 
         await ctx.send(msg)
 

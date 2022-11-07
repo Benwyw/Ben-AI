@@ -70,7 +70,7 @@ mentions_List = [
                     "__好撚雷__嗎？"]
     ],
     [
-        ["https://i.imgur.com/yY9Lwjz.gif", "OT on99！"],
+        ["https://i.imgur.com/yY9Lwjz.gif", "OT mode activated！"],
         ["https://i.imgur.com/pDCgoaR.png", "就算你說些聽起來像一回事的大道理，\n" \
                     "你也只不過想要認為自己是正確的罷了。"],
         ["https://i.imgur.com/gCZK0SQ.jpg", "不幸的人做什麼都會被原諒嗎？"],

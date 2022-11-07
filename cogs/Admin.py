@@ -251,7 +251,7 @@ class Admin(commands.Cog):
         except Exception as e:
             image = Image.open(BytesIO(requests.get('https://i.imgur.com/fYe7MrH.jpg').content))
             draw = ImageDraw.Draw(image)
-            txt = "屌屌屌屌屌屌屌你呀"
+            txt = "呢個係一幅預設梗"
             fontsize = 80
             ttf = 'https://www.dropbox.com/s/cq2bainz70cpbu4/ArialUnicodeMS.ttf?dl=1'
             color = 'red' #default
