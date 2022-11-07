@@ -279,3 +279,5 @@ oracle/
 
 #vscode
 .vscode/
+.vscode/*
+.vscode/settings.json
