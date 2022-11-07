@@ -634,23 +634,24 @@ async def my_background_task():
     await channel.send(f'{counter}')
 my_background_task.start()'''
 
-try:
-    load_dotenv()
-    bot.run(os.getenv('TOKEN'))
-except:
+if __name__ == '__main__':
     try:
-        DBConnection.DBCursor.close()
+        load_dotenv()
+        bot.run(os.getenv('TOKEN'))
     except:
-        pass
-    try:
-        DBConnection.botDB.close()
-    except:
-        pass
-'''
-finally:
-    try:
-        DBConnection.DBCursor.close()
-        DBConnection.botDB.close()
-    except:
-        pass
-'''
+        try:
+            DBConnection.DBCursor.close()
+        except:
+            pass
+        try:
+            DBConnection.botDB.close()
+        except:
+            pass
+    '''
+    finally:
+        try:
+            DBConnection.DBCursor.close()
+            DBConnection.botDB.close()
+        except:
+            pass
+    '''
