@@ -141,9 +141,9 @@ async def on_ready():
     if os.getenv('TOKEN')[0:3] == 'ODA':
         gameLoop.start()
         #newsLoop.start()
-        #gamesLoop.start()
+        gamesLoop.start()
         #hypebeastLoop.start()
-        #naLolLoop.start()
+        naLolLoop.start()
         #covLoop.start()
         #twLolLoop.start() #Server error 500 24/7
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
