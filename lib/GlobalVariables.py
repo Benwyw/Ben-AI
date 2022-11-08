@@ -12,7 +12,10 @@ guild_Manny = 982965069535150140
 guild_Minecraft = 965588726778585111
 
 channel_BenDiscordBot_PublicDemo = 927850362776461333
+channel_BenDiscordBot_Log = 809527650955296848
+channel_BenDiscordBot_Crows = 925673962283884584
 channel_BrianLee_Satellite = 815568098001813555
+channel_BrianLee_Main = 356782441777725440
 channel_BenKaChu_OffTopic = 772038210057535488
 channel_Cave_BenAI = 965809908970819614
 

@@ -56,10 +56,10 @@ class Admin(commands.Cog):
 
                 #channels
                 botupdates_channel = bot.get_channel(910000426240340009)
-                logs_channel = bot.get_channel(809527650955296848)
-                main_channel = bot.get_channel(356782441777725440) #BrianLee Game Discord
-                cave_channel = bot.get_channel(490302069425700866) #Cave ben-ai
-                crows_channel = bot.get_channel(925673962283884584) #Ben Discord Bot
+                logs_channel = bot.get_channel(channel_BenDiscordBot_Log)
+                main_channel = bot.get_channel(channel_BrianLee_Main) #BrianLee Game Discord
+                cave_channel = bot.get_channel(guild_Cave) #Cave ben-ai
+                crows_channel = bot.get_channel(channel_BenDiscordBot_Crows) #Ben Discord Bot
 
                 #images related
                 bot_member = ctx.guild.get_member(809526579389792338)
