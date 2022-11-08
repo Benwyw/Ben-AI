@@ -39,11 +39,11 @@ async def modaltest(ctx):
     class MyModal(Modal):
         def __init__(self, person) -> None:
             super().__init__(person)
-            self.add_item(InputText(label="is", placeholder="gay"))
+            self.add_item(InputText(label="is", placeholder="strong"))
             self.add_item(
                 InputText(
                     label="because",
-                    value="gay",
+                    value="strong",
                     style=discord.InputTextStyle.long,
                 )
             )
