@@ -76,28 +76,39 @@ class General(commands.Cog):
     async def _stock(self, ctx:commands.Context, stock_name:Option(str, "stock_code", required=True, name_localizations={"zh-TW": "美股股票代號"})):
         """股市圖表"""
         await ctx.defer()
-
-        '''response = requests.get('https://www.marketwatch.com/tools/quotes/lookup.asp?siteid=mktw&Lookup={}&Country=us&Type=All'.format(stock_name))
+        
+        '''hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+        
+        url = 'https://www.google.com/search?q={}+stock+code'.format(stock_name)
+        req = requests.Session()
+        response = req.get(url, headers={'Accept': 'application/xml; charset=utf-8','User-Agent':'foo'})
+        print(response.status_code, response.text)
+        
         if response.status_code == 200:
             for line in response.content.decode('utf-8').splitlines():
-                if '<td class="bottomborder">' in line:
-                    stock_name = line.split('<',3)[2].split('>')[-1]
-                    break
-                if '<span class="company__ticker">' in line:
-                    stock_name = line.split('>',1)[1].split('<',1)[0]
+                if 'NASDAQ:' in line:
+                    print(line)
+                    stock_name = line.split('NASDAQ:', 1)[1]
+                    print(stock_name)
                     break
 
         else:
-            await ctx.send_followup("marketwatch連線失敗！？")
+            await ctx.send_followup("nasdaq連線失敗！？")
             return
-
-        response.close()'''
+        return'''
+        #response.close()
         e = discord.Embed()
 
         # Initialize IO
         data_stream = io.BytesIO()
 
         data, meta_data = ts.get_intraday(symbol=stock_name,interval='1min', outputsize='full')
+
         if str(data.head(2)) is not None:
             pass
         else:
