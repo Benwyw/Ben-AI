@@ -62,6 +62,39 @@ class Music(commands.Cog):
                 pass
         else:
             return
+        
+    @music.command(guild_ids=guild_ids, name='forcejoin', aliases=['fj'], invoke_without_subcommand=True)
+    async def _join(self, ctx: commands.Context):
+        """我要進來了。(強制)"""
+        
+        await ctx.defer()
+        
+        destination = ctx.author.voice.channel
+        
+        try:
+            ctx.guild.voice_client.stop() #await ctx.voice_state.stop()
+        except Exception as e:
+            await log(f'`/music leave`\nctx.guild.voice_client.stop()\n{e}')
+        try:
+            await ctx.guild.voice_client.disconnect()
+        except Exception as e:
+            await log(f'`/music leave`\nawait ctx.guild.voice_client.disconnect()\n{e}')
+        try:
+            del self.voice_states[ctx.guild.id]
+        except Exception as e:
+            await log(f'`/music leave`\ndel self.voice_states[ctx.guild.id]\n{e}')
+        
+        try:
+            if ctx.voice_state.voice:
+                await ctx.voice_state.voice.move_to(destination)
+                await ctx.respond(':thumbsup:')
+                return
+
+            ctx.voice_state.voice = await destination.connect()
+        except Exception as e:
+            pass
+        
+        await ctx.send_followup(':thumbsup:')
 
     @music.command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
