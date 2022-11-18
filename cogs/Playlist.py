@@ -69,7 +69,7 @@ class Playlist(commands.Cog):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
         try:
-            await log(f'start createplaylist {playlist_name}')
+            #await log(f'start createplaylist {playlist_name}')
 
             if (len(playlist_name)) > 30:
                 ctx.send_followup('播放清單名稱限30字元內。')
@@ -80,7 +80,7 @@ class Playlist(commands.Cog):
                 
                 DBConnection.createPlaylist(ctx.author.id, playlist_name)
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已建立播放清單 {playlist_name}', ''))
-            await log(f'end createplaylist {playlist_name}')
+            #await log(f'end createplaylist {playlist_name}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during createplaylist {playlist_name}:\n\n{e}')
@@ -90,7 +90,7 @@ class Playlist(commands.Cog):
         #url:Option(str, "Test param", name_localizations={"zh-TW": "測試參數"})
         await ctx.defer()
         try:
-            await log(f'start insertplaylist {playlist_id}')
+            #await log(f'start insertplaylist {playlist_id}')
 
             regex_code = "^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
             pattern = re.compile(regex_code)
@@ -132,7 +132,7 @@ class Playlist(commands.Cog):
                     embed.set_thumbnail(url=vid_info_thumbnail)
                     await ctx.send_followup(embed=embed)
 
-            await log(f'end insertplaylist {playlist_id}')
+            #await log(f'end insertplaylist {playlist_id}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error occured during insertplaylist {playlist_id}:\n\n{e}')
@@ -227,7 +227,7 @@ class Playlist(commands.Cog):
     async def _deleteplaylist(self, ctx:commands.Context, playlist_id):
         await ctx.defer()
         try:
-            await log(f'start deleteplaylist {playlist_id}')
+            #await log(f'start deleteplaylist {playlist_id}')
             
             playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
             if not playlist_name:
@@ -237,7 +237,7 @@ class Playlist(commands.Cog):
                 DBConnection.deletePlaylist(playlist_id)
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除播放清單 {playlist_name}', ''))
 
-            await log(f'end deleteplaylist {playlist_name}')
+            #await log(f'end deleteplaylist {playlist_name}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during deleteplaylist {playlist_id}:\n\n{e}')
@@ -246,7 +246,7 @@ class Playlist(commands.Cog):
     async def _deletemusicfromplaylist(self, ctx:commands.Context, playlist_id, music_id):
         await ctx.defer()
         try:
-            await log(f'start deletemusicfromplaylist {playlist_id}')
+            #await log(f'start deletemusicfromplaylist {playlist_id}')
             
             playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
             if not playlist_name:
@@ -256,7 +256,7 @@ class Playlist(commands.Cog):
                 music_name = DBConnection.deleteMusicFromPlaylist(playlist_id, music_id)[0][0]
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已刪除從播放清單 __{playlist_name}__\n刪除曲目 {music_name}', ''))
 
-            await log(f'end deletemusicfromplaylist {playlist_name}')
+            #await log(f'end deletemusicfromplaylist {playlist_name}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during deletemusicfromplaylist {playlist_id}:\n\n{e}')
@@ -265,7 +265,7 @@ class Playlist(commands.Cog):
     async def _updatemyplaylistname(self, ctx:commands.Context, playlist_id, playlist_new_name):
         await ctx.defer()
         try:
-            await log(f'start updatemyplaylistname {playlist_id}')
+            #await log(f'start updatemyplaylistname {playlist_id}')
             
             playlist_name = DBConnection.getPlaylistAndCheckIfUserOwns(ctx.author.id, playlist_id)
             if not playlist_name:
@@ -275,7 +275,7 @@ class Playlist(commands.Cog):
                 playlist_new_name_confirmed = DBConnection.updateMyPlaylistName(playlist_id, playlist_new_name)
                 await ctx.send_followup(embed=await self.create_embed(ctx, f'已更改播放清單名稱至 __{playlist_new_name_confirmed}__', ''))
 
-            await log(f'end updatemyplaylistname {playlist_name} {playlist_new_name_confirmed}')
+            #await log(f'end updatemyplaylistname {playlist_name} {playlist_new_name_confirmed}')
         except Exception as e:
             await ctx.send_followup('Error occured.')
             await log(f'error ocured during updatemyplaylistname {playlist_id}:\n\n{e}')
