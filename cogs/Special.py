@@ -875,7 +875,8 @@ class Special(commands.Cog):
         except:
             await message.clear_reactions()
 
-    @slash_command(guild_ids=guild_ids, name='chest')
+    # Disabled, require JVM environment
+    '''@slash_command(guild_ids=guild_ids, name='chest')
     async def _chest(self, ctx: commands.Context, code, key):
         """/chest CivilCodeMenu網址 關鍵字"""
 
@@ -891,7 +892,7 @@ class Special(commands.Cog):
                     if key.lower() in str(pdfFile["content"]).lower():
                         await ctx.send_followup("在 {} 找到 {}".format(pdf_url,key))
         else:
-            await ctx.send_followup('Response.status_code != 200. <@{}>'.format(bot.owner_id))
+            await ctx.send_followup('Response.status_code != 200. <@{}>'.format(bot.owner_id))'''
 
     @ask.command(guild_ids=guild_ids, name='ping')
     async def _ping(self, ctx: commands.Context, target):
