@@ -18,6 +18,7 @@ channel_BrianLee_Satellite = 815568098001813555
 channel_BrianLee_Main = 356782441777725440
 channel_BenKaChu_OffTopic = 772038210057535488
 channel_Cave_BenAI = 965809908970819614
+channel_Cave_General = 490302069425700866
 
 # Category - Data centre | 數據中心
 channel_BenDiscordBot_BugReport = 1018526299435827201           # 漏洞回饋

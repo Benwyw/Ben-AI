@@ -58,7 +58,7 @@ class Admin(commands.Cog):
                 botupdates_channel = bot.get_channel(910000426240340009)
                 logs_channel = bot.get_channel(channel_BenDiscordBot_Log)
                 main_channel = bot.get_channel(channel_BrianLee_Main) #BrianLee Game Discord
-                cave_channel = bot.get_channel(guild_Cave) #Cave ben-ai
+                cave_channel = bot.get_channel(channel_Cave_General) #Cave General
                 crows_channel = bot.get_channel(channel_BenDiscordBot_Crows) #Ben Discord Bot
 
                 #images related
