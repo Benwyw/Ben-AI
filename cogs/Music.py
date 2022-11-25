@@ -349,7 +349,7 @@ class Music(commands.Cog):
                         await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
 
     @music.command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist', description_localizations={"zh-TW": "播放播放清單"})
-    async def _playplaylist(self, ctx: commands.Context, *, playlist_id, random_shuffle: bool=False, start_id: int=None):
+    async def _playplaylist(self, ctx: commands.Context, *, playlist_id, start_id: int=None, random_shuffle: bool=False, random_retrieve_amount: int=None):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
         如果未提供URL，此指令將自動從各個站點搜索。
@@ -381,8 +381,10 @@ class Music(commands.Cog):
 
             async with ctx.typing():
                 try:
-                    if random_shuffle:
+                    if random_shuffle or random_retrieve_amount is not None:
                         random.shuffle(playlist)
+                        if random_retrieve_amount is not None:
+                            playlist = playlist[:random_retrieve_amount]
                     for pl in playlist:
                         try:
                             if isAppleMusic:
