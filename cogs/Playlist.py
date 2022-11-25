@@ -40,6 +40,62 @@ class Playlist(commands.Cog):
             if i not in playlist_ids:
                 return i
 
+    # TODO
+    @classmethod
+    def insertAppleMusicPlaylist(cls, url:str):
+        req = requests.Session()
+        response = req.get(url, headers={'Accept': 'application/xml; charset=utf-8','User-Agent':'foo'})
+
+        if response.status_code == 200:
+            for line in response.content.decode('utf-8').splitlines():
+                if 'non-editable-product-title' in line:
+                    playlistName = line.split('non-editable-product-title\">', 1)[1].split('</h1',1)[0]
+                    break
+
+        else:
+            return None
+        return playlistName
+
+    @classmethod
+    def getAppleMusicPlaylist(cls, url:str=None):
+        '''hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+            'Accept-Encoding': 'none',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Connection': 'keep-alive'}'''
+                
+        #url = 'https://www.google.com/search?q={}+stock+code'.format(stock_name)
+        if url is None or url == '':
+            url = default_apple_music_playlist #default playlist
+        req = requests.Session()
+        response = req.get(url, headers={'Accept': 'application/xml; charset=utf-8','User-Agent':'foo'})
+
+        if response.status_code == 200:
+            trackList = []
+            singerBool = False
+            for line in response.content.decode('utf-8').splitlines():
+                if 'track-title' in line:
+                    trackTitle = line.split('track-title\">', 1)[1].split('</div',1)[0]
+                    
+                    if singerBool is False:
+                        singerBool = True
+                    
+                '''if 'track-column-song' in line:
+                    print(line)
+                    print('\n\n')'''
+
+                if 'click-action\" href=\"#' in line and singerBool is True:
+                    trackSinger = line.split('click-action\" href=\"#\">', 1)[1].split('</a', 1)[0]
+                    
+                    trackList.append(f'{trackTitle} {trackSinger}')
+                    singerBool = False
+
+        else:
+            return None
+        return trackList
+
+
     '''    
     @playlist.command(guild_ids=guild_ids, name='testplaylist', description='Testing playlist', description_localizations={"zh-TW": "測試播放清單"})
     #@commands.cooldown(1, 600, commands.BucketType.user)

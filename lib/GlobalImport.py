@@ -258,3 +258,5 @@ async def is_owner(ctx):
         return True
     else:
         return await ctx.send_followup('This command is for owner use only.')
+    
+default_apple_music_playlist = os.getenv('DEFAULT_APPLE_MUSIC_PLAYLIST')
