@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import oracledb
 
 global enable_db
-enable_db = True
+enable_db = False
 
 if enable_db:
     
