@@ -139,7 +139,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     load_dotenv()
     if os.getenv('TOKEN')[0:3] == 'ODA':
-        gameLoop.start()
+        #gameLoop.start()
         #newsLoop.start()
         gamesLoop.start()
         #hypebeastLoop.start()
