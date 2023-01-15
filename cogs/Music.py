@@ -148,7 +148,7 @@ class Music(commands.Cog):
     async def _leave(self, ctx: commands.Context):
         """清除曲列、解除循環播放，離開語音頻道。"""
 
-        if not ctx.guild.voice_client: #if not ctx.voice_state.voice:
+        if ctx.guild.voice_client is None or not ctx.guild.voice_client: #if not ctx.voice_state.voice:
             return await ctx.respond('未連接到任何語音通道。')
 
         try:
@@ -314,7 +314,7 @@ class Music(commands.Cog):
         #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
         await ctx.defer()
 
-        if not ctx.voice_client:
+        if ctx.voice_client is None or not ctx.voice_client:
             #await commands.Context.invoke('join2', self._join2, ctx)
             destination = ctx.author.voice.channel
             if ctx.voice_state.voice:
@@ -370,7 +370,7 @@ class Music(commands.Cog):
         if not playlist or playlist is None:
             await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
         else:
-            if not ctx.voice_client:
+            if ctx.voice_client is None or not ctx.voice_client:
                 #await commands.Context.invoke('join2', self._join2, ctx)
                 destination = ctx.author.voice.channel
                 if ctx.voice_state.voice:
