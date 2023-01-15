@@ -20,7 +20,7 @@ if enable_db:
         load_dotenv()
         pyoc.add_custom_tns(os.getenv('DSNSTR'))'''
         
-        oracledb.init_oracle_client(config_dir="/home/Wallet_benai")
+        oracledb.init_oracle_client(lib_dir=r"/home/oracle/instantclient_21_6", config_dir=r"/home/Wallet_benai")
         
 
 
