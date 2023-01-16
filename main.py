@@ -135,7 +135,7 @@ async def pagetest_groups(ctx: discord.ApplicationContext):
 
 @bot.event
 async def on_ready():
-    status = "/ | 冇野幫到你"
+    status = "冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     load_dotenv()
     if os.getenv('TOKEN')[0:3] == 'ODA':
