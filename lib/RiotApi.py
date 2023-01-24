@@ -52,7 +52,19 @@ class RiotApi(object):
 
             gmbn = self.get_matches_by_name(gsbn)
 
-            if gmbn is not None and int(len(gmbn)) > 0:
-                gmbn = gmbn[0]
-                return self.get_matches_by_matchid(gmbn)
+            if gmbn is not None:
+                # attempt retry once if 503 service unavailable
+                if 'status' in gmbn and str(gmbn['status']['status_code']) == '503':
+                    gmbn = self.get_matches_by_name(gsbn)
+
+                if 'status' not in gmbn and int(len(gmbn)) > 0:
+                    gmbn = gmbn[0]
+                    matchDetails = self.get_matches_by_matchid(gmbn)
+                    
+                    if matchDetails is not None:
+                        if 'status' in matchDetails and str(matchDetails['status']['status_code']) == '503':
+                            matchDetails = self.get_matches_by_matchid(gmbn)
+
+                        if 'status' not in matchDetails and int(len(matchDetails)) > 0:
+                            return matchDetails
         return None

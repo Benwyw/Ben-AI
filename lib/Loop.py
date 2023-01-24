@@ -160,6 +160,7 @@ async def twLolLoop():
 async def riotLolLoop():
     regionList = ['na', 'tw']
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    embedList = []
     
     try:
         for region in regionList:
@@ -239,7 +240,7 @@ async def riotLolLoop():
                     url = 'https://{}.op.gg/summoner/userName={}'.format(region, summonerNameFormat)
                     thumbnail = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg'.format(championName)
                     #dt = str(datetime.utcfromtimestamp(int(gameStartTimestamp)/1000).strftime('%Y-%m-%d %H:%M:%S'))
-                    dt = "{} {}".format(str(datetime.fromtimestamp(int(gameStartTimestamp)/1000, pytz.timezone('Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S')), "HKT")
+                    dt = "{} {}".format(str(datetime.fromtimestamp(int(gameStartTimestamp)/1000, pytz.timezone('Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S')), 'HKT')
 
                     #embed construct
                     embed = discord.Embed()
@@ -269,9 +270,7 @@ async def riotLolLoop():
 
                     embed.set_footer(text=dt)
 
-                    #await bot.get_channel(channel_BenDiscordBot_PublicDemo).send(embed=embed) #Ben Discord Bot - public demo
-                    await bot.get_channel(channel_BrianLee_Satellite).send(embed=embed) #BrianLee Server - satellie
-                    #await bot.get_channel(channel_BenKaChu_OffTopic).send(embed=embed) #Ben's Minecraft Server - off topic
+                    embedList.append(embed)
 
                     '''print('\n\n')
                     print('matchId: {}\ngameDuration: {}\ngameMode: {}\ngameType: {}\n \
@@ -279,6 +278,14 @@ async def riotLolLoop():
                         goldEarned: {}\ngoldSpent: {}\n \
                         kills: {}\ndeaths: {}\nassists: {}\n \
                         doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
+                        
+        embedList.sort(key=lambda embed: datetime.strptime(str(embed.footer).split('\'')[1].split('\'')[0].split(' HKT')[0], '%Y-%m-%d %H:%M:%S'))
+        for embed in embedList:
+            if str(sys.platform).startswith('win'):
+                await bot.get_channel(channel_BenDiscordBot_PublicDemo).send(embed=embed) #Ben Discord Bot - public demo
+            else:
+                await bot.get_channel(channel_BrianLee_Satellite).send(embed=embed) #BrianLee Server - satellie
+                #await bot.get_channel(channel_BenKaChu_OffTopic).send(embed=embed) #Ben's Minecraft Server - off topic
     except Exception as e:
         await log('{}\n\nError occured in riotLolLoop\n{}'.format(e,timestamp))
 
