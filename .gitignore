@@ -281,3 +281,6 @@ oracle/
 .vscode/
 .vscode/*
 .vscode/settings.json
+
+#config
+lib/GlobalVariables.py

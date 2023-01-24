@@ -324,9 +324,9 @@ class DBConnection:
     def insertLol(cls, region: str, remarks: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query = """INSERT INTO Points (type, remarks) 
-                VALUES (:1, :1) """
-        dataTuple = (region, remarks)
+        query = """INSERT INTO Points (type, remarks, active) 
+                VALUES (:1, :1, :1) """
+        dataTuple = (region, remarks, 'Y')
         DBCursor.execute(query, dataTuple)
         botDB.commit()
 

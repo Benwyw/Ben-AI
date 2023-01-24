@@ -145,10 +145,11 @@ async def on_ready():
         #newsLoop.start()
         gamesLoop.start()
         #hypebeastLoop.start()
-        naLolLoop.start()
+        #naLolLoop.start()
         #covLoop.start()
         #twLolLoop.start() #Server error 500 24/7
-        newTWLolLoop.start()
+        #newTWLolLoop.start()
+        riotLolLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event

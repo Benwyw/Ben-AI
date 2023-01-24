@@ -274,8 +274,12 @@ class Admin(commands.Cog):
                 file = discord.File(fp=img, filename='memeup.png')
             await ctx.send_followup(file=file)
 
+    regionOption = [
+        OptionChoice(name="TW", value="tw", name_localizations={"zh-TW": "台服"}),
+        OptionChoice(name="NA", value="na", name_localizations={"zh-TW": "美服"})
+    ]
     @db.command(guild_ids=guild_ids, name='deletelol')
-    async def _deletelol(self, ctx:commands.Context, region:str, summonername:str):
+    async def _deletelol(self, ctx:commands.Context, region: Option(str, "Region", required=True, choices=regionOption, name_localizations={"zh-TW": "地區"}), summonername:str):
         '''Delete summoner name tw na'''
 
         await ctx.defer()
@@ -290,7 +294,7 @@ class Admin(commands.Cog):
                 await BDS_Log_Channel.send('{}\n\nError occured in deletelol\n{}'.format(e,timestamp))
 
     @db.command(guild_ids=guild_ids, name='insertlol')
-    async def _insertlol(self, ctx:commands.Context, region:str, summonername:str):
+    async def _insertlol(self, ctx:commands.Context, region: Option(str, "Region", required=True, choices=regionOption, name_localizations={"zh-TW": "地區"}), summonername:str):
         '''Insert summoner name tw na'''
 
         await ctx.defer()

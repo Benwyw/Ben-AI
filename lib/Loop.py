@@ -157,12 +157,137 @@ async def twLolLoop():
         #await BDS_Log_Channel.send('{}\n\nError occured in twLolLoop\n{}'.format(e,timestamp))
 
 @loop(minutes=10)
+async def riotLolLoop():
+    regionList = ['na', 'tw']
+    timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
+    
+    try:
+        for region in regionList:
+            count = 0
+            summonerNames = DBConnection.getLolSummonerNames(getRegion(region))
+
+            load_dotenv()
+            riotApi = None
+            if not str(sys.platform).startswith('win'):
+                riotApi = RiotApi(os.getenv('RIOT_API_KEY'), region)
+            else:
+                riotApi = RiotApi(os.getenv('RIOT_DEV_API_KEY'), region)
+
+            for summonerName in summonerNames:
+                if count == 20:
+                    asyncio.sleep(1)
+                    count = 0
+
+                count += 1
+                summonerName = str(summonerName[0])
+                match = riotApi.get_latest_matches_by_name(summonerName)
+
+                if match is None:
+                    await log('{}\n\nError occured in riotLolLoop summoner: {} possibly not found in region {}\n'.format(timestamp, summonerName, region))
+                    continue
+
+                matchId = match['metadata']['matchId']
+
+                #DB operations
+                dt_db = DBConnection.getLolPublishedAt(getRegion(region), summonerName)[0][0]
+                if str(matchId) == str(dt_db):
+                    continue
+                else:
+                    DBConnection.updateLolPublishedAt(getRegion(region), matchId, summonerName)
+
+                    gameDuration = match['info']['gameDuration']
+                    gameMode = match['info']['gameMode']
+                    gameType = match['info']['gameType']
+                    gameStartTimestamp = match['info']['gameStartTimestamp']
+
+                    for participant in match['info']['participants']:
+
+                        #if a list of participant names...
+                        if participant['summonerName'] == summonerName:
+                            #general
+                            summonerLevel = participant['summonerLevel']
+                            championName = participant['championName']
+                            win = participant['win']
+
+                            #economy
+                            goldEarned = participant['goldEarned']
+                            goldSpent = participant['goldSpent']
+
+                            #KDA
+                            kills = participant['kills']
+                            deaths = participant['deaths']
+                            assists = participant['assists']
+
+                            #double triple quadra penta kill
+                            doubleKills = participant['doubleKills']
+                            tripleKills = participant['tripleKills']
+                            quadraKills = participant['quadraKills']
+                            pentaKills = participant['pentaKills']
+
+                            break
+
+                    title = str(summonerName)
+                    color = 0x000000
+                    if win is True:
+                        title += ' 勝利'
+                        color = 0x00ff00
+                    else:
+                        title += ' 失敗'
+                        color = 0xff0000
+
+                    summonerNameFormat = summonerName.replace(' ', '%20')
+                    url = 'https://{}.op.gg/summoner/userName={}'.format(region, summonerNameFormat)
+                    thumbnail = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg'.format(championName)
+                    #dt = str(datetime.utcfromtimestamp(int(gameStartTimestamp)/1000).strftime('%Y-%m-%d %H:%M:%S'))
+                    dt = "{} {}".format(str(datetime.fromtimestamp(int(gameStartTimestamp)/1000, pytz.timezone('Asia/Hong_Kong')).strftime('%Y-%m-%d %H:%M:%S')), "HKT")
+
+                    #embed construct
+                    embed = discord.Embed()
+                    embed.title = title
+                    embed.color = color
+                    embed.url = url
+                    #embed.description = desc
+                    embed.set_author(name='League of Legends ({})'.format(region.upper()), icon_url='https://i.imgur.com/tkjOxrX.png')
+                    embed.set_thumbnail(url=thumbnail)
+
+                    embed.add_field(name="召喚師等級", value='{}'.format(summonerLevel), inline=True)
+                    embed.add_field(name="英雄名字", value='{}'.format(championName), inline=True)
+                    embed.add_field(name="獲得金幣", value='{}'.format(goldEarned), inline=True)
+
+                    embed.add_field(name="遊戲時長", value='{} 分鐘'.format(int(gameDuration)/60), inline=True)
+                    embed.add_field(name="遊戲模式", value='{}'.format(gameMode), inline=True)
+                    embed.add_field(name="遊戲類型", value='{}'.format(gameType), inline=True)
+
+                    embed.add_field(name="擊殺", value='{}'.format(kills), inline=True)
+                    embed.add_field(name="死亡", value='{}'.format(deaths), inline=True)
+                    embed.add_field(name="助攻", value='{}'.format(assists), inline=True)
+
+                    embed.add_field(name="雙殺", value='{}'.format(doubleKills), inline=True)
+                    embed.add_field(name="三連殺", value='{}'.format(tripleKills), inline=True)
+                    embed.add_field(name="四連殺", value='{}'.format(quadraKills), inline=True)
+                    embed.add_field(name="五連殺", value='{}'.format(pentaKills), inline=True)
+
+                    embed.set_footer(text=dt)
+
+                    await bot.get_channel(channel_BenDiscordBot_PublicDemo).send(embed=embed) #Ben Discord Bot - public demo
+                    #await bot.get_channel(channel_BrianLee_Satellite).send(embed=embed) #BrianLee Server - satellie
+                    #await bot.get_channel(772038210057535488).send(embed=embed) #Ben's Minecraft Server - off topic
+
+                    '''print('\n\n')
+                    print('matchId: {}\ngameDuration: {}\ngameMode: {}\ngameType: {}\n \
+                        summonerLevel: {}\nchampionName: {}\nwin: {}\n \
+                        goldEarned: {}\ngoldSpent: {}\n \
+                        kills: {}\ndeaths: {}\nassists: {}\n \
+                        doubleKills: {}\ntripleKills: {}\nquardraKills: {}\npentaKills: {}'.format(matchId, gameDuration, gameMode, gameType, summonerLevel, championName, win, goldEarned, goldSpent, kills, deaths, assists, doubleKills, tripleKills, quadraKills, pentaKills))'''
+    except Exception as e:
+        await log('{}\n\nError occured in riotLolLoop\n{}'.format(e,timestamp))
+
+@loop(minutes=10)
 async def newTWLolLoop():
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     try:
 
         count = 0
-        #totalcount = 0
         summonerNames = DBConnection.getLolSummonerNames(getRegion('tw'))
 
         load_dotenv()
@@ -176,7 +301,6 @@ async def newTWLolLoop():
             if count == 20:
                 asyncio.sleep(1)
                 count = 0
-                #totalcount += count
 
             count += 1
             summonerName = str(summonerName[0])

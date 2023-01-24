@@ -4,10 +4,8 @@ class RiotApi(object):
     def __init__(self, api_key: str, region: str):
         self.__RIOT_API_KEY = api_key
         self.__HEADER = {'X-Riot-Token': self.__RIOT_API_KEY}
-        self.__REGION = region
-        self.__ROUTING = "americas"
-        if str(region) == "tw2":
-            self.__ROUTING = "sea"
+        self.__REGION = 'tw2' if region == 'tw' else 'na1'
+        self.__ROUTING = "sea" if region == "tw" else "americas"
         self.__BASE_URL = ".api.riotgames.com/lol/"
         self.__API_URL_SUMMONER_V4 = "https://" + self.__REGION + self.__BASE_URL + "summoner/v4/summoners/"
         self.__API_URL_MATCH_V5 = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/by-puuid/"
