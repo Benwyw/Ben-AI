@@ -8,6 +8,8 @@ from lib.GlobalImport import *
 from cogs.Game import gameLoop
 from lib.Loop import *
 
+import sys
+
 """
 Commands Start Here
 """
@@ -138,7 +140,7 @@ async def on_ready():
     status = "冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     load_dotenv()
-    if os.getenv('TOKEN')[0:3] == 'ODA':
+    if not str(sys.platform).startswith('win'):
         #gameLoop.start()
         #newsLoop.start()
         gamesLoop.start()
@@ -146,6 +148,7 @@ async def on_ready():
         naLolLoop.start()
         #covLoop.start()
         #twLolLoop.start() #Server error 500 24/7
+        newTWLolLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 @bot.event
