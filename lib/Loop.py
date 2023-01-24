@@ -269,9 +269,9 @@ async def riotLolLoop():
 
                     embed.set_footer(text=dt)
 
-                    await bot.get_channel(channel_BenDiscordBot_PublicDemo).send(embed=embed) #Ben Discord Bot - public demo
-                    #await bot.get_channel(channel_BrianLee_Satellite).send(embed=embed) #BrianLee Server - satellie
-                    #await bot.get_channel(772038210057535488).send(embed=embed) #Ben's Minecraft Server - off topic
+                    #await bot.get_channel(channel_BenDiscordBot_PublicDemo).send(embed=embed) #Ben Discord Bot - public demo
+                    await bot.get_channel(channel_BrianLee_Satellite).send(embed=embed) #BrianLee Server - satellie
+                    #await bot.get_channel(channel_BenKaChu_OffTopic).send(embed=embed) #Ben's Minecraft Server - off topic
 
                     '''print('\n\n')
                     print('matchId: {}\ngameDuration: {}\ngameMode: {}\ngameType: {}\n \
