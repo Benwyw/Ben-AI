@@ -156,6 +156,9 @@ async def twLolLoop():
         #BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
         #await BDS_Log_Channel.send('{}\n\nError occured in twLolLoop\n{}'.format(e,timestamp))
 
+'''
+https://developer.riotgames.com/docs/lol#data-dragon_regions
+'''
 @loop(minutes=10)
 async def riotLolLoop():
     regionList = ['na', 'tw']
