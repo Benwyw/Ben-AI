@@ -89,6 +89,8 @@ def getRegion(region):
         return 'loltw'
     elif region == 'na':
         return 'lolna'
+    elif region == 'eu':
+        return 'loleu'
     
 # API Key
 load_dotenv()

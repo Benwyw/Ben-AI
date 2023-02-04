@@ -276,7 +276,8 @@ class Admin(commands.Cog):
 
     regionOption = [
         OptionChoice(name="TW", value="tw", name_localizations={"zh-TW": "台服"}),
-        OptionChoice(name="NA", value="na", name_localizations={"zh-TW": "美服"})
+        OptionChoice(name="NA", value="na", name_localizations={"zh-TW": "美服"}),
+        OptionChoice(name="EU", value="eu", name_localizations={"zh-TW": "歐服"})
     ]
     @db.command(guild_ids=guild_ids, name='deletelol')
     async def _deletelol(self, ctx:commands.Context, region: Option(str, "Region", required=True, choices=regionOption, name_localizations={"zh-TW": "地區"}), summonername:str):

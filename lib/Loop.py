@@ -161,7 +161,7 @@ https://developer.riotgames.com/docs/lol#data-dragon_regions
 '''
 @loop(minutes=10)
 async def riotLolLoop():
-    regionList = ['na', 'tw']
+    regionList = ['na', 'tw', 'eu']
     timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
     embedList = []
     
