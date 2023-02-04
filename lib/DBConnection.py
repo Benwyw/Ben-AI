@@ -370,8 +370,8 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query =  """select remarks
                     from Points
-                    where type = :1"""
-        data = (region,)
+                    where type = :1 and active = :1"""
+        data = (region, 'Y')
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
