@@ -89,6 +89,7 @@ class DBConnection:
                 print('DB connection is not alive, second attempt failed, abort')
                 return
         finally:
+            connection.autocommit = True
             return (connection, connection.cursor())
 
     @classmethod
