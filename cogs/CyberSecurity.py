@@ -29,6 +29,9 @@ class CyberSecurity(commands.Cog):
                     }
 
                     response = requests.get(url, headers=headers)
+                    
+                    if 'data' not in response.json():
+                        response = requests.get(url, headers=headers)
 
                     id = response.json()['data']['id']
                     attr = response.json()['data']['attributes']
