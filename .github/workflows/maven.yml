@@ -30,14 +30,8 @@ jobs:
         distribution: 'temurin'
         cache: maven
         
-    - name: List current files
-    - run: ls
-    
-    - name: List parent dir files
-    - run: ls ..
-        
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file ../pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
