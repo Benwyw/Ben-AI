@@ -56,10 +56,34 @@ jobs:
           path: |
             .
             !venv/
+            
+  release:
+    
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Set tag name
+      id: set_tag
+      run: echo "TAG=$(echo ${GITHUB_SHA::8})-$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      id: create-release
+      uses: ncipollo/release-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag: "${{ steps.set_tag.outputs.TAG }}"
+        name: "${{ steps.set_tag.outputs.TAG }}"
+        body: |
+            ${{ github.event.pull_request.body }}
+            ${{ github.event.head_commit.message }}
+        draft: false
+        prerelease: false
 
   deploy:
+    needs: release
     runs-on: ubuntu-latest
-    needs: build
     environment:
       name: 'production'
 #       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
