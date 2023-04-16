@@ -60,6 +60,7 @@ class Admin(commands.Cog):
                 main_channel = bot.get_channel(channel_BrianLee_Main) #BrianLee Game Discord
                 cave_channel = bot.get_channel(channel_Cave_General) #Cave General
                 crows_channel = bot.get_channel(channel_BenDiscordBot_Crows) #Ben Discord Bot
+                s4_channel = bot.get_channel(channel_S4_General) #S4
 
                 #images related
                 bot_member = ctx.guild.get_member(809526579389792338)
@@ -102,6 +103,13 @@ class Admin(commands.Cog):
                     await crows_channel.send(embed=embed_botupdates)
                 except Exception as e:
                     await ctx.send_followup("Unable to send message to 鎹鴉")
+                    await logs_channel.send(str(e))
+                    
+                #send s4
+                try:
+                    await s4_channel.send(embed=embed_botupdates)
+                except Exception as e:
+                    await ctx.send_followup("Unable to send message to S4")
                     await logs_channel.send(str(e))
 
                 #response embed
