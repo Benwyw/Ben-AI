@@ -18,10 +18,10 @@ bot.load_extension('lib.game.Poker')
 bot.load_extension('lib.game.Economy')
 bot.load_extension('lib.game.Betting')
 bot.load_extension('lib.game.Pres')
-bot.load_extension('cogs.Music') #bot.add_cog(Music(bot))
-bot.load_extension('cogs.Special') #bot.add_cog(Special(bot))
-bot.load_extension('cogs.General') #bot.add_cog(General(bot))
-bot.load_extension('cogs.Game') #bot.add_cog(Game(bot))
+bot.load_extension('cogs.Music')  # bot.add_cog(Music(bot))
+bot.load_extension('cogs.Special')  # bot.add_cog(Special(bot))
+bot.load_extension('cogs.General')  # bot.add_cog(General(bot))
+bot.load_extension('cogs.Game')  # bot.add_cog(Game(bot))
 bot.load_extension('cogs.CyberSecurity')
 bot.load_extension('cogs.Playlist')
 bot.load_extension('cogs.Admin')
@@ -32,11 +32,13 @@ async def modal_slash(ctx):
     modal = MyModal()
     await ctx.interaction.response.send_modal(modal)'''
 
+
 @bot.slash_command(name="modaltest", guild_ids=guild_ids)
 async def modaltest(ctx):
     """模態demo"""
-    #await ctx.delete()
-    #await ctx.respond('Completed', ephemeral=True)
+
+    # await ctx.delete()
+    # await ctx.respond('Completed', ephemeral=True)
 
     class MyModal(Modal):
         def __init__(self, person) -> None:
@@ -59,6 +61,7 @@ async def modaltest(ctx):
 
     class MyView(discord.ui.View):
         person = None
+
         @discord.ui.button(label="開始評論", style=discord.ButtonStyle.primary, row=4)
         async def button_callback(self, button, interaction):
             if self.person is not None:
@@ -80,12 +83,13 @@ async def modaltest(ctx):
         )
         async def select_callback(self, select, interaction):
             modal = MyModal(select.values[0])
-            #modal.title = select.values[0]
+            # modal.title = select.values[0]
             self.person = select.values[0]
-            #await interaction.response.send_modal(modal)
+            # await interaction.response.send_modal(modal)
 
     view = MyView()
     await ctx.interaction.response.send_message(content="\u200b", view=view)
+
 
 '''@bot.slash_command(name="groups", guild_ids=guild_ids)
 async def pagetest_groups(ctx: discord.ApplicationContext):
@@ -135,22 +139,24 @@ async def pagetest_groups(ctx: discord.ApplicationContext):
     paginator = pages.Paginator(pages=page_groups, show_menu=True, custom_view=view, default_button_row=1)
     await paginator.respond(ctx.interaction, ephemeral=False)'''
 
+
 @bot.event
 async def on_ready():
     status = "冇野幫到你"
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
     load_dotenv()
     if not str(sys.platform).startswith('win'):
-        #gameLoop.start()
-        #newsLoop.start()
+        # gameLoop.start()
+        # newsLoop.start()
         gamesLoop.start()
-        #hypebeastLoop.start()
-        #naLolLoop.start()
-        #covLoop.start()
-        #twLolLoop.start() #Server error 500 24/7
-        #newTWLolLoop.start()
+        # hypebeastLoop.start()
+        # naLolLoop.start()
+        # covLoop.start()
+        # twLolLoop.start() #Server error 500 24/7
+        # newTWLolLoop.start()
         riotLolLoop.start()
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
+
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -211,9 +217,9 @@ async def on_command_error(ctx, error):
         min = 0
         sec = 0
 
-        while error.retry_after >= 60*60:
+        while error.retry_after >= 60 * 60:
             hour += 1
-            error.retry_after -= 60*60
+            error.retry_after -= 60 * 60
         while error.retry_after >= 60:
             min += 1
             error.retry_after -= 60
@@ -231,9 +237,10 @@ async def on_command_error(ctx, error):
         if sec != 0:
             middle += "{:.0f}秒".format(sec)
 
-        msg = start+middle+end
+        msg = start + middle + end
 
         await ctx.send(msg)
+
 
 @bot.event
 async def on_application_command_error(ctx, error):
@@ -242,9 +249,9 @@ async def on_application_command_error(ctx, error):
         min = 0
         sec = 0
 
-        while error.retry_after >= 60*60:
+        while error.retry_after >= 60 * 60:
             hour += 1
-            error.retry_after -= 60*60
+            error.retry_after -= 60 * 60
         while error.retry_after >= 60:
             min += 1
             error.retry_after -= 60
@@ -262,9 +269,10 @@ async def on_application_command_error(ctx, error):
         if sec != 0:
             middle += "{:.0f}秒".format(sec)
 
-        msg = start+middle+end
+        msg = start + middle + end
 
         await ctx.send(msg)
+
 
 @bot.event
 async def on_reaction_add(reaction, user):
@@ -275,6 +283,7 @@ async def on_reaction_add(reaction, user):
             await reaction.message.add_reaction("🇴")
             await reaction.message.add_reaction("🇰")'''
 
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -283,7 +292,8 @@ async def on_message(message):
     if message.guild is None:
         if not str(message.content).startswith("$") and message.author.id not in temp_blocked_list:
             user = await getUserById(message.author.id)
-            await user.send("DM commands is not available yet, please execute commands within a server.\n私訊指令尚未開放，請使用伺服器頻道。")
+            await user.send(
+                "DM commands is not available yet, please execute commands within a server.\n私訊指令尚未開放，請使用伺服器頻道。")
             await log(f"{user.display_name} sent a message to bot DM:\n\n{message.content}")
             '''req_ver_author = message.author
             req_ver_author_id = message.author.id
@@ -398,8 +408,7 @@ async def on_message(message):
             not(message.guild is None and message.author != bot.user):
         await message.delete()'''
 
-
-    #Mentions Ben AI
+    # Mentions Ben AI
     if bot.user.mentioned_in(message) and '@everyone' not in message.content and '@here' not in message.content:
         e = discord.Embed()
 
@@ -417,7 +426,7 @@ async def on_message(message):
         e.set_footer(text=msg)
         await message.channel.send(embed=e)
 
-    #Troll
+    # Troll
     if '888' in message.content and message.content.startswith('8'):
         seed = randrange(8)
         if seed == 0:
@@ -439,23 +448,27 @@ async def on_message(message):
 
         await message.channel.send(msg, tts=True)
 
+
 @bot.event
 async def on_guild_join(guild):
     # Log
     try:
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
+        BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
         try:
-            await BDS_Log_Channel.send('<@254517813417476097>\nJoined a new server {}\n{}'.format(guild.name,timestamp))
+            await BDS_Log_Channel.send(
+                '<@254517813417476097>\nJoined a new server {}\n{}'.format(guild.name, timestamp))
         except Exception as e:
-            await BDS_Log_Channel.send('<@254517813417476097>\nError when attempt to send notification for joining a new server\n{}'.format(e))
+            await BDS_Log_Channel.send(
+                '<@254517813417476097>\nError when attempt to send notification for joining a new server\n{}'.format(e))
     except:
         pass
-    
+
     # DB
     for member in guild.members:
         if not DBConnection.checkUserInDB(str(member.id)):
             DBConnection.addUserToDB(str(member.id))
+
 
 @bot.event
 async def on_member_join(member):
@@ -473,20 +486,26 @@ async def on_member_join(member):
         bot_channel_embed_to_staff.add_field(name="Discord", value='<@{}>'.format(member.id), inline=True)
         bot_channel_embed_to_staff.set_footer(text=timestamp)
 
-        bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
+        bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server",
+                                               icon_url="https://i.imgur.com/NssQKDi.png")
         bot_channel_embed_to_member.title = "Welcome to Ben\'s Minecraft server"
         bot_channel_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
         bot_channel_embed_to_member.add_field(name="IP (Survival)", value="mc.benwyw.com", inline=True)
         bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
-        bot_channel_embed_to_member.add_field(name="Java & Bedrock", value="Support both Java & Bedrock. Bedrock requires Port `19132`", inline=False)
-        bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username, please join the server at least once before requesting.", inline=False)
-        bot_channel_embed_to_member.add_field(name="In-game guide", value="`/ibooks list` `/ibooks get (book)`", inline=False)
+        bot_channel_embed_to_member.add_field(name="Java & Bedrock",
+                                              value="Support both Java & Bedrock. Bedrock requires Port `19132`",
+                                              inline=False)
+        bot_channel_embed_to_member.add_field(name="Verify guide",
+                                              value="Reply this bot with your Minecraft username, please join the server at least once before requesting.",
+                                              inline=False)
+        bot_channel_embed_to_member.add_field(name="In-game guide", value="`/ibooks list` `/ibooks get (book)`",
+                                              inline=False)
         bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
         bot_channel_embed_to_member.add_field(name="Map", value="map.benwyw.com", inline=True)
         bot_channel_embed_to_member.add_field(name="Instagram", value="ig.benwyw.com", inline=True)
         bot_channel_embed_to_member.set_footer(text=timestamp)
 
-        #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
+        # wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
         bot_channel = bot.get_channel(692466531447210105)
         try:
             await member.send(content='2019~2021 | End of service: 17Dec2021', embed=bot_channel_embed_to_member)
@@ -502,12 +521,13 @@ async def on_member_join(member):
     if member.guild.id == 351742829254410250:
         try:
             pok_channel = bot.get_channel(858022877450600458)
-            await pok_channel.send("{} 加入了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
+            await pok_channel.send("{} 加入了這個伺服器\n<@{}>".format(member, member.guild.owner.id))
         except:
             pass
 
     if not DBConnection.checkUserInDB(str(member.id)):
         DBConnection.addUserToDB(str(member.id))
+
 
 @bot.event
 async def on_member_remove(member):
@@ -519,10 +539,11 @@ async def on_member_remove(member):
     try:
         pok_channel = bot.get_channel(858022877450600458)
 
-        await pok_channel.send("{} 離開了這個伺服器\n<@{}>".format(member,member.guild.owner.id))
+        await pok_channel.send("{} 離開了這個伺服器\n<@{}>".format(member, member.guild.owner.id))
 
     except:
         pass
+
 
 @bot.event
 async def on_member_update(before, after):
@@ -535,10 +556,11 @@ async def on_member_update(before, after):
         pok_channel = bot.get_channel(858022877450600458)
 
         if str(before.nick) != str(after.nick):
-            await pok_channel.send("{} 已由 __{}__ 改名至 __{}__".format(before,before.nick,after.nick))
+            await pok_channel.send("{} 已由 __{}__ 改名至 __{}__".format(before, before.nick, after.nick))
 
     except:
         pass
+
 
 @bot.event
 async def on_presence_update(before, after):
@@ -553,27 +575,28 @@ async def on_presence_update(before, after):
 
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
             embed = discord.Embed()
-            #embed.set_author(name=str(before.display_name), icon_url=before.display_avatar.url)
-            #embed.description = '<@{}>'.format(before.id)
+            # embed.set_author(name=str(before.display_name), icon_url=before.display_avatar.url)
+            # embed.description = '<@{}>'.format(before.id)
             embed.set_footer(text=timestamp)
 
             if str(before.status) == "offline":
                 if str(after.status) in ("online", "idle", "dnd", "streaming"):
-                    #embed.title = "已上線"
+                    # embed.title = "已上線"
                     embed.color = 0x00ff00
                     embed.description = '<@{}>已上線'.format(before.id)
-                    #embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
+                    # embed.set_thumbnail(url="https://i.imgur.com/CUkeFip.png")
                     await pok_channel.send(embed=embed)
 
             if str(before.status) in ("online", "idle", "dnd", "streaming"):
                 if str(after.status) == "offline":
-                    #embed.title = "已離線"
+                    # embed.title = "已離線"
                     embed.color = 0xff0000
                     embed.description = '<@{}>已離線'.format(before.id)
-                    #embed.set_thumbnail(url="https://i.imgur.com/8tG00SB.png")
+                    # embed.set_thumbnail(url="https://i.imgur.com/8tG00SB.png")
                     await pok_channel.send(embed=embed)
     except:
         pass
+
 
 @bot.event
 async def on_raw_message_delete(payload):
@@ -587,8 +610,9 @@ async def on_raw_message_delete(payload):
     except:
         pass
 
+
 @bot.event
-async def on_voice_state_update(member, before, after): # Pok
+async def on_voice_state_update(member, before, after):  # Pok
     # Protection
     if member == bot.user:
         if after.channel is not None and member.voice.self_deaf == False:
@@ -627,6 +651,7 @@ async def on_voice_state_update(member, before, after): # Pok
             pass
     else:
         return'''
+
 
 '''counter = 0
 

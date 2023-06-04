@@ -1,5 +1,6 @@
 from lib.GlobalImport import *
 
+
 class Special(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -9,14 +10,18 @@ class Special(commands.Cog):
             "Apex": "https://i.imgur.com/0fF6EkT.png",
             "Minecraft": "https://i.imgur.com/Rc6f19X.png"
         }
-    
-    mc = SlashCommandGroup(guild_ids=guild_ids, name="mc", description='Minecraft', description_localizations={"zh-TW": "當個創世神"})
-    ask = SlashCommandGroup(guild_ids=guild_ids, name="ask", description='Ask', description_localizations={"zh-TW": "問"})
-    report = SlashCommandGroup(guild_ids=guild_ids, name="report", description='Report', description_localizations={"zh-TW": "報告"})
-        
+
+    mc = SlashCommandGroup(guild_ids=guild_ids, name="mc", description='Minecraft',
+                           description_localizations={"zh-TW": "當個創世神"})
+    ask = SlashCommandGroup(guild_ids=guild_ids, name="ask", description='Ask',
+                            description_localizations={"zh-TW": "問"})
+    report = SlashCommandGroup(guild_ids=guild_ids, name="report", description='Report',
+                               description_localizations={"zh-TW": "報告"})
+
     def is_in_guild(guild_id):
         async def predicate(ctx):
             return ctx.guild and ctx.guild.id == guild_id
+
         return commands.check(predicate)
 
     '''
@@ -87,14 +92,14 @@ class Special(commands.Cog):
     '''
 
     @slash_command(guild_ids=guild_ids, name='map')
-    async def _map(self, ctx:commands.Context, location:str):
-        '''Retrieve location map by location name'''
+    async def _map(self, ctx: commands.Context, location: str):
+        """Retrieve location map by location name"""
 
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         try:
             if ' ' in location:
-                location = location.replace(' ','+')
+                location = location.replace(' ', '+')
 
             lat, lon = getLatLonByAddress('{}'.format(location))
             image = getMapsImageByLatLon(lat, lon, 18)
@@ -105,20 +110,20 @@ class Special(commands.Cog):
 
             await ctx.send_followup(file=imgfile)
 
-            '''with BytesIO() as img:
-                image.save(img, 'PNG')
-                img.seek(0)
-                imgfile = discord.File(fp=img, filename='gMapLocation.png')
-            await ctx.send_followup(file=imgfile)
-
-            with BytesIO() as img:
-                image.save(img, 'PNG')
-                img.seek(0)
-                imgfile = discord.File(fp=img, filename='gMapLocation.png')
-            await ctx.send_followup(file=imgfile)'''
+            # with BytesIO() as img:
+            #     image.save(img, 'PNG')
+            #     img.seek(0)
+            #     imgfile = discord.File(fp=img, filename='gMapLocation.png')
+            # await ctx.send_followup(file=imgfile)
+            #
+            # with BytesIO() as img:
+            #     image.save(img, 'PNG')
+            #     img.seek(0)
+            #     imgfile = discord.File(fp=img, filename='gMapLocation.png')
+            # await ctx.send_followup(file=imgfile)
         except Exception as e:
-            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-            await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e,timestamp))
+            BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in map\n{}'.format(e, timestamp))
 
     '''@mc.command(guild_ids=guild_ids, name='log', description='Change log release')
     @commands.check_any(commands.is_owner(), commands.has_any_role('Owner', 'Co-Owner', 'Manager', 'Public Relations Team', 'Discord Staff'))
@@ -165,8 +170,8 @@ class Special(commands.Cog):
 
     @slash_command(guild_ids=guild_ids, name='getserver')
     async def _getserver(self, ctx: commands.Context, code):
-        '''在__私訊__收到 play.benwyw.com 既 Private Server 資訊'''
-        
+        """在__私訊__收到 play.benwyw.com 既 Private Server 資訊"""
+
         await ctx.defer()
 
         game = ""
@@ -212,25 +217,27 @@ class Special(commands.Cog):
                             password = "||`{}`||".format(selectServer[1])
                             status = "Success"
                         else:
-                            embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
+                            embed.add_field(name="Error",
+                                            value='You are not permitted, please contact Ben.'.format(code))
                             status = "No permission"
                     if code == "terraria":
-                        if discord.utils.get(ctx.guild.roles, id=720669342550720663) in ctx.author.roles or discord.utils.get(ctx.guild.roles, id=735956800750223430) in ctx.author.roles or ctx.author.id in terrariaUserList:
+                        if discord.utils.get(ctx.guild.roles,
+                                             id=720669342550720663) in ctx.author.roles or discord.utils.get(
+                                ctx.guild.roles,
+                                id=735956800750223430) in ctx.author.roles or ctx.author.id in terrariaUserList:
                             game = selectServer[2]
                             port = selectServer[3]
                             remarks = selectServer[4]
                             password = "||`{}`||".format(selectServer[1])
                             status = "Success"
                         else:
-                            embed.add_field(name="Error", value='You are not permitted, please contact Ben.'.format(code))
+                            embed.add_field(name="Error",
+                                            value='You are not permitted, please contact Ben.'.format(code))
                             status = "No permission"
                 else:
                     status = "No password"
             else:
                 status = "Code not found"
-            
-                            
-
 
         if status == "No password":
             await ctx.send_followup("Requesting code is not a private server!")
@@ -242,21 +249,22 @@ class Special(commands.Cog):
                 embed.add_field(name="Port", value=port, inline=True)
                 embed.add_field(name="Remarks", value=remarks, inline=True)
                 embed.add_field(name="Password", value=password, inline=True)
-            
+
             embed.set_footer(text="www.benwyw.com")
 
-            #Private Message:
+            # Private Message:
             await ctx.author.send(embed=embed)
 
-            #Channel Message:
+            # Channel Message:
             await ctx.send_followup("請查閱私人訊息。")
 
-            #log Message:
-            await bot.get_channel(809527650955296848).send("{} 已查詢私人伺服器資訊 (Code = {}, Status = {})".format(ctx.author,code, status))
+            # log Message:
+            await bot.get_channel(809527650955296848).send(
+                "{} 已查詢私人伺服器資訊 (Code = {}, Status = {})".format(ctx.author, code, status))
 
-    @slash_command(guild_ids=guild_ids, name='server', aliases=['ser','serverlist'])
+    @slash_command(guild_ids=guild_ids, name='server', aliases=['ser', 'serverlist'])
     async def _server(self, ctx: commands.Context):
-        '''所有 play.benwyw.com 既 Server 列表'''
+        """所有 play.benwyw.com 既 Server 列表"""
 
         await ctx.defer()
 
@@ -275,19 +283,19 @@ class Special(commands.Cog):
 
         embed = discord.Embed(title="List of Servers Enabled | 已啟用的伺服器列表", color=0x00ff00)
         embed.description = "IP: `play.benwyw.com`"
-        #embed.set_author(name='Test Name', icon_url=ctx.author.display_avatar.url)
+        # embed.set_author(name='Test Name', icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
 
-        #embed.add_field(name="Game", value='Minecraft (Survival)\nMinecraft (Pixelmon)\nTerraria (Expert)\nBarotrauma', inline=True)
-        #embed.add_field(name="Port", value='`25565`\n-\n`7777`\n-', inline=True)
-        #embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock\nPublic | Pixelmon Reforged 8.3.0\nPublic | Vanilla\nPrivate | `$get baro`', inline=True)
-        #embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
+        # embed.add_field(name="Game", value='Minecraft (Survival)\nMinecraft (Pixelmon)\nTerraria (Expert)\nBarotrauma', inline=True)
+        # embed.add_field(name="Port", value='`25565`\n-\n`7777`\n-', inline=True)
+        # embed.add_field(name="Remarks", value='Public | 1.17.1 | Java & Bedrock\nPublic | Pixelmon Reforged 8.3.0\nPublic | Vanilla\nPrivate | `$get baro`', inline=True)
+        # embed.add_field(name="Password", value='使用__相應Remarks指令__，在__私訊__收到Private資訊', inline=False)
 
         serverList = DBConnection.selectAllServer()
         count = 0
         for server in serverList:
-            #id = server[0]
-            #pw = server[1]
+            # id = server[0]
+            # pw = server[1]
             game = server[2]
             port = server[3]
             remarks = server[4]
@@ -334,9 +342,9 @@ class Special(commands.Cog):
         await ctx.send_followup(embed=embed)
 
     @mc.command(guild_ids=guild_ids, name='bind')
-    #@commands.cooldown(1, 60, commands.BucketType.user)
+    # @commands.cooldown(1, 60, commands.BucketType.user)
     async def _bind(self, ctx: commands.Context, message):
-        '''與Minecraft伺服器綁定 /bind (username)'''
+        """與Minecraft伺服器綁定 /bind (username)"""
 
         await ctx.defer()
 
@@ -353,9 +361,9 @@ class Special(commands.Cog):
         await ctx.send_followup(embed=embed)
 
     @mc.command(guild_ids=guild_ids, name='unbind')
-    #@commands.cooldown(1, 60, commands.BucketType.user)
+    # @commands.cooldown(1, 60, commands.BucketType.user)
     async def _unbind(self, ctx: commands.Context):
-        '''與Minecraft伺服器解除綁定'''
+        """與Minecraft伺服器解除綁定"""
 
         await ctx.defer()
 
@@ -372,8 +380,8 @@ class Special(commands.Cog):
 
     @mc.command(guild_ids=guild_ids, name='bound')
     async def _bound(self, ctx: commands.Context):
-        '''檢閱Minecraft伺服器綁定狀態'''
-        
+        """檢閱Minecraft伺服器綁定狀態"""
+
         await ctx.defer()
 
         id = ctx.author.id
@@ -395,7 +403,7 @@ class Special(commands.Cog):
 
     @slash_command(guild_ids=guild_ids, name='rank')
     async def _rank(self, ctx: commands.Context):
-        '''查閱全宇宙排行榜 及 你的排名'''
+        """查閱全宇宙排行榜 及 你的排名"""
         await ctx.defer()
 
         embed = discord.Embed(title="全宇宙首十名 排行榜",
@@ -408,8 +416,8 @@ class Special(commands.Cog):
         embed2.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
 
         embed3 = discord.Embed(title="全宇宙首十名 排行榜",
-                              description="根據德州撲克金錢已定。",
-                              color=0x00ff00)
+                               description="根據德州撲克金錢已定。",
+                               color=0x00ff00)
         embed3.set_thumbnail(url="https://i.imgur.com/1DDTG0z.png")
 
         rankData = DBConnection.fetchAllRankData()
@@ -423,14 +431,14 @@ class Special(commands.Cog):
             if count <= 10:
                 user = await bot.fetch_user(tempid)
 
-                embed.add_field(name="{}. {}".format(count,user.display_name),
+                embed.add_field(name="{}. {}".format(count, user.display_name),
                                 value="勝場: {}".format(tempWIN), inline=False)
 
             if int(ctx.author.id) == int(tempid):
                 userWin = DBConnection.fetchUserData("userWin", tempid)
 
                 embed2.description = "勝場: {}".format(userWin)
-                embed2.add_field(name="全宇宙排行(勝場)", value="No.{} | 勝場: {}".format(count,tempWIN))
+                embed2.add_field(name="全宇宙排行(勝場)", value="No.{} | 勝場: {}".format(count, tempWIN))
 
             count += 1
 
@@ -442,14 +450,14 @@ class Special(commands.Cog):
             if count <= 10:
                 user = await bot.fetch_user(tempid)
 
-                embed3.add_field(name="{}. {}".format(count,user.display_name),
+                embed3.add_field(name="{}. {}".format(count, user.display_name),
                                  value="金錢: {}".format(tempMONEY), inline=False)
 
             if int(ctx.author.id) == int(tempid):
                 userBalance = DBConnection.fetchUserData("userBalance", tempid)
 
                 embed2.description += " | 金錢: {}".format(userBalance)
-                embed2.add_field(name="全宇宙排行(金錢)", value="No.{} | 金錢: {}".format(count,tempMONEY))
+                embed2.add_field(name="全宇宙排行(金錢)", value="No.{} | 金錢: {}".format(count, tempMONEY))
 
             count += 1
 
@@ -457,14 +465,13 @@ class Special(commands.Cog):
         await ctx.send_followup(embed=embed3)
         await ctx.send_followup(embed=embed2)
 
-
-    @slash_command(guild_ids=guild_ids, name='draw', aliases=['bonus','prize','b','reward'], pass_context=True)
-    #@commands.cooldown(1, 600, commands.BucketType.user)
+    @slash_command(guild_ids=guild_ids, name='draw', aliases=['bonus', 'prize', 'b', 'reward'], pass_context=True)
+    # @commands.cooldown(1, 600, commands.BucketType.user)
     async def _reward(self, ctx: commands.Context):
-        '''隨機獎金'''
+        """隨機獎金"""
         await ctx.defer()
 
-        chanceList = [0,1,2,3,4]
+        chanceList = [0, 1, 2, 3, 4]
 
         first = str(ctx.author.name)
         middle = "抽中了"
@@ -477,7 +484,7 @@ class Special(commands.Cog):
         console_seasonal_channel = bot.get_channel(888429949873172570)
 
         seed = random.choices(chanceList, weights=(1.5, 5.5, 15, 33, 45), k=1)
-        seed = int(str(seed).replace("[","").replace("]",""))
+        seed = int(str(seed).replace("[", "").replace("]", ""))
 
         '''print(draw_List[seed])
         print(draw_List[seed][0])
@@ -489,23 +496,23 @@ class Special(commands.Cog):
         if seed == 4:
             img = "https://i.imgur.com/IfZS8xe.gif"
             end = "星蛋 $100~300區間"
-            money = randrange(100,300+1,1)
+            money = randrange(100, 300 + 1, 1)
         elif seed == 3:
             img = "https://i.imgur.com/k0SQ1Lt.png"
             end = "銀蛋 $301~500區間"
-            money = randrange(301,500+1,1)
+            money = randrange(301, 500 + 1, 1)
         elif seed == 2:
             img = "https://i.imgur.com/JyDHamm.gif"
             end = "金蛋 $501~700區間"
-            money = randrange(501,700+1,1)
+            money = randrange(501, 700 + 1, 1)
         elif seed == 1:
             img = "https://i.imgur.com/crdEb6i.gif"
             end = "鑽蛋 $701~1000區間"
-            money = randrange(701,1000+1,1)
+            money = randrange(701, 1000 + 1, 1)
         elif seed == 0:
             img = "https://i.imgur.com/WBfgmgL.png"
             end = "壞蛋 -$500~1500區間"
-            money = randrange(-1500,-500+1,1)
+            money = randrange(-1500, -500 + 1, 1)
 
         oldTotal = DBConnection.fetchUserData("userBalance", id)
 
@@ -516,12 +523,12 @@ class Special(commands.Cog):
         DBConnection.updateUserBalance(id, newTotal)
         newTotal = DBConnection.fetchUserData("userBalance", id)
 
-        msg = first+" "+middle+end
+        msg = first + " " + middle + end
 
         e.set_image(url=img)
         e.set_author(name=msg, url=e.Empty, icon_url=e.Empty)
 
-        default_content = "{}得到了 ${} | ${} --> ${}".format(first,money,oldTotal,newTotal)
+        default_content = "{}得到了 ${} | ${} --> ${}".format(first, money, oldTotal, newTotal)
 
         # if user binded with MC name:
         binded = False
@@ -818,25 +825,25 @@ class Special(commands.Cog):
     @slash_command(guild_ids=guild_ids, name='menu')
     async def _menu(self, ctx: commands.Context):
         """Menu測試"""
-        page1 = discord.Embed (
-            title = '頁 1/3',
-            description = '早',
-            colour = discord.Colour.orange()
+        page1 = discord.Embed(
+            title='頁 1/3',
+            description='早',
+            colour=discord.Colour.orange()
         )
-        page2 = discord.Embed (
-            title = '頁 2/3',
-            description = '晨',
-            colour = discord.Colour.orange()
+        page2 = discord.Embed(
+            title='頁 2/3',
+            description='晨',
+            colour=discord.Colour.orange()
         )
-        page3 = discord.Embed (
-            title = '頁 3/3',
-            description = '呀',
-            colour = discord.Colour.orange()
+        page3 = discord.Embed(
+            title='頁 3/3',
+            description='呀',
+            colour=discord.Colour.orange()
         )
 
         pages = [page1, page2, page3]
 
-        message = await ctx.respond(embed = page1)
+        message = await ctx.respond(embed=page1)
 
         await message.add_reaction('⏮')
         await message.add_reaction('◀')
@@ -853,22 +860,22 @@ class Special(commands.Cog):
             while True:
                 if emoji == '⏮':
                     i = 0
-                    await message.edit(embed = pages[i])
+                    await message.edit(embed=pages[i])
                 elif emoji == '◀':
                     if i > 0:
                         i -= 1
-                        await message.edit(embed = pages[i])
+                        await message.edit(embed=pages[i])
                 elif emoji == '▶':
                     if i < 2:
                         i += 1
-                        await message.edit(embed = pages[i])
+                        await message.edit(embed=pages[i])
                 elif emoji == '⏭':
                     i = 2
                     await message.edit(embed=pages[i])
-                res = await bot.wait_for('reaction_add', timeout = 30.0, check = check)
+                res = await bot.wait_for('reaction_add', timeout=30.0, check=check)
                 if res == None:
                     break
-                if str(res[1]) != 'Ben AI#0649':  #Example: 'MyBot#1111'
+                if str(res[1]) != 'Ben AI#0649':  # Example: 'MyBot#1111'
                     emoji = str(res[0].emoji)
                     await message.remove_reaction(res[0].emoji, res[1])
 
@@ -896,7 +903,7 @@ class Special(commands.Cog):
 
     @ask.command(guild_ids=guild_ids, name='ping')
     async def _ping(self, ctx: commands.Context, target):
-        '''Ping爆佢!!!'''
+        """Ping爆佢!!!"""
 
         if '<@' not in target and '>' not in target:
             await ctx.respond("我唔會Ping: 空氣 / 其他Bot")
@@ -908,7 +915,7 @@ class Special(commands.Cog):
                 await ctx.send_followup("{}".format(target))
                 await ctx.send_followup(embed=embed)
 
-    async def create_ask_embed(self, ctx, target_user, purpose:str, thumbnail:str=None, ask_type:str=None):
+    async def create_ask_embed(self, ctx, target_user, purpose: str, thumbnail: str = None, ask_type: str = None):
         title = f"玩唔玩{purpose}呀?"
         if ask_type is not None:
             title = f"{ask_type}唔{ask_type}{purpose}呀?"
@@ -926,7 +933,7 @@ class Special(commands.Cog):
 
         return embed
 
-    async def create_desc_embed(self, target_user, desc:str):
+    async def create_desc_embed(self, target_user, desc: str):
         embed = discord.Embed(description=f"<@{target_user.id}> {desc}")
         return embed
 
@@ -949,9 +956,9 @@ class Special(commands.Cog):
         await target_user_msg.add_reaction(quitEmoji)
 
         def check(reaction, user):
-                global rxn
-                rxn = reaction
-                return user.id == target_user.id and not user.bot
+            global rxn
+            rxn = reaction
+            return user.id == target_user.id and not user.bot
 
         try:
             rxn = await bot.wait_for('reaction_add', timeout=60.0, check=check)
@@ -981,9 +988,14 @@ class Special(commands.Cog):
         OptionChoice(name="Apex", value="Apex", name_localizations={"zh-TW": "Apex 英雄"}),
         OptionChoice(name="Minecraft", value="Minecraft", name_localizations={"zh-TW": "當個創世神"})
     ]
-    @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?", description_locationlizations={"zh-TW": "玩唔玩...呀?"})
-    async def _game(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), purpose: Option(str, "Purpose", required=True, choices=askGameOption, name_localizations={"zh-TW": "目的"})):
-        await self.process_ask_embed(ctx,target_user, purpose)
+
+    @ask.command(guild_ids=guild_ids, name='game', description="玩唔玩...呀?",
+                 description_locationlizations={"zh-TW": "玩唔玩...呀?"})
+    async def _game(self, ctx: commands.Context,
+                    target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}),
+                    purpose: Option(str, "Purpose", required=True, choices=askGameOption,
+                                    name_localizations={"zh-TW": "目的"})):
+        await self.process_ask_embed(ctx, target_user, purpose)
 
     askCustomOption = [
         OptionChoice(name="玩", value="玩", name_localizations={"zh-TW": "玩"}),
@@ -997,11 +1009,19 @@ class Special(commands.Cog):
         OptionChoice(name="飲", value="飲", name_localizations={"zh-TW": "飲"}),
         OptionChoice(name="睇", value="睇", name_localizations={"zh-TW": "睇"})
     ]
-    @ask.command(guild_ids=guild_ids, name='custom', description="_唔_...呀?", description_locationlizations={"zh-TW": "_唔_...呀?"})
-    async def _custom(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True, name_localizations={"zh-TW": "收件人"}), ask_type: Option(str, "Ask type", required=True, choices=askCustomOption, name_localizations={"zh-TW": "類別"}), purpose: Option(str, "Purpose", required=True, name_localizations={"zh-TW": "目的"}), thumbnail: Option(discord.Attachment, "Image", required=True, name_localizations={"zh-TW": "圖片"})):
-        await self.process_ask_embed(ctx,target_user, purpose, thumbnail, ask_type)
-        
-    async def create_report_embed(self, ctx, content=str, thumbnail:str=None, report_type=str):
+
+    @ask.command(guild_ids=guild_ids, name='custom', description="_唔_...呀?",
+                 description_locationlizations={"zh-TW": "_唔_...呀?"})
+    async def _custom(self, ctx: commands.Context, target_user: Option(discord.Member, "User", required=True,
+                                                                       name_localizations={"zh-TW": "收件人"}),
+                      ask_type: Option(str, "Ask type", required=True, choices=askCustomOption,
+                                       name_localizations={"zh-TW": "類別"}),
+                      purpose: Option(str, "Purpose", required=True, name_localizations={"zh-TW": "目的"}),
+                      thumbnail: Option(discord.Attachment, "Image", required=True,
+                                        name_localizations={"zh-TW": "圖片"})):
+        await self.process_ask_embed(ctx, target_user, purpose, thumbnail, ask_type)
+
+    async def create_report_embed(self, ctx, content=str, thumbnail: str = None, report_type=str):
         title = "Bug report" if report_type == 'Bug' else "Suggestion report"
         thumbnail_url = thumbnail
 
@@ -1013,11 +1033,11 @@ class Special(commands.Cog):
         embed.set_footer(text=get_timestamp())
 
         return embed
-        
+
     async def process_report_embed(self, ctx, content=str, thumbnail=None, report_type=str):
         await ctx.defer()
         embed_report = await self.create_report_embed(ctx, content, thumbnail, report_type)
-        
+
         channel_target = channel_BenDiscordBot_BugReport if report_type == 'Bug' else channel_BenDiscordBot_SuggestionReport
 
         try:
@@ -1027,16 +1047,27 @@ class Special(commands.Cog):
             embed_except = discord.Embed(description=f"無法傳信息至 <@{ctx.channel}>")
             await ctx.send_followup(embed=embed_except)
             return
-        
-    @report.command(guild_ids=guild_ids, name='bug', description="Bug report", cooldown=commands.CooldownMapping.from_cooldown(3, 60, commands.BucketType.default), description_locationlizations={"zh-TW": "漏洞回饋"})
-    async def _bug(self, ctx: commands.Context, content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"})):
+
+    @report.command(guild_ids=guild_ids, name='bug', description="Bug report",
+                    cooldown=commands.CooldownMapping.from_cooldown(3, 60, commands.BucketType.default),
+                    description_locationlizations={"zh-TW": "漏洞回饋"})
+    async def _bug(self, ctx: commands.Context,
+                   content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}),
+                   thumbnail: Option(discord.Attachment, "Image", required=False,
+                                     name_localizations={"zh-TW": "圖片"})):
         await self.process_report_embed(ctx, content, thumbnail, "Bug")
-        
-    @report.command(guild_ids=guild_ids, name='suggest', description="Suggestion report", cooldown=commands.CooldownMapping.from_cooldown(3, 60, commands.BucketType.default), description_locationlizations={"zh-TW": "建議回饋"})
-    async def _suggest(self, ctx: commands.Context, content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}), thumbnail: Option(discord.Attachment, "Image", required=False, name_localizations={"zh-TW": "圖片"})):
+
+    @report.command(guild_ids=guild_ids, name='suggest', description="Suggestion report",
+                    cooldown=commands.CooldownMapping.from_cooldown(3, 60, commands.BucketType.default),
+                    description_locationlizations={"zh-TW": "建議回饋"})
+    async def _suggest(self, ctx: commands.Context,
+                       content: Option(str, "Content", required=True, name_localizations={"zh-TW": "內容"}),
+                       thumbnail: Option(discord.Attachment, "Image", required=False,
+                                         name_localizations={"zh-TW": "圖片"})):
         await self.process_report_embed(ctx, content, thumbnail, "Suggest")
 
+
 def setup(
-    bot: commands.Bot
+        bot: commands.Bot
 ) -> None:
     bot.add_cog(Special(bot))

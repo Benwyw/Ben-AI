@@ -1,22 +1,23 @@
 from lib.GlobalImport import requests
 
+
 class RiotApi(object):
     def __init__(self, api_key: str, region: str):
         self.__RIOT_API_KEY = api_key
         self.__HEADER = {'X-Riot-Token': self.__RIOT_API_KEY}
-        
+
         self.__REGION = 'tw2'
         if region == 'na':
             self.__REGION = 'na1'
         elif region == 'eu':
             self.__REGION = 'euw1'
-            
+
         self.__ROUTING = 'sea'
         if region == 'na':
             self.__ROUTING = 'americas'
         elif region == 'eu':
             self.__ROUTING = 'europe'
-            
+
         self.__BASE_URL = ".api.riotgames.com/lol/"
         self.__API_URL_SUMMONER_V4 = "https://" + self.__REGION + self.__BASE_URL + "summoner/v4/summoners/"
         self.__API_URL_MATCH_V5 = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/by-puuid/"
@@ -52,8 +53,8 @@ class RiotApi(object):
         request = requests.get(url, headers=self.__HEADER)
         return request.json()
 
-    #call
-    def get_latest_matches_by_name(self, summoner_name:str) -> dict:
+    # call
+    def get_latest_matches_by_name(self, summoner_name: str) -> dict:
         """Latest match history info by summoner name"""
 
         gsbn = self.get_summoner_by_name(summoner_name)
@@ -71,7 +72,7 @@ class RiotApi(object):
                 if 'status' not in gmbn and int(len(gmbn)) > 0:
                     gmbn = gmbn[0]
                     matchDetails = self.get_matches_by_matchid(gmbn)
-                    
+
                     if matchDetails is not None:
                         if 'status' in matchDetails and str(matchDetails['status']['status_code']) == '503':
                             matchDetails = self.get_matches_by_matchid(gmbn)

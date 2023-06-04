@@ -1,9 +1,11 @@
 from lib.GlobalImport import *
 
+
 @loop(seconds=1)
 async def gameLoop():
     for GAME in gameList:
         await GAME.gameLoop()
+
 
 # Card constants
 offset = 10
@@ -12,23 +14,36 @@ cardHeight = 210
 
 gameList = []
 
-uncategorized = ['game', 'hand',  'in', 'rc', 'setcolor', 'setsort', 'start']
+uncategorized = ['game', 'hand', 'in', 'rc', 'setcolor', 'setsort', 'start']
 
 # Card generator
 cardChoices = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 suits = ['C', 'D', 'H', 'S']
 
-
-
 # Deck constant
-deck = ["https://i.imgur.com/VBdPy26.png", "https://i.imgur.com/yGcued2.png", "https://i.imgur.com/5SR155z.png", "https://i.imgur.com/8M9EbWg.png", "https://i.imgur.com/aR5T1do.png", "https://i.imgur.com/A9Nyxwn.png", "https://i.imgur.com/pKv3o52.png",
-        "https://i.imgur.com/sEqDkMq.png", "https://i.imgur.com/rxaKhG4.png", "https://i.imgur.com/11yLhfD.png", "https://i.imgur.com/bq6lb5Z.png", "https://i.imgur.com/0Znul30.png", "https://i.imgur.com/md7LNs3.png", "https://i.imgur.com/GoyjsN6.png",
-        "https://i.imgur.com/J3sKcoF.png", "https://i.imgur.com/0F2KC0D.png", "https://i.imgur.com/KYWeqAC.png", "https://i.imgur.com/smLknK1.png", "https://i.imgur.com/F98Y3CA.png", "https://i.imgur.com/SS7SFsT.png", "https://i.imgur.com/NRQiCiJ.png",
-        "https://i.imgur.com/pTlYzW7.png", "https://i.imgur.com/v9iTjcX.png", "https://i.imgur.com/DiuE5ye.png", "https://i.imgur.com/ntwFoQr.png", "https://i.imgur.com/qSZoZT3.png", "https://i.imgur.com/mFdtL9O.png", "https://i.imgur.com/SsNG5L8.png",
-        "https://i.imgur.com/3qqBau2.png", "https://i.imgur.com/DrehITV.png", "https://i.imgur.com/LblY086.png", "https://i.imgur.com/hj27dUO.png", "https://i.imgur.com/43gwYkW.png", "https://i.imgur.com/2bMLCBW.png", "https://i.imgur.com/0lqLY4E.png",
-        "https://i.imgur.com/kQARj7b.png", "https://i.imgur.com/S3BUfV7.png", "https://i.imgur.com/PNGooTc.png", "https://i.imgur.com/8WhdL65.png", "https://i.imgur.com/PjxnGhg.png", "https://i.imgur.com/9cDlc0C.png", "https://i.imgur.com/4XM9H2y.png",
-        "https://i.imgur.com/y3NLpIF.png", "https://i.imgur.com/7o4C1LX.png", "https://i.imgur.com/zAr7vhg.png", "https://i.imgur.com/R4bYTZo.png", "https://i.imgur.com/N8qoXrl.png", "https://i.imgur.com/MJIoVsk.png", "https://i.imgur.com/WpL2pJI.png",
+deck = ["https://i.imgur.com/VBdPy26.png", "https://i.imgur.com/yGcued2.png", "https://i.imgur.com/5SR155z.png",
+        "https://i.imgur.com/8M9EbWg.png", "https://i.imgur.com/aR5T1do.png", "https://i.imgur.com/A9Nyxwn.png",
+        "https://i.imgur.com/pKv3o52.png",
+        "https://i.imgur.com/sEqDkMq.png", "https://i.imgur.com/rxaKhG4.png", "https://i.imgur.com/11yLhfD.png",
+        "https://i.imgur.com/bq6lb5Z.png", "https://i.imgur.com/0Znul30.png", "https://i.imgur.com/md7LNs3.png",
+        "https://i.imgur.com/GoyjsN6.png",
+        "https://i.imgur.com/J3sKcoF.png", "https://i.imgur.com/0F2KC0D.png", "https://i.imgur.com/KYWeqAC.png",
+        "https://i.imgur.com/smLknK1.png", "https://i.imgur.com/F98Y3CA.png", "https://i.imgur.com/SS7SFsT.png",
+        "https://i.imgur.com/NRQiCiJ.png",
+        "https://i.imgur.com/pTlYzW7.png", "https://i.imgur.com/v9iTjcX.png", "https://i.imgur.com/DiuE5ye.png",
+        "https://i.imgur.com/ntwFoQr.png", "https://i.imgur.com/qSZoZT3.png", "https://i.imgur.com/mFdtL9O.png",
+        "https://i.imgur.com/SsNG5L8.png",
+        "https://i.imgur.com/3qqBau2.png", "https://i.imgur.com/DrehITV.png", "https://i.imgur.com/LblY086.png",
+        "https://i.imgur.com/hj27dUO.png", "https://i.imgur.com/43gwYkW.png", "https://i.imgur.com/2bMLCBW.png",
+        "https://i.imgur.com/0lqLY4E.png",
+        "https://i.imgur.com/kQARj7b.png", "https://i.imgur.com/S3BUfV7.png", "https://i.imgur.com/PNGooTc.png",
+        "https://i.imgur.com/8WhdL65.png", "https://i.imgur.com/PjxnGhg.png", "https://i.imgur.com/9cDlc0C.png",
+        "https://i.imgur.com/4XM9H2y.png",
+        "https://i.imgur.com/y3NLpIF.png", "https://i.imgur.com/7o4C1LX.png", "https://i.imgur.com/zAr7vhg.png",
+        "https://i.imgur.com/R4bYTZo.png", "https://i.imgur.com/N8qoXrl.png", "https://i.imgur.com/MJIoVsk.png",
+        "https://i.imgur.com/WpL2pJI.png",
         "https://i.imgur.com/bXFkuPH.png", "https://i.imgur.com/UQSjCzN.png", "https://i.imgur.com/vakonuH.png"]
+
 
 def findFileName(suit, card):
     if suit == 'D':
@@ -147,6 +162,7 @@ def hasCommandByName(name: str):
             return command
     return None
 
+
 # Check if a user in participating in a game
 def checkInGame(user: discord.Member):
     for GAME in gameList:
@@ -154,11 +170,13 @@ def checkInGame(user: discord.Member):
             return True
     return False
 
+
 # Get a Game object by its 6-digit id
 def getGameByid(id):
     for GAME in gameList:
         if GAME.ID == id:
             return GAME
+
 
 # Check if a Game object exists given a 6-digit id
 def hasGame(id):
@@ -167,11 +185,13 @@ def hasGame(id):
             return True
     return False
 
+
 # Get a Game object that the user is participating in
 def getGame(user: discord.Member):
     for GAME in gameList:
         if GAME.hasPlayer(user):
             return GAME
+
 
 # Get a Game by channel
 def getGameByChannel(channel):
@@ -180,9 +200,11 @@ def getGameByChannel(channel):
             return GAME
     return None
 
+
 # Check if message and game channel match
 def channelCheck(GAME, CHANNEL):
     return GAME.channel == CHANNEL
+
 
 # Return a discord File object representing the user's hand
 def showHand(user, userHand):
@@ -199,12 +221,12 @@ def showHand(user, userHand):
         fname = str(userHand[i].split("/")[1])
         lname = fname.split(".")[0]
         if len(lname) > 2:
-            card = fname[0]+fname[1]
+            card = fname[0] + fname[1]
             suit = fname[2]
         else:
             card = fname[0]
             suit = fname[1]
-        url = findFileName(suit,card)
+        url = findFileName(suit, card)
         card = Image.open(requests.get(url, stream=True).raw)
         card = card.resize((cardWidth, cardHeight))
         HAND.paste(card, (10 + int(cardWidth / 3) * i, 10))
@@ -215,12 +237,13 @@ def showHand(user, userHand):
         file = discord.File(fp=img, filename='hand.png')
         return file
 
+
 # Sort user's hand based on their preferred sorting style
 def sortHand(user: discord.Member, HAND):
     global ORDER, presOrder, suitOrder, order
     h = []
     sorttype = DBConnection.fetchUserData("sortPref", str(user.id))
-    if sorttype== 'p':
+    if sorttype == 'p':
         ORDER = presOrder
     elif sorttype == 's':
         ORDER = suitOrder
@@ -239,13 +262,15 @@ def sortHand(user: discord.Member, HAND):
 
     return h
 
+
 class Game(commands.Cog):
-    games = SlashCommandGroup(guild_ids=guild_ids, name="games", description='Games', description_localizations={"zh-TW": "遊戲"})
-    
+    games = SlashCommandGroup(guild_ids=guild_ids, name="games", description='Games',
+                              description_localizations={"zh-TW": "遊戲"})
+
     @games.command(guild_ids=guild_ids, description="遊戲幫助指令。",
-                      name="cmd",
-                      help="顯示遊戲指令表",
-                      pass_context=True)
+                   name="cmd",
+                   help="顯示遊戲指令表",
+                   pass_context=True)
     async def _cmd(self, ctx: commands.Context, param: str = None):
         if param is None:
             embed = discord.Embed(title="新世界 指令表",
@@ -328,10 +353,10 @@ class Game(commands.Cog):
             await ctx.send(embed=embed)
 
     @games.command(guild_ids=guild_ids, description="生成隨機卡。 可能會出現重複項。",
-                      name="rc",
-                    brief="生成隨機卡",
-                    help="該命令從52張卡組中生成一張隨機卡。 格式為 /rc。 不需要任何參數。",
-                    pass_context=True)
+                   name="rc",
+                   brief="生成隨機卡",
+                   help="該命令從52張卡組中生成一張隨機卡。 格式為 /rc。 不需要任何參數。",
+                   pass_context=True)
     async def rc(self, ctx: commands.Context):
         embed = discord.Embed(title="隨機卡", description="", color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -358,12 +383,11 @@ class Game(commands.Cog):
         else:
             embed.description += selectCard
 
-        #imgName = "deck/" + selectCard + selectSuit + ".png"
+        # imgName = "deck/" + selectCard + selectSuit + ".png"
         embed.set_image(url=findFileName(selectSuit, selectCard))
-        #file = discord.File(imgName, filename='card.png')
+        # file = discord.File(imgName, filename='card.png')
         embed.set_thumbnail(url="attachment://card.png")
         await ctx.send(embed=embed)
-
 
     '''@games.command(guild_ids=guild_ids, description="從卡組中拉出許多隨機卡。",
                       name="draw",
@@ -410,12 +434,11 @@ class Game(commands.Cog):
         embed.set_image(url="attachment://hand.png")
         await ctx.send(file=file, embed=embed)'''
 
-
     @games.command(guild_ids=guild_ids, description="查看您的手。",
-                      name="hand",
-                    brief="查看你的手",
-                    help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 /hand，不帶任何參數。",
-                    pass_context=True)
+                   name="hand",
+                   brief="查看你的手",
+                   help="查看您手中的卡。 該機器人將為您PM包含您的手的圖像。 格式為 /hand，不帶任何參數。",
+                   pass_context=True)
     async def hand(self, ctx: commands.Context):
         embed = discord.Embed(title=ctx.author.name + "'s Hand", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -435,13 +458,13 @@ class Game(commands.Cog):
             embed.description = "您不在遊戲中。"
             await ctx.send(embed=embed)
 
-
-    @games.command(guild_ids=guild_ids, description="Set sorting type. 'p' for (3 low, 2 high), 'd' for (A low, K high), 's' for (diamonds - spades).",
-                      name="setsort",
-                    brief="Set sorting type",
-                    aliases=['ss'],
-                    help="/setsort <sorttype>. 'p' for 3 lowest, 2 highest, 'd' for default, 's' for by suit.",
-                    pass_context=True)
+    @games.command(guild_ids=guild_ids,
+                   description="Set sorting type. 'p' for (3 low, 2 high), 'd' for (A low, K high), 's' for (diamonds - spades).",
+                   name="setsort",
+                   brief="Set sorting type",
+                   aliases=['ss'],
+                   help="/setsort <sorttype>. 'p' for 3 lowest, 2 highest, 'd' for default, 's' for by suit.",
+                   pass_context=True)
     async def setsort(self, ctx: commands.Context, sorttype: str = None):
         embed = discord.Embed(title="排序方式", description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -474,13 +497,12 @@ class Game(commands.Cog):
 
         await ctx.send(embed=embed)
 
-
     @games.command(guild_ids=guild_ids, description="開始遊戲。",
-                      name="game",
-                    brief="開始遊戲",
-                    aliases=['5card'],
-                    help="使用此命令開始新遊戲。 您只能在遊戲之外使用此命令。 格式為 /game，不帶參數。",
-                    pass_context=True)
+                   name="game",
+                   brief="開始遊戲",
+                   aliases=['5card'],
+                   help="使用此命令開始新遊戲。 您只能在遊戲之外使用此命令。 格式為 /game，不帶參數。",
+                   pass_context=True)
     async def game(self, ctx: commands.Context):
         global gameList
 
@@ -504,14 +526,15 @@ class Game(commands.Cog):
         await ctx.defer()
 
         emoji1 = '1️⃣'
-        #emoji2 = '2️⃣'
-        embed = discord.Embed(title="遊戲選擇", description="通過使用給定的表情符號對此消息做出反應來選擇遊戲類型。", color=0x00ff00)
+        # emoji2 = '2️⃣'
+        embed = discord.Embed(title="遊戲選擇", description="通過使用給定的表情符號對此消息做出反應來選擇遊戲類型。",
+                              color=0x00ff00)
         embed.set_thumbnail(url=bot.get_user(814558209859518555).display_avatar.url)
         embed.add_field(name="德州撲克", value=emoji1)
-        #embed.add_field(name="大統領", value=emoji2)
+        # embed.add_field(name="大統領", value=emoji2)
         msg = await ctx.send(embed=embed)
         await msg.add_reaction(emoji1)
-        #await msg.add_reaction(emoji2)
+        # await msg.add_reaction(emoji2)
         rxn = None
 
         def check(reaction, user):
@@ -549,12 +572,11 @@ class Game(commands.Cog):
                 embed.set_thumbnail(url=GAME.imageUrl)
                 await ctx.send(embed=embed)'''
 
-
     @games.command(guild_ids=guild_ids, description="使用6位數字id參加遊戲。",
-                      name="in",
-                    brief="加入遊戲。",
-                    help="使用其6位數字id加入現有遊戲。 此命令的格式為 /in <6位數id>。",
-                    pass_context=True)
+                   name="in",
+                   brief="加入遊戲。",
+                   help="使用其6位數字id加入現有遊戲。 此命令的格式為 /in <6位數id>。",
+                   pass_context=True)
     async def _in(self, ctx: commands.Context, id: int = None):
         embed = discord.Embed(title='德州撲克', description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -601,12 +623,11 @@ class Game(commands.Cog):
         embed.set_thumbnail(url=GAME.imageUrl)
         await ctx.respond(embed=embed)
 
-
     @games.command(guild_ids=guild_ids, description="離開遊戲，如果遊戲已經在進行中，則放棄任何下注。",
-                      name="out",
-                    brief="離開您加入的遊戲，如果該遊戲已經在進行中，則放棄任何下注",
-                    help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 /out，不帶任何參數。",
-                    pass_context=True)
+                   name="out",
+                   brief="離開您加入的遊戲，如果該遊戲已經在進行中，則放棄任何下注",
+                   help="留下您與眾不同的遊戲，從而放棄您已經進行的任何下注。 格式為 /out，不帶任何參數。",
+                   pass_context=True)
     async def out(self, ctx: commands.Context):
         embed = discord.Embed(title='德州撲克', description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -630,12 +651,11 @@ class Game(commands.Cog):
         embed.set_thumbnail(url=GAME.imageUrl)
         await ctx.respond(embed=embed)
 
-
     @games.command(guild_ids=guild_ids, description="開始遊戲。",
-                      name="start",
-                    brief="開始遊戲",
-                    help="如果您還沒有開始遊戲，請先開始。 格式為 /start，不帶任何參數。",
-                    pass_context=True)
+                   name="start",
+                   brief="開始遊戲",
+                   help="如果您還沒有開始遊戲，請先開始。 格式為 /start，不帶任何參數。",
+                   pass_context=True)
     async def start(self, ctx: commands.Context):
         embed = discord.Embed(title='德州撲克', description=None, color=0x00ff00)
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -665,20 +685,19 @@ class Game(commands.Cog):
         await ctx.respond('開始中...')
         await GAME.startGame()
 
-
     @games.command(guild_ids=guild_ids, description="使用十六進制代碼為您的手設置自定義顏色。",
-                      name="setcolor",
-                    brief="為您的手設置自定義顏色",
-                    aliases=['sc', 'setColour'],
-                    help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 /setcolor <十六進制代碼>。",
-                    pass_context=True)
+                   name="setcolor",
+                   brief="為您的手設置自定義顏色",
+                   aliases=['sc', 'setColour'],
+                   help="為顯示您的手的圖像設置自定義顏色。 需要格式為＃123ABC的有效顏色十六進制代碼。 格式為 /setcolor <十六進制代碼>。",
+                   pass_context=True)
     async def setcolor(self, ctx: commands.Context, colour: str):
         embed = discord.Embed(title="自定義顏色", description=None, color=0x00ff00)
         embed.set_thumbnail(url="https://i.imgur.com/FCCMHHi.png")
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', colour)
         if not match:
-            embed.description="無效的顏色十六進制代碼。"
+            embed.description = "無效的顏色十六進制代碼。"
             await ctx.send(embed=embed)
             return
 
@@ -690,7 +709,8 @@ class Game(commands.Cog):
 
         await ctx.send(embed=embed)
 
+
 def setup(
-    bot: commands.Bot
+        bot: commands.Bot
 ) -> None:
     bot.add_cog(Game(bot))

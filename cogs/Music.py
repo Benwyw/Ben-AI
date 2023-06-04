@@ -7,13 +7,15 @@ from lib.music.Song import *
 from lib.music.SongQueue import *
 from cogs.Playlist import Playlist
 
+
 class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.voice_states = {}
         self.prevmsg = None
 
-    music = SlashCommandGroup(guild_ids=guild_ids, name="music", description='Music', description_localizations={"zh-TW": "音樂"})
+    music = SlashCommandGroup(guild_ids=guild_ids, name="music", description='Music',
+                              description_localizations={"zh-TW": "音樂"})
 
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
@@ -43,7 +45,8 @@ class Music(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         voice_state = member.guild.voice_client
 
-        if voice_state is not None and len(voice_state.channel.members) == 1 or member == bot.user and after.channel is None:
+        if voice_state is not None and len(
+                voice_state.channel.members) == 1 or member == bot.user and after.channel is None:
             # You should also check if the song is still playing
             try:
                 voice_state.stop()
@@ -53,8 +56,8 @@ class Music(commands.Cog):
                 await voice_state.disconnect()
                 '''for task in asyncio.Task.all_tasks(bot.loop):
                     await task.cancel()'''
-                #self.voice_states.get(member.guild.id).audio_player.cancel()
-                
+                # self.voice_states.get(member.guild.id).audio_player.cancel()
+
             except:
                 pass
             try:
@@ -63,17 +66,17 @@ class Music(commands.Cog):
                 pass
         else:
             return
-        
+
     @music.command(guild_ids=guild_ids, name='forcejoin', aliases=['fj'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
         """我要進來了。(強制)"""
-        
+
         await ctx.defer()
-        
+
         destination = ctx.author.voice.channel
-        
+
         try:
-            ctx.guild.voice_client.stop() #await ctx.voice_state.stop()
+            ctx.guild.voice_client.stop()  # await ctx.voice_state.stop()
         except Exception as e:
             await log(f'`/music leave`\nctx.guild.voice_client.stop()\n{e}')
         try:
@@ -84,7 +87,7 @@ class Music(commands.Cog):
             del self.voice_states[ctx.guild.id]
         except Exception as e:
             await log(f'`/music leave`\ndel self.voice_states[ctx.guild.id]\n{e}')
-        
+
         try:
             if ctx.voice_state.voice:
                 await ctx.voice_state.voice.move_to(destination)
@@ -94,13 +97,13 @@ class Music(commands.Cog):
             ctx.voice_state.voice = await destination.connect()
         except Exception as e:
             pass
-        
+
         await ctx.send_followup(':thumbsup:')
 
     @music.command(guild_ids=guild_ids, name='join', aliases=['j'], invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
         """我要進來了。"""
-        
+
         await ctx.defer()
 
         destination = ctx.author.voice.channel
@@ -148,11 +151,11 @@ class Music(commands.Cog):
     async def _leave(self, ctx: commands.Context):
         """清除曲列、解除循環播放，離開語音頻道。"""
 
-        if ctx.guild.voice_client is None or not ctx.guild.voice_client: #if not ctx.voice_state.voice:
+        if ctx.guild.voice_client is None or not ctx.guild.voice_client:  # if not ctx.voice_state.voice:
             return await ctx.respond('未連接到任何語音通道。')
 
         try:
-            ctx.guild.voice_client.stop() #await ctx.voice_state.stop()
+            ctx.guild.voice_client.stop()  # await ctx.voice_state.stop()
         except Exception as e:
             await log(f'`/music leave`\nctx.guild.voice_client.stop()\n{e}')
         try:
@@ -163,7 +166,7 @@ class Music(commands.Cog):
             del self.voice_states[ctx.guild.id]
         except Exception as e:
             await log(f'`/music leave`\ndel self.voice_states[ctx.guild.id]\n{e}')
-            
+
         await ctx.respond(':middle_finger:')
 
     @music.command(guild_ids=guild_ids, name='volume', aliases=['v'])
@@ -243,6 +246,7 @@ class Music(commands.Cog):
         '''
         await ctx.respond('⏭')
         ctx.voice_state.skip()
+
     @music.command(guild_ids=guild_ids, name='queue', aliases=['q'])
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
         """顯示曲列。
@@ -302,7 +306,8 @@ class Music(commands.Cog):
         elif not ctx.voice_state.loop:
             await ctx.respond('❎')
 
-    @music.command(guild_ids=guild_ids, name='play', aliases=['p'], description='Play music', description_localizations={"zh-TW": "播放音樂"})
+    @music.command(guild_ids=guild_ids, name='play', aliases=['p'], description='Play music',
+                   description_localizations={"zh-TW": "播放音樂"})
     async def _play(self, ctx: commands.Context, *, search: str):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
@@ -310,12 +315,12 @@ class Music(commands.Cog):
         個站點的列表可以喺呢到揾到：https://rg3.github.io/youtube-dl/supportedsites.html
         """
 
-        #ctx.voice_stats.voice --> ctx.voice_client
-        #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
+        # ctx.voice_stats.voice --> ctx.voice_client
+        # ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
         await ctx.defer()
 
         if ctx.voice_client is None or not ctx.voice_client:
-            #await commands.Context.invoke('join2', self._join2, ctx)
+            # await commands.Context.invoke('join2', self._join2, ctx)
             destination = ctx.author.voice.channel
             if ctx.voice_state.voice:
                 await ctx.voice_state.voice.move_to(destination)
@@ -326,16 +331,17 @@ class Music(commands.Cog):
         async with ctx.typing():
             try:
                 sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, search, loop=self.bot.loop), 180)
-            #except YTDLError as e:
-            except asyncio.TimeoutError:
+            # except YTDLError as e:
+            except asyncio.TimeoutError as e:
                 timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                await BDS_Log_Channel.send('{}\n\n__TimeoutError__ occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                await BDS_Log_Channel.send(
+                    '{}\n\n__TimeoutError__ occured in YTDLSource.create_source\n{}'.format(e, timestamp))
                 await ctx.send_followup('處理此請求時發生錯誤: 處理時間過長 (3分鐘以上)')
             except Exception as e:
                 timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                await BDS_Log_Channel.send('{}\n\nError occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in YTDLSource.create_source\n{}'.format(e, timestamp))
                 await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
             else:
                 for source in sourceList:
@@ -345,21 +351,24 @@ class Music(commands.Cog):
                         await ctx.send_followup('加咗首 {}'.format(str(source)))
                     except Exception as e:
                         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-                        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                        await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
+                        BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                        await BDS_Log_Channel.send(
+                            '{}\n\nError occured in for source in sourceList\n{}'.format(e, timestamp))
 
-    @music.command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist', description_localizations={"zh-TW": "播放播放清單"})
-    async def _playplaylist(self, ctx: commands.Context, *, playlist_id, start_id: int=None, random_shuffle: bool=False, random_retrieve_amount: int=None):
+    @music.command(guild_ids=guild_ids, name='playplaylist', aliases=['pp'], description='Play playlist',
+                   description_localizations={"zh-TW": "播放播放清單"})
+    async def _playplaylist(self, ctx: commands.Context, *, playlist_id, start_id: int = None,
+                            random_shuffle: bool = False, random_retrieve_amount: int = None):
         """播放歌曲。
         如果隊列中有歌曲，它將一直排隊，直到其他歌曲播放完畢。
         如果未提供URL，此指令將自動從各個站點搜索。
         個站點的列表可以喺呢到揾到：https://rg3.github.io/youtube-dl/supportedsites.html
         """
 
-        #ctx.voice_stats.voice --> ctx.voice_client
-        #ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
+        # ctx.voice_stats.voice --> ctx.voice_client
+        # ctx.invoke --> commands.Context.invoke, 'cmd name' | (original) | ctx
         await ctx.defer()
-        
+
         isAppleMusic = False
         if 'http' in playlist_id:
             isAppleMusic = True
@@ -371,7 +380,7 @@ class Music(commands.Cog):
             await ctx.send_followup('指定之播放清單不存在 或 沒有曲目。')
         else:
             if ctx.voice_client is None or not ctx.voice_client:
-                #await commands.Context.invoke('join2', self._join2, ctx)
+                # await commands.Context.invoke('join2', self._join2, ctx)
                 destination = ctx.author.voice.channel
                 if ctx.voice_state.voice:
                     await ctx.voice_state.voice.move_to(destination)
@@ -388,25 +397,32 @@ class Music(commands.Cog):
                     for pl in playlist:
                         try:
                             if isAppleMusic:
-                                sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'{pl}', loop=self.bot.loop), 180)
+                                sourceList = await asyncio.wait_for(
+                                    YTDLSource.create_source(ctx, f'{pl}', loop=self.bot.loop), 180)
                             else:
                                 if start_id is not None:
                                     if int(pl[0]) >= start_id:
-                                        sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
+                                        sourceList = await asyncio.wait_for(
+                                            YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}',
+                                                                     loop=self.bot.loop), 180)
                                     else:
                                         continue
                                 else:
-                                    sourceList = await asyncio.wait_for(YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}', loop=self.bot.loop), 180)
-                        #except YTDLError as e:
+                                    sourceList = await asyncio.wait_for(
+                                        YTDLSource.create_source(ctx, f'https://www.youtube.com/watch?v={pl[4]}',
+                                                                 loop=self.bot.loop), 180)
+                        # except YTDLError as e:
                         except asyncio.TimeoutError:
                             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-                            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                            await BDS_Log_Channel.send('{}\n\n__TimeoutError__ occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                            BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                            await BDS_Log_Channel.send(
+                                '{}\n\n__TimeoutError__ occured in YTDLSource.create_source\n{}'.format(e, timestamp))
                             await ctx.send_followup('處理此請求時發生錯誤: 處理時間過長 (3分鐘以上)')
                         except Exception as e:
                             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-                            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                            await BDS_Log_Channel.send('{}\n\nError occured in YTDLSource.create_source\n{}'.format(e,timestamp))
+                            BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                            await BDS_Log_Channel.send(
+                                '{}\n\nError occured in YTDLSource.create_source\n{}'.format(e, timestamp))
                             await ctx.send_followup('處理此請求時發生錯誤: {}'.format(str(e)))
                         else:
                             if sourceList:
@@ -416,10 +432,11 @@ class Music(commands.Cog):
                                         await ctx.voice_state.songs.put(song)
                                         await ctx.send_followup('加咗首 {}'.format(str(source)))
                                     except Exception as e:
-                                        BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                                        await BDS_Log_Channel.send('{}\n\nError occured in for source in sourceList\n{}'.format(e,timestamp))
+                                        BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                                        await BDS_Log_Channel.send(
+                                            '{}\n\nError occured in for source in sourceList\n{}'.format(e, timestamp))
                 except Exception as e:
-                        await log(f'{e}')
+                    await log(f'{e}')
 
     @_join.before_invoke
     @_play.before_invoke
@@ -431,7 +448,8 @@ class Music(commands.Cog):
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
 
+
 def setup(
-    bot: commands.Bot
+        bot: commands.Bot
 ) -> None:
     bot.add_cog(Music(bot))

@@ -1,22 +1,26 @@
 from lib.GlobalImport import *
 
+
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     guild_ids = guild_ids_FBenI
-        
-    admin = SlashCommandGroup(guild_ids=guild_ids, name="admin", description='Admin', description_localizations={"zh-TW": "管理員"})
-    db = admin.create_subgroup(guild_ids=guild_ids, name="db", description='Database', description_localizations={"zh-TW": "數據庫"})
-    test = admin.create_subgroup(guild_ids=guild_ids, name="test", description='Testing', description_localizations={"zh-TW": "測試"})
 
+    admin = SlashCommandGroup(guild_ids=guild_ids, name="admin", description='Admin',
+                              description_localizations={"zh-TW": "管理員"})
+    db = admin.create_subgroup(guild_ids=guild_ids, name="db", description='Database',
+                               description_localizations={"zh-TW": "數據庫"})
+    test = admin.create_subgroup(guild_ids=guild_ids, name="test", description='Testing',
+                                 description_localizations={"zh-TW": "測試"})
 
     # --- Action ---
-    
-    @admin.command(guild_ids=guild_ids, name='announce', description="Announcement", description_locationlizations={"zh-TW": "特別指令。公告。"})
+
+    @admin.command(guild_ids=guild_ids, name='announce', description="Announcement",
+                   description_locationlizations={"zh-TW": "特別指令。公告。"})
     async def _announce(self, ctx: commands.Context, message):
-        #client.get_channel("182583972662")
-        '''
+        # client.get_channel("182583972662")
+        """
         logs_channel = bot.get_channel(809527650955296848)
 
         for guild in bot.guilds:
@@ -44,28 +48,28 @@ class Admin(commands.Cog):
         await ctx.send(embed=embed)
         await logs_channel.send("Announced: {}".format(message))
         await ctx.message.delete()
-        '''
-        #loading
+        """
+        # loading
         await ctx.defer()
         if await is_owner(ctx) is True:
             if ctx.channel.id == 810511993449742347:
-                #timezone
+                # timezone
                 tz = pytz.timezone('Asia/Hong_Kong')
                 hk_now = datetime.now(tz)
                 timestamp = str(hk_now)
 
-                #channels
+                # channels
                 botupdates_channel = bot.get_channel(910000426240340009)
                 logs_channel = bot.get_channel(channel_BenDiscordBot_Log)
-                main_channel = bot.get_channel(channel_BrianLee_Main) #BrianLee Game Discord
-                cave_channel = bot.get_channel(channel_Cave_General) #Cave General
-                crows_channel = bot.get_channel(channel_BenDiscordBot_Crows) #Ben Discord Bot
-                s4_channel = bot.get_channel(channel_S4_General) #S4
+                main_channel = bot.get_channel(channel_BrianLee_Main)  # BrianLee Game Discord
+                cave_channel = bot.get_channel(channel_Cave_General)  # Cave General
+                crows_channel = bot.get_channel(channel_BenDiscordBot_Crows)  # Ben Discord Bot
+                s4_channel = bot.get_channel(channel_S4_General)  # S4
 
-                #images related
+                # images related
                 bot_member = ctx.guild.get_member(809526579389792338)
 
-                #botupdates embed
+                # botupdates embed
                 embed_botupdates = discord.Embed()
                 embed_botupdates.set_author(name="Ben AI", icon_url=bot_member.display_avatar.url)
                 embed_botupdates.title = "Bot Updates"
@@ -73,80 +77,80 @@ class Admin(commands.Cog):
                 embed_botupdates.description = message
                 embed_botupdates.set_footer(text=timestamp)
 
-                #preview
-                #await ctx.respond(embed=embed_botupdates)
-                
+                # preview
+                # await ctx.respond(embed=embed_botupdates)
 
-                #send botupdates
+                # send botupdates
                 try:
                     await botupdates_channel.send(embed=embed_botupdates)
                 except Exception as e:
                     await ctx.send_followup("Unable to send message to bot-updates channel")
                     await logs_channel.send(str(e))
 
-                #send main
+                # send main
                 try:
                     await main_channel.send(embed=embed_botupdates)
                 except Exception as e:
                     await ctx.send_followup("Unable to send message to 主頻道")
                     await logs_channel.send(str(e))
-                    
-                #send main
+
+                # send main
                 try:
                     await cave_channel.send(embed=embed_botupdates)
                 except Exception as e:
                     await ctx.send_followup("Unable to send message to Cave")
                     await logs_channel.send(str(e))
 
-                #send crows
+                # send crows
                 try:
                     await crows_channel.send(embed=embed_botupdates)
                 except Exception as e:
                     await ctx.send_followup("Unable to send message to 鎹鴉")
                     await logs_channel.send(str(e))
-                    
-                #send s4
+
+                # send s4
                 try:
                     await s4_channel.send(embed=embed_botupdates)
                 except Exception as e:
                     await ctx.send_followup("Unable to send message to S4")
                     await logs_channel.send(str(e))
 
-                #response embed
+                # response embed
                 embed = discord.Embed()
                 embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
                 embed.title = "已發布Bot Updates"
                 embed.description = str(message)
                 embed.set_footer(text=timestamp)
 
-                #send reponse
+                # send reponse
                 await ctx.send_followup(embed=embed)
-                await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author,message))
+                await logs_channel.send("Bot Updates: {} --> {}".format(ctx.author, message))
             else:
                 await ctx.respond("請去 <#810511993449742347>")
 
     @admin.command(guild_ids=guild_ids, name='status')
     async def _status(self, ctx: commands.Context, status):
-        '''特別指令。更改狀態。'''
+        """特別指令。更改狀態。"""
 
         if await is_owner(ctx) is True:
             if status != "reset":
-                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/ | {}".format(status)))
+                await bot.change_presence(
+                    activity=discord.Activity(type=discord.ActivityType.watching, name="/ | {}".format(status)))
             else:
-                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/ | 冇野幫到你"))
-            
+                await bot.change_presence(
+                    activity=discord.Activity(type=discord.ActivityType.watching, name="/ | 冇野幫到你"))
+
             await ctx.respond('Request processed.')
-        
 
     # --- Economy ---
-    
+
     @db.command(guild_ids=guild_ids, description="Set money for user. Requires administrator permissions.",
-                        brief="Set money for user",
-                        name="setbal",
-                        help="Set the balance of a user to a specified value. Requires administrator permissions for use. Mention a user to"
-                            " set their balance. Format is $setbal <mention user> <balance amount>.",
-                        pass_context=True)
-    #@commands.check_any(commands.has_permissions(administrator=True), commands.is_owner())
+                brief="Set money for user",
+                name="setbal",
+                help="Set the balance of a user to a specified value. Requires administrator permissions for use. Mention a user to"
+                     " set their balance. Format is $setbal <mention user> <balance amount>.",
+                pass_context=True)
+    # @commands.check_any(commands.has_permissions(administrator=True), commands.is_owner())
     async def setbal(self, ctx, user: discord.Member = None, amount: float = None):
         await ctx.defer()
         if await is_owner(ctx) is True:
@@ -168,23 +172,23 @@ class Admin(commands.Cog):
     async def setbal_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title="Command Error",
-                                    description="Invalid arguments detected for command 'setbal'. Check $help setbal for more details.",
-                                    color=0x00ff00)
+                                  description="Invalid arguments detected for command 'setbal'. Check $help setbal for more details.",
+                                  color=0x00ff00)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url=Economy_imgUrl)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
             embed = discord.Embed(title="權限錯誤",
-                                    description="您無權使用此指令。",
-                                    color=0x00ff00)
+                                  description="您無權使用此指令。",
+                                  color=0x00ff00)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             embed.set_thumbnail(url=Economy_imgUrl)
             await ctx.send(embed=embed)
-            
-            
+
     # --- Database ---
-    
-    @db.command(guild_ids=guild_ids, name='scanusers', desription='Automatically search and add missing user to DB', description_localizations={"zh-TW": "自動搜索並將丟失的用戶添加至數據庫"})
+
+    @db.command(guild_ids=guild_ids, name='scanusers', desription='Automatically search and add missing user to DB',
+                description_localizations={"zh-TW": "自動搜索並將丟失的用戶添加至數據庫"})
     async def _autocheckdbusers(self, ctx: commands.Context):
         await ctx.defer()
 
@@ -198,7 +202,7 @@ class Admin(commands.Cog):
                     if not DBConnection.checkUserInDB(str(member.id)):
                         DBConnection.addUserToDB(str(member.id))
                         counter += 1
-            
+
             await ctx.send_followup('Found {} missing members in DB, added to DB.'.format(counter))
 
     memeChoice = [
@@ -221,22 +225,27 @@ class Admin(commands.Cog):
         OptionChoice(name="White", value="white", name_localizations={"zh-TW": "白"}),
         OptionChoice(name="Black", value="black", name_localizations={"zh-TW": "黑"})
     ]
+
     @slash_command(guild_ids=guild_ids,
                    name='meme',
                    description='Meme generator',
                    description_localizations={"zh-TW": "梗圖生成器"})
     async def _meme(self, ctx: commands.Context,
-                    text:Option(str, "Input text of your choice", name_localizations={"zh-TW": "文字"}), 
-                    txtsize:Option(int, description = "Font size", required = True, choices = meme_size_choice, name_localizations={"zh-TW": "文字大小"}),
-                    pos:Option(str, "Position", required = True, choices=memeChoice, name_localizations={"zh-TW": "位置"}),
-                    color:Option(str, "Color", required = True, choices = meme_color_choice, name_localizations={"zh-TW": "顏色"}),
-                    attachment:Option(discord.Attachment, "Image", required=True, name_localizations={"zh-TW": "圖片"})):
-                    #url:Option(str, "Image url, either one", required=False)
-        
+                    text: Option(str, "Input text of your choice", name_localizations={"zh-TW": "文字"}),
+                    txtsize: Option(int, description="Font size", required=True, choices=meme_size_choice,
+                                    name_localizations={"zh-TW": "文字大小"}),
+                    pos: Option(str, "Position", required=True, choices=memeChoice,
+                                name_localizations={"zh-TW": "位置"}),
+                    color: Option(str, "Color", required=True, choices=meme_color_choice,
+                                  name_localizations={"zh-TW": "顏色"}),
+                    attachment: Option(discord.Attachment, "Image", required=True,
+                                       name_localizations={"zh-TW": "圖片"})):
+        # url:Option(str, "Image url, either one", required=False)
+
         await ctx.defer()
         try:
             if await is_owner(ctx) is True:
-                #processed_url = attachment if attachment is not None else url
+                # processed_url = attachment if attachment is not None else url
                 image = Image.open(BytesIO(requests.get(attachment).content))
                 image = image.convert('RGBA')
                 draw = ImageDraw.Draw(image)
@@ -249,20 +258,20 @@ class Admin(commands.Cog):
                 font = ImageFont.truetype(requests.get(ttf, stream=True).raw, fontsize)
 
                 w, h = draw.textsize(txt, font=font)
-                
+
                 if pos == 'up':
-                    draw.text(((W-w)/2,(H-h)/50), txt, font=font, fill=color)
+                    draw.text(((W - w) / 2, (H - h) / 50), txt, font=font, fill=color)
                 elif pos == 'center' or pos == 'middle':
-                    draw.text(((W-w)/2,(H-h)/2), txt, font=font, fill=color)
+                    draw.text(((W - w) / 2, (H - h) / 2), txt, font=font, fill=color)
                 elif pos == 'down':
-                    draw.text(((W-w)/2,(H-h)-((H-h)/50)), txt, font=font, fill=color)
+                    draw.text(((W - w) / 2, (H - h) - ((H - h) / 50)), txt, font=font, fill=color)
         except Exception as e:
             image = Image.open(BytesIO(requests.get('https://i.imgur.com/fYe7MrH.jpg').content))
             draw = ImageDraw.Draw(image)
             txt = "呢個係一幅預設梗"
             fontsize = 80
             ttf = 'https://www.dropbox.com/s/cq2bainz70cpbu4/ArialUnicodeMS.ttf?dl=1'
-            color = 'red' #default
+            color = 'red'  # default
 
             W, H = image.size
 
@@ -270,9 +279,9 @@ class Admin(commands.Cog):
 
             w, h = draw.textsize(txt, font=font)
 
-            print('{} {} {} {}'.format((H-h), (H-h)/10, (H-h)/5, (H-h)/2))
+            print('{} {} {} {}'.format((H - h), (H - h) / 10, (H - h) / 5, (H - h) / 2))
 
-            draw.text(((W-w)/2,(H-h)/50), txt, font=font, fill=color) #up
+            draw.text(((W - w) / 2, (H - h) / 50), txt, font=font, fill=color)  # up
 
             await ctx.send_followup('{}\n出現了以上問題所以用了預設梗圖'.format(e))
         else:
@@ -287,9 +296,12 @@ class Admin(commands.Cog):
         OptionChoice(name="NA", value="na", name_localizations={"zh-TW": "美服"}),
         OptionChoice(name="EU", value="eu", name_localizations={"zh-TW": "歐服"})
     ]
+
     @db.command(guild_ids=guild_ids, name='deletelol')
-    async def _deletelol(self, ctx:commands.Context, region: Option(str, "Region", required=True, choices=regionOption, name_localizations={"zh-TW": "地區"}), summonername:str):
-        '''Delete summoner name tw na'''
+    async def _deletelol(self, ctx: commands.Context, region: Option(str, "Region", required=True, choices=regionOption,
+                                                                     name_localizations={"zh-TW": "地區"}),
+                         summonername: str):
+        """Delete summoner name tw na"""
 
         await ctx.defer()
         if await is_owner(ctx) is True:
@@ -299,12 +311,14 @@ class Admin(commands.Cog):
                 DBConnection.deleteLol(region, summonername)
                 await ctx.send_followup('Deleted {} to {}'.format(summonername, region))
             except Exception as e:
-                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                await BDS_Log_Channel.send('{}\n\nError occured in deletelol\n{}'.format(e,timestamp))
+                BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in deletelol\n{}'.format(e, timestamp))
 
     @db.command(guild_ids=guild_ids, name='insertlol')
-    async def _insertlol(self, ctx:commands.Context, region: Option(str, "Region", required=True, choices=regionOption, name_localizations={"zh-TW": "地區"}), summonername:str):
-        '''Insert summoner name tw na'''
+    async def _insertlol(self, ctx: commands.Context, region: Option(str, "Region", required=True, choices=regionOption,
+                                                                     name_localizations={"zh-TW": "地區"}),
+                         summonername: str):
+        """Insert summoner name tw na"""
 
         await ctx.defer()
         if await is_owner(ctx) is True:
@@ -314,12 +328,12 @@ class Admin(commands.Cog):
                 DBConnection.insertLol(region, summonername)
                 await ctx.send_followup('Inserted {} to {}'.format(summonername, region))
             except Exception as e:
-                BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-                await BDS_Log_Channel.send('{}\n\nError occured in insertlol\n{}'.format(e,timestamp))
-            
+                BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+                await BDS_Log_Channel.send('{}\n\nError occured in insertlol\n{}'.format(e, timestamp))
+
     @db.command(guild_ids=guild_ids, name='updateserverpw')
     async def updateserverpw(self, ctx: commands.Context, id, pw):
-        '''Update server pw by (id pw)'''
+        """Update server pw by (id pw)"""
 
         await ctx.defer()
         if await is_owner(ctx) is True:
@@ -337,7 +351,7 @@ class Admin(commands.Cog):
 
     @db.command(guild_ids=guild_ids, name='deleteserver')
     async def deleteserver(self, ctx: commands.Context, id):
-        '''Delete server by (id)'''
+        """Delete server by (id)"""
 
         await ctx.defer()
         if await is_owner(ctx) is True:
@@ -345,75 +359,81 @@ class Admin(commands.Cog):
 
             DBConnection.deleteServer(str(id))
             result = "Successfully deleted `{}` in serverlist".format(id)
-            
+
             await ctx.send_followup(result)
 
     @db.command(guild_ids=guild_ids, name='updateserver')
-    async def updateserver(self, ctx: commands.Context, id, pw=None, game: str=None, port: int=None, remarks: str=None):
-        '''Update server pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
+    async def updateserver(self, ctx: commands.Context, id, pw=None, game: str = None, port: int = None,
+                           remarks: str = None):
+        """Update server pw by (id$pw[nullable]$game$port[nullable]$remarks)"""
 
         await ctx.defer()
         if await is_owner(ctx) is True:
             result = "No operations."
 
             if pw is not None:
-                remarks = "Private | {} | `/getserver {}`".format(remarks,id) if remarks is not None else "Private | `/getserver {}`".format(id)
+                remarks = "Private | {} | `/getserver {}`".format(remarks,
+                                                                  id) if remarks is not None else "Private | `/getserver {}`".format(
+                    id)
             else:
                 remarks = "Public | {}".format(remarks) if remarks is not None else "Public"
 
             DBConnection.updateServer(id, pw, game, port, remarks)
             result = "Successfully updated `{}` in serverlist".format(id)
-            
+
             await ctx.send_followup(result)
 
     @db.command(guild_ids=guild_ids, name='createserver')
-    async def createserver(self, ctx: commands.Context, id, pw=None, game: str=None, port: int=None, remarks: str=None):
-        '''Create server id pw by (id$pw[nullable]$game$port[nullable]$remarks)'''
-        
+    async def createserver(self, ctx: commands.Context, id, pw=None, game: str = None, port: int = None,
+                           remarks: str = None):
+        """Create server id pw by (id$pw[nullable]$game$port[nullable]$remarks)"""
+
         result = "No operations."
         await ctx.defer()
         if await is_owner(ctx) is True:
             if pw is not None:
-                remarks = "Private | {} | `/getserver {}`".format(remarks, id) if remarks is not None else "Private | `/getserver {}`".format(id)
+                remarks = "Private | {} | `/getserver {}`".format(remarks,
+                                                                  id) if remarks is not None else "Private | `/getserver {}`".format(
+                    id)
             else:
                 remarks = "Public | {}".format(remarks) if remarks is not None else "Public"
 
             DBConnection.createServer(id, pw, game, port, remarks)
             result = "Successfully created `{}` in serverlist".format(id)
             await ctx.send_followup(result)
-        
-    
+
     # --- Test ---
-    
+
     @test.command(guild_ids=guild_ids, name='gamesloop')
     async def _testgamesloop(self, ctx: commands.Context):
-        '''Test command for gamesLoop'''
+        """Test command for gamesLoop"""
 
         await ctx.defer()
         timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
         try:
             if await is_owner(ctx) is True:
-                hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-                'Accept-Encoding': 'none',
-                'Accept-Language': 'en-US,en;q=0.8',
-                'Connection': 'keep-alive'}
+                hdr = {
+                    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+                    'Accept-Encoding': 'none',
+                    'Accept-Language': 'en-US,en;q=0.8',
+                    'Connection': 'keep-alive'}
 
                 url = Request("https://www.indiegamebundles.com/category/free/", headers=hdr)
                 html_page = urlopen(url)
                 soup = BeautifulSoup(html_page, "lxml")
 
-                text = '' #game title
-                link = '' #game url
-                desc = '' #game desc
-                dt = '' #posted dt
-                for title in soup.findAll("div", class_="td-module-meta-info"): #entry-title td-module-title
+                text = ''  # game title
+                link = ''  # game url
+                desc = ''  # game desc
+                dt = ''  # posted dt
+                for title in soup.findAll("div", class_="td-module-meta-info"):  # entry-title td-module-title
                     soup_section = BeautifulSoup(str(title), "lxml")
 
                     for section in soup_section.findAll("time", class_="entry-date updated td-module-date"):
-                        dt = str(section).split('datetime=\"')[1].split('\">',1)[0]
-                        #print(dt+'\n') #text_30 = text[:min(len(text), 30)]
+                        dt = str(section).split('datetime=\"')[1].split('\">', 1)[0]
+                        # print(dt+'\n') #text_30 = text[:min(len(text), 30)]
                         break
                     dt_db = DBConnection.getPublishedAt('indiegamebundles')[0][0]
                     if str(dt) == str(dt_db):
@@ -424,14 +444,16 @@ class Admin(commands.Cog):
                         for section in soup_section.findAll("h3", class_="entry-title td-module-title"):
                             title = str(section)
                             link = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[0]
-                            text = title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[1].split('</a></h3>')[0].split('\">')[0]
+                            text = \
+                            title.split('<a href=\"')[1].split('\" rel=\"bookmark\" title=\"')[1].split('</a></h3>')[
+                                0].split('\">')[0]
                             break
 
                         for section in soup_section.findAll("div", class_="td-excerpt"):
-                            desc = str(section).split('\">',1)[1].split('</',1)[0]
+                            desc = str(section).split('\">', 1)[1].split('</', 1)[0]
                             break
 
-                        #embed construct
+                        # embed construct
                         embed = discord.Embed()
                         embed.title = text
                         embed.color = 0xb50024
@@ -440,45 +462,45 @@ class Admin(commands.Cog):
                         embed.set_thumbnail(url='https://i.imgur.com/RWIVDRN.png')
                         embed.set_footer(text=dt)
 
-                        #url handlings
+                        # url handlings
                         url = link
                         if url is not None and 'http' in url and '://' in url:
-                            url2 = url.rsplit('/',1)[1]
-                            url1 = url.rsplit('/',1)[0]
+                            url2 = url.rsplit('/', 1)[1]
+                            url1 = url.rsplit('/', 1)[0]
                             if url2 is not None and url2 != '' and not url2.isalnum():
                                 url2 = quote(url2)
-                                url = url1 +'/'+ url2
+                                url = url1 + '/' + url2
                             embed.url = url
 
-                        BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                        #BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
-                        #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+                        BDS_PD_Channel = bot.get_channel(927850362776461333)  # Ben Discord Bot - public demo
+                        # BLG_ST_Channel = bot.get_channel(815568098001813555) #BrianLee Server - satellie
+                        # BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
                         await BDS_PD_Channel.send(embed=embed)
-                        #await BLG_ST_Channel.send(embed=embed)
-                        #await BMS_OT_Channel.send(embed=embed)
+                        # await BLG_ST_Channel.send(embed=embed)
+                        # await BMS_OT_Channel.send(embed=embed)
 
                         await ctx.send_followup(embed=embed)
 
                     break
         except Exception as e:
-            BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
-            await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
-    
+            BDS_Log_Channel = bot.get_channel(809527650955296848)  # Ben Discord Bot - logs
+            await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e, timestamp))
+
     @test.command(guild_ids=guild_ids, name='newsloop')
     async def _testnewsloop(self, ctx: commands.Context):
-        '''Test command for newsLoop'''
+        """Test command for newsLoop"""
 
         await ctx.defer()
         if await is_owner(ctx) is True:
             timestamp = str(datetime.now(pytz.timezone('Asia/Hong_Kong')))
-            #try:
+            # try:
             # /v2/top-headlines
             top_headlines = newsapi.get_top_headlines(category='general', language='zh', country='hk')
             print('after api')
             selected_top_headline = ''
             for top_headline in top_headlines['articles']:
-                #if top_headline['author'] == '香港經濟日報HKET':
+                # if top_headline['author'] == '香港經濟日報HKET':
                 if top_headline['source']['name'] == 'Rthk.hk':
                     selected_top_headline = top_headline
                     break
@@ -498,7 +520,11 @@ class Admin(commands.Cog):
 
                 title = selected_top_headline['title']
                 url = selected_top_headline['url']
-                urlToImage = selected_top_headline['urlToImage'] if selected_top_headline['urlToImage'] is not None and 'http' in selected_top_headline['urlToImage'] and '://' in selected_top_headline['urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
+                urlToImage = selected_top_headline['urlToImage'] if selected_top_headline[
+                                                                        'urlToImage'] is not None and 'http' in \
+                                                                    selected_top_headline['urlToImage'] and '://' in \
+                                                                    selected_top_headline[
+                                                                        'urlToImage'] else 'https://i.imgur.com/UdkSDcb.png'
                 authorName = selected_top_headline['source']['name']
                 author = selected_top_headline['author']
                 description = selected_top_headline['description']
@@ -506,13 +532,13 @@ class Admin(commands.Cog):
 
                 embed = discord.Embed(title=title)
 
-                #url handlings
+                # url handlings
                 if url is not None and 'http' in url and '://' in url:
-                    url2 = url.rsplit('/',1)[1]
-                    url1 = url.rsplit('/',1)[0]
+                    url2 = url.rsplit('/', 1)[1]
+                    url1 = url.rsplit('/', 1)[0]
                     if url2 is not None and url2 != '' and not url2.isalnum():
                         url2 = quote(url2)
-                        url = url1 +'/'+ url2
+                        url = url1 + '/' + url2
                     embed.url = url
 
                 embed.description = description
@@ -521,23 +547,23 @@ class Admin(commands.Cog):
                 embed.set_footer(text=footer)
 
                 ##BDS_PD_Channel = bot.get_channel(927850362776461333) #Ben Discord Bot - public demo
-                #BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
-                #BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
+                # BLG_MC_Channel = bot.get_channel(356782441777725440) #BrianLee Server - main channel
+                # BMS_OT_Channel = bot.get_channel(772038210057535488) #Ben's Minecraft Server - off topic
 
-                #await BDS_PD_Channel.send(embed=embed)
-                #await BLG_MC_Channel.send(embed=embed)
-                #await BMS_OT_Channel.send(embed=embed)
+                # await BDS_PD_Channel.send(embed=embed)
+                # await BLG_MC_Channel.send(embed=embed)
+                # await BMS_OT_Channel.send(embed=embed)
 
                 await ctx.send_followup(embed=embed)
             '''except Exception as e:
                 BDS_Log_Channel = bot.get_channel(809527650955296848) #Ben Discord Bot - logs
                 await BDS_Log_Channel.send('{}\n\nError occured in newsLoop\n{}'.format(e,timestamp))
                 await ctx.send_followup('Error')'''
-    
+
     @test.command(guild_ids=guild_ids, name='welcome')
     async def testwelcome(self, ctx: commands.Context):
-        '''Test welcome message'''
-        
+        """Test welcome message"""
+
         await ctx.defer()
         if await is_owner(ctx) is True:
             bot_channel_embed_to_staff = discord.Embed()
@@ -550,22 +576,28 @@ class Admin(commands.Cog):
             bot_channel_embed_to_staff.add_field(name="Discord", value='<@{}>'.format(ctx.author.id), inline=True)
             bot_channel_embed_to_staff.set_footer(text=timestamp)
 
-            bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server", icon_url="https://i.imgur.com/NssQKDi.png")
+            bot_channel_embed_to_member.set_author(name="Ben's Minecraft Server",
+                                                   icon_url="https://i.imgur.com/NssQKDi.png")
             bot_channel_embed_to_member.title = "Welcome to Ben\'s Minecraft server"
             bot_channel_embed_to_member.set_thumbnail(url="https://i.imgur.com/NssQKDi.png")
             bot_channel_embed_to_member.add_field(name="IP (Survival)", value="mc.benwyw.com", inline=True)
             bot_channel_embed_to_member.add_field(name="Version", value="latest", inline=True)
-            bot_channel_embed_to_member.add_field(name="Java & Bedrock", value="Support both Java & Bedrock. Bedrock requires Port `19132`", inline=False)
-            bot_channel_embed_to_member.add_field(name="Verify guide", value="Reply this bot with your Minecraft username, please join the server at least once before requesting.", inline=False)
-            bot_channel_embed_to_member.add_field(name="In-game guide", value="`/ibooks list` `/ibooks get (book)`", inline=False)
+            bot_channel_embed_to_member.add_field(name="Java & Bedrock",
+                                                  value="Support both Java & Bedrock. Bedrock requires Port `19132`",
+                                                  inline=False)
+            bot_channel_embed_to_member.add_field(name="Verify guide",
+                                                  value="Reply this bot with your Minecraft username, please join the server at least once before requesting.",
+                                                  inline=False)
+            bot_channel_embed_to_member.add_field(name="In-game guide", value="`/ibooks list` `/ibooks get (book)`",
+                                                  inline=False)
             bot_channel_embed_to_member.add_field(name="Website", value="www.benwyw.com", inline=True)
             bot_channel_embed_to_member.add_field(name="Map", value="map.benwyw.com", inline=True)
             bot_channel_embed_to_member.add_field(name="Instagram", value="ig.benwyw.com", inline=True)
             bot_channel_embed_to_member.set_footer(text=timestamp)
 
-            #wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
-            #bot_channel = bot.get_channel(692466531447210105)
-            
+            # wmsg = "Welcome!\n\nTo verify yourself: https://www.benwyw.com/forums/request-verified/\nVerify Guide: https://www.benwyw.com/faq/\n@Staff in-game if you come up with any server related issues.\n\nPublic Relations Team\nBen's Minecraft Server\n\nMinecraft Server IP: mc.benwyw.com\nWebsite: https://www.benwyw.com"
+            # bot_channel = bot.get_channel(692466531447210105)
+
             try:
                 await ctx.author.send(embed=bot_channel_embed_to_member)
                 bot_channel_embed_to_staff.description = "歡迎信息發送成功"
@@ -574,11 +606,11 @@ class Admin(commands.Cog):
                 bot_channel_embed_to_staff.description = "無法發送歡迎信息"
                 bot_channel_embed_to_staff.color = 0xff0000
                 await log(str(e))
-            #await bot_channel.send(embed=bot_channel_embed_to_staff)
+            # await bot_channel.send(embed=bot_channel_embed_to_staff)
             await ctx.send_followup(embed=bot_channel_embed_to_staff)
-    
-            
+
+
 def setup(
-    bot: commands.Bot
+        bot: commands.Bot
 ) -> None:
-    bot.add_cog(Admin(bot))     
+    bot.add_cog(Admin(bot))

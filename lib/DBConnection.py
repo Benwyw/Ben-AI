@@ -1,47 +1,47 @@
-import os,sys
+import os, sys
 from dotenv import load_dotenv
 
-#Game import
-#import mysql.connector
+# Game import
+# import mysql.connector
 import oracledb
 
 global enable_db
 enable_db = True
 
 if enable_db:
-    
+
     if str(sys.platform).startswith('win'):
         print('Windows local test begin')
         oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_6")
-    #else:
+        # else:
         # pyoracleclient (removed from requirements.txt)
         '''import pyoracleclient as pyoc
         pyoc.get_client(version='21.8.0.0.0', sys='linux', url=None)
         load_dotenv()
         pyoc.add_custom_tns(os.getenv('DSNSTR'))'''
-        
-        #cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
-        
 
+        # cx_Oracle.init_oracle_client(config_dir="/home/ubuntu/Wallet_benai")
 
     load_dotenv()
     dsnStr = os.getenv('DSNSTR')
-    #host = os.getenv('HOST')
-    user = os.getenv('ORACLE_DB_USER') #os.getenv('DBUSER')
-    password = os.getenv('ORACLE_DB_PASSWORD') #os.getenv('DBPW')
-    #database = os.getenv('DATABASE')
+    # host = os.getenv('HOST')
+    user = os.getenv('ORACLE_DB_USER')  # os.getenv('DBUSER')
+    password = os.getenv('ORACLE_DB_PASSWORD')  # os.getenv('DBPW')
+    # database = os.getenv('DATABASE')
+
 
 class DBDisabled(Exception):
     pass
 
+
 class DBConnection:
     if enable_db:
-        #botDB = mysql.connector.connect(host=host, user=user,
-                                        #password=password, database=database)
+        # botDB = mysql.connector.connect(host=host, user=user,
+        # password=password, database=database)
         botDB = oracledb.connect(user=user, password=password,
-                                dsn=dsnStr)
-        #botDB = oracledb.SessionPool(user=user, password=password,
-                                #dsn=dsnStr, min=5, max=5, increment=0)
+                                 dsn=dsnStr)
+        # botDB = oracledb.SessionPool(user=user, password=password,
+        # dsn=dsnStr, min=5, max=5, increment=0)
 
     @classmethod
     def enableDBOrElseRaise(cls):
@@ -69,21 +69,21 @@ class DBConnection:
                 return
         finally:
             return (connection, connection.cursor())'''
-        
+
     @classmethod
     def connection(cls):
         cls.enableDBOrElseRaise()
-        #if DBConnection.botDB.is_connected():
+        # if DBConnection.botDB.is_connected():
         connection = DBConnection.botDB
         try:
-            #DBConnection.botDB.is_healthy(): 
+            # DBConnection.botDB.is_healthy():
             connection.ping()
-        #else:
+        # else:
         except Exception as e:
             print('DB connection is not alive')
             try:
                 DBConnection.botDB = oracledb.connect(user=user, password=password,
-                                dsn=dsnStr)
+                                                      dsn=dsnStr)
                 connection = DBConnection.botDB
             except Exception as e:
                 print('DB connection is not alive, second attempt failed, abort')
@@ -96,12 +96,12 @@ class DBConnection:
     def fetchUserData(cls, dataType: str, userID: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        vals = (userID, )
+        vals = (userID,)
         sqlQuery = 'select * from userData where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         result = DBCursor.fetchone()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
 
         if dataType == "userBalance":
             return result[1]
@@ -116,7 +116,7 @@ class DBConnection:
     def fetchUserMcName(cls, userID: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        vals = (userID, )
+        vals = (userID,)
         sqlQuery = 'select mcName from userData where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         result = DBCursor.fetchone()
@@ -129,8 +129,8 @@ class DBConnection:
         sqlQuery = 'select userID, userWin from userData order by userWin desc'
         DBCursor.execute(sqlQuery)
         result = DBCursor.fetchall()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
         return result
 
     @classmethod
@@ -150,8 +150,8 @@ class DBConnection:
         sqlQuery = 'update userData set userBalance = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
 
     @classmethod
     def updateUserWin(cls, userID: str, win: int):
@@ -161,8 +161,8 @@ class DBConnection:
         sqlQuery = 'update userData set userWin = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
 
     @classmethod
     def updateUserSortPref(cls, userID: str, sortPref: str):
@@ -172,8 +172,8 @@ class DBConnection:
         sqlQuery = 'update userData set sortPref = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
 
     @classmethod
     def updateUserHandColor(cls, userID: str, color: str):
@@ -183,8 +183,8 @@ class DBConnection:
         sqlQuery = 'update userData set colorPref = :1 where userID = :1'
         DBCursor.execute(sqlQuery, vals)
         botDB.commit()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
 
     @classmethod
     def updateUserMcName(cls, userID: str, mcName: str):
@@ -201,8 +201,8 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         DBCursor.execute("select * from userData where userID = " + userID)
         result = DBCursor.fetchall()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
         return len(result) != 0
 
     @classmethod
@@ -214,8 +214,8 @@ class DBConnection:
         dataTuple = (userID, 10000, "#00ff00", 'd', 0)
         DBCursor.execute(query, dataTuple)
         botDB.commit()
-        #DBCursor.close()
-        #botDB.close()
+        # DBCursor.close()
+        # botDB.close()
 
     @classmethod
     def createServer(cls, id: str, pw: str, game: str, port: str, remarks: str):
@@ -263,7 +263,7 @@ class DBConnection:
     def selectServer(cls, id: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        vals = (id, )
+        vals = (id,)
         sqlQuery = """SELECT id, pw, game, port, remarks
                 FROM serverlist
                 WHERE id = :1"""
@@ -302,7 +302,7 @@ class DBConnection:
     def getPublishedAt(cls, pointType: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query =  """select publishedAt
+        query = """select publishedAt
                     from Points
                     where type = :1"""
         data = (pointType,)
@@ -337,7 +337,7 @@ class DBConnection:
         botDB, DBCursor = cls.connection()
         query = """DELETE FROM Points
                 WHERE type=:1 and remarks=:1 """
-        data = (region,remarks)
+        data = (region, remarks)
         DBCursor.execute(query, data)
         botDB.commit()
 
@@ -345,10 +345,10 @@ class DBConnection:
     def getLolPublishedAt(cls, region: str, remarks: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query =  """select publishedAt
+        query = """select publishedAt
                     from Points
                     where type = :1 and remarks = :1"""
-        data = (region,remarks)
+        data = (region, remarks)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
@@ -368,7 +368,7 @@ class DBConnection:
     def getLolSummonerNames(cls, region: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query =  """select remarks
+        query = """select remarks
                     from Points
                     where type = :1 and active = :1"""
         data = (region, 'Y')
@@ -380,10 +380,10 @@ class DBConnection:
     def getRemarks(cls, type: str, active: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query =  """select remarks
+        query = """select remarks
                     from Points
                     where type = :1 and active = :1"""
-        data = (type,active)
+        data = (type, active)
         DBCursor.execute(query, data)
         result = DBCursor.fetchall()
         return result
@@ -397,11 +397,11 @@ class DBConnection:
         # insert into playlist
         query = """INSERT INTO playlist (playlist_name, owner_user_id) 
                 VALUES (:1, :1) """
-        dataTuple = (playlist_name,userid)
+        dataTuple = (playlist_name, userid)
         DBCursor.execute(query, dataTuple)
 
         # get playlist id
-        query =  """select playlist_id
+        query = """select playlist_id
                     from playlist
                     where playlist_name = :1"""
         data = (playlist_name,)
@@ -422,7 +422,7 @@ class DBConnection:
     def getPlaylistAndCheckIfUserOwns(cls, userid: str, playlist_id: str):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query =  """select p.playlist_name
+        query = """select p.playlist_name
                     from user_music_playlist ump
                     inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1 and p.owner_user_id = :1
                     where ump.userid = :1"""
@@ -438,7 +438,7 @@ class DBConnection:
 
         # get all playlist globally
         if userid is None and playlist_id is None:
-            query =  """select *
+            query = """select *
                         from playlist
                         order by playlist_id"""
             DBCursor.execute(query)
@@ -446,7 +446,7 @@ class DBConnection:
 
         # get all playlist of specific user
         elif userid is not None and playlist_id is None:
-            query =  """select p.*
+            query = """select p.*
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id
                         where userid = :1
@@ -454,9 +454,9 @@ class DBConnection:
             data = (userid,)
             DBCursor.execute(query, data)
             return DBCursor.fetchall()
-        
+
         elif userid is None and playlist_id is not None:
-            query =  """select mp.*, p.playlist_name, p.owner_user_id
+            query = """select mp.*, p.playlist_name, p.owner_user_id
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
                         inner join music_playlist mp on mp.playlist_id = p.playlist_id
@@ -466,7 +466,7 @@ class DBConnection:
             return DBCursor.fetchall()
 
         else:
-            query =  """select mp.*, p.playlist_name, p.owner_user_id
+            query = """select mp.*, p.playlist_name, p.owner_user_id
                         from user_music_playlist ump
                         inner join playlist p on ump.playlist_id = p.playlist_id and p.playlist_id = :1
                         inner join music_playlist mp on mp.playlist_id = p.playlist_id
@@ -509,14 +509,14 @@ class DBConnection:
         DBCursor.execute(query, data)
 
         botDB.commit()
-        
+
     # delete music from owning playlist
     @classmethod
     def deleteMusicFromPlaylist(cls, playlist_id: int, music_id: int):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        
-        query =  """select music_name
+
+        query = """select music_name
                     from music_playlist
                     where id = :1"""
         data = (music_id,)
@@ -525,13 +525,13 @@ class DBConnection:
 
         query = """DELETE FROM music_playlist
                 WHERE playlist_id=:1 and id=:1"""
-        data = (playlist_id,music_id)
+        data = (playlist_id, music_id)
         DBCursor.execute(query, data)
 
         botDB.commit()
-        
+
         return music_name
-    
+
     # update owning playlist name
     @classmethod
     def updateMyPlaylistName(cls, playlist_id: int, playlist_new_name: str):
@@ -541,19 +541,19 @@ class DBConnection:
         query = """UPDATE playlist
                 SET playlist_name = :1
                 WHERE playlist_id=:1"""
-        data = (playlist_new_name,playlist_id)
+        data = (playlist_new_name, playlist_id)
         DBCursor.execute(query, data)
 
         botDB.commit()
-        
+
         return playlist_new_name
-    
+
     # TODO
     @classmethod
     def selectAllPlaylistId(cls):
         cls.enableDBOrElseRaise()
         botDB, DBCursor = cls.connection()
-        query =  """select playlist_id
+        query = """select playlist_id
                     from playlist
                     order by playlist_id"""
         DBCursor.execute(query)
