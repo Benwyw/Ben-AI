@@ -154,7 +154,7 @@ async def on_ready():
         # covLoop.start()
         # twLolLoop.start() #Server error 500 24/7
         # newTWLolLoop.start()
-        riotLolLoop.start()
+        # riotLolLoop.start() # TODO Disabled until updated from V4 to V5
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
 
