@@ -6,28 +6,23 @@ class RiotApi(object):
         self.__RIOT_API_KEY = api_key
         self.__HEADER = {'X-Riot-Token': self.__RIOT_API_KEY}
 
-        self.__REGION = 'tw2'
+        # region (tw2, na1, euw1), is depreciated, use V5
+        self.__REGION = 'asia'
         if region == 'na':
-            self.__REGION = 'na1'
+            self.__REGION = 'americas'
         elif region == 'eu':
-            self.__REGION = 'euw1'
+            self.__REGION = 'europe'
 
-        self.__ROUTING = 'sea'
+        self.__ROUTING = 'asia'
         if region == 'na':
             self.__ROUTING = 'americas'
         elif region == 'eu':
             self.__ROUTING = 'europe'
 
-        self.__REGION_V5 = 'asia'
-        if region == 'na':
-            self.__REGION_V5 = 'americas'
-        elif region == 'eu':
-            self.__REGION_V5 = 'europe'
-
         self.__BASE_URL = ".api.riotgames.com/lol/"
         self.__RIOT_BASE_URL = ".api.riotgames.com/riot/"
         self.__API_URL_SUMMONER_V4 = "https://" + self.__REGION + self.__BASE_URL + "summoner/v4/summoners/" # depreciated, replaced by __API_URL_ACCOUNT_V1
-        self.__API_URL_ACCOUNT_V1 = "https://" + self.__REGION_V5 + self.__RIOT_BASE_URL + "account/v1/accounts/"
+        self.__API_URL_ACCOUNT_V1 = "https://" + self.__REGION + self.__RIOT_BASE_URL + "account/v1/accounts/"
         self.__API_URL_MATCH_V5 = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/by-puuid/"
         self.__API_URL_MATCH_V5_MATCHID = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/"
 
