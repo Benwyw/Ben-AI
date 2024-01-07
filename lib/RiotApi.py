@@ -19,7 +19,9 @@ class RiotApi(object):
             self.__ROUTING = 'europe'
 
         self.__BASE_URL = ".api.riotgames.com/lol/"
-        self.__API_URL_SUMMONER_V4 = "https://" + self.__REGION + self.__BASE_URL + "summoner/v4/summoners/"
+        self.__RIOT_BASE_URL = ".api.riotgames.com/riot/"
+        self.__API_URL_SUMMONER_V4 = "https://" + self.__REGION + self.__BASE_URL + "summoner/v4/summoners/" # depreciated, replaced by __API_URL_ACCOUNT_V1
+        self.__API_URL_ACCOUNT_V1 = "https://" + self.__REGION + self.__RIOT_BASE_URL + "account/v1/accounts/"
         self.__API_URL_MATCH_V5 = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/by-puuid/"
         self.__API_URL_MATCH_V5_MATCHID = "https://" + self.__ROUTING + self.__BASE_URL + "match/v5/matches/"
 
@@ -28,9 +30,16 @@ class RiotApi(object):
         @param summoner_name: LoL summoner name
         @return json object of infos and ids
         """
-        url = self.__API_URL_SUMMONER_V4 + "by-name/" + summoner_name
-        request = requests.get(url, headers=self.__HEADER)
-        return request.json()
+        if "#" in summoner_name:
+            gameNameTagLine = summoner_name.split("#")
+            gameName = gameNameTagLine[0]
+            tagLine = gameNameTagLine[1]
+            url = self.__API_URL_ACCOUNT_V1 + "by-riot-id/" + gameName + "/" + tagLine # url = self.__API_URL_SUMMONER_V4 + "by-name/" + summoner_name
+            request = requests.get(url, headers=self.__HEADER)
+            return request.json()
+        else:
+            print("Skipped {} due to summoner name does not contain #, v4 API already depreciated")
+            return None
 
     def get_matches_by_name(self, puuid: str) -> dict:
         """Get summoner match history by name"""
