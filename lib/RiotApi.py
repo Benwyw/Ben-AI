@@ -31,7 +31,8 @@ class RiotApi(object):
         @param summoner_name: LoL summoner name
         @return json object of infos and ids
         """
-        if "#" in summoner_name:
+        summoner_name = str(summoner_name)
+        if str("#") in str(summoner_name):
             gameNameTagLine = summoner_name.split("#")
             gameName = gameNameTagLine[0]
             tagLine = gameNameTagLine[1]
