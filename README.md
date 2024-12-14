@@ -1,6 +1,6 @@
 # Ben AI
 [![Python CI/CD with venv Ubuntu](https://github.com/Benwyw/Ben-AI/actions/workflows/ubuntu-python.yml/badge.svg)](https://github.com/Benwyw/Ben-AI/actions/workflows/ubuntu-python.yml)
-
+ 
 Multi-purposes Python Discord Bot.
 
 
